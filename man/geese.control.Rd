@@ -33,7 +33,7 @@ geese.control(epsilon = 1e-04, maxit = 25, trace = FALSE,
 \value{
   A list with the arguments as components.
 }
-\author{Jun Yan \email{jyan@stat.wisc.edu} }
+\author{Jun Yan \email{jyan@stat.uiowa.edu} }
 \seealso{`geese.fit', the fitting procedure used by `geese'.}
 \examples{
 }

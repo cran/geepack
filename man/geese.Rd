@@ -155,7 +155,7 @@ geese.fit(x, y, id, offset = rep(0, N), soffset = rep(0, N),
   multivariate discrete and continuous responses.
   \emph{Biometrics}, \bold{47} 825--839.
 }
-\author{Jun Yan \email{jyan@stat.wisc.edu}}
+\author{Jun Yan \email{jyan@stat.uiowa.edu}}
 \seealso{
   \code{\link{glm}}, \code{\link{lm}}, \code{\link{ordgee}}.
 }

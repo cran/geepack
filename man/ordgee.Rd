@@ -96,7 +96,7 @@ ordgee(formula = formula(data), ooffset = NULL, id, waves = NULL,
   Marginal regression models for clustered ordinal measurements.
   \emph{JASA}, \bold{91} 1024--1036.
 }
-\author{Jun Yan \email{jyan@stat.wisc.edu}}
+\author{Jun Yan \email{jyan@stat.uiowa.edu}}
 \seealso{
   \code{\link{glm}}, \code{\link{lm}}, \code{\link{geese}}.
 }
