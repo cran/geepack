@@ -9,7 +9,7 @@
 ordgee(formula = formula(data), ooffset = NULL, id, waves = NULL,
        data = parent.frame, subset = NULL, na.action = na.omit,
        contrasts = NULL, weights = NULL, z = NULL,
-       mean.link = "logit", corstr = "exchangeable",
+       mean.link = "logit", corstr = "independence",
        control = geese.control(...), b = NA, alpha = NA,
        scale.fix = FALSE, scale.val = 1, int.const = TRUE,
        rev = FALSE,...)
@@ -58,12 +58,19 @@ ordgee(formula = formula(data), ooffset = NULL, id, waves = NULL,
     in the fitting process. The length of \code{weights} should be the
     same as the number of observations.
   }
-  \item{z}{a design matrix for the odds ratio model.}
+  \item{z}{a design matrix for the odds ratio model. The number of rows
+    of z is \deqn{c^2 \sum n_i(n_i - 1)/2,} where \eqn{n_i} is the cluster
+    size, and \eqn{c} is the number of categories minus 1.
+  }
   \item{mean.link}{a character string specifying the link function for
     the means. The following are allowed:
-    \code{"logit"}, \code{"probit"}, and \code{"cloglog"}
+    \code{"logit"}, \code{"probit"}, and \code{"cloglog"}.
   }
-  \item{corstr}{a character string specifying the log odds.  }
+  \item{corstr}{a character string specifying the log odds. The
+    following are allowed:
+    \code{"independence"}, \code{"exchangeable"}, \code{"unstructured"},
+    and \code{"userdefined"}.
+  }
   \item{control}{a list of iteration and algorithmic constants. See
     \code{\link{geese.control}} for their names and default
     values. These can also be set as arguments to \code{geese} itself.
@@ -85,7 +92,7 @@ ordgee(formula = formula(data), ooffset = NULL, id, waves = NULL,
   An object of class \code{"geese"} representing the fit.
 }
 \references{
-  Heagerty, P.J. and Zeger, S.L.
+  Heagerty, P.J. and Zeger, S.L. (1996)
   Marginal regression models for clustered ordinal measurements.
   \emph{JASA}, \bold{91} 1024--1036.
 }
@@ -95,8 +102,12 @@ ordgee(formula = formula(data), ooffset = NULL, id, waves = NULL,
 }
 \examples{
 data(respdis)
-fit <- ordgee(resp ~ trt, id=id, data=respdis, int.const=FALSE)
+resp.l <- reshape(respdis, varying =list(c("y1", "y2", "y3", "y4")),
+                  v.names = "resp", direction = "long")
+resp.l <- resp.l[order(resp.l$id, resp.l$time),]
+fit <- ordgee(resp ~ trt, id=id, data=resp.l, int.const=FALSE)
 summary(fit)
+
 data(ohio)
 ohio$resp <- as.factor(ohio$resp)
 fit <- ordgee(resp ~ age + smoke + age:smoke, id = id, data=ohio)

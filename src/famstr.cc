@@ -238,7 +238,7 @@ Corr:: Corr(int corst, int maxwave): _corst(corst), _maxwave(maxwave) {
 //class Link
 //Link::Link() { Link(IDENT); }
 //Link::Link(int link) {
-Link::Link(int link = IDENT) {
+Link::Link(int link) {
     switch(link) {
     case LOGIT:
       init(linkfun_logit, linkinv_logit, mu_eta_logit);
@@ -276,7 +276,7 @@ Link::Link(fun1* linkfun, fun1* linkinv, fun1* mu_eta) {
 
 //class Variance
 //Variance::Variance() {Variance(GAUSSIAN); }
-Variance::Variance(int var = GAUSSIAN) {
+Variance::Variance(int var) {
 //Variance::Variance(int var) {
     switch(var) {
     case GAUSSIAN:
