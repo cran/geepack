@@ -4,7 +4,7 @@
 \alias{print.geese}
 \alias{summary.geese}
 \alias{print.summary.geese}
-\title{Function to solve a Generalize Estimating Equation Model}
+\title{Function to solve a Generalized Estimating Equation Model}
 \description{
   Produces an object of class `geese' which is a Generalized Estimating
   Equation fit of the data.

@@ -10,7 +10,7 @@ geese <- function(formula = formula(data),
                   ## control parameters
                   control = geese.control(...),
                   ## param 
-                  b = NA, alpha = NA, gm = NA,
+                  b = NULL, alpha = NULL, gm = NULL,
                   ## geestr
                   family = gaussian(),
                   mean.link = NULL,
@@ -44,7 +44,7 @@ geese <- function(formula = formula(data),
   corp <- model.extract(m, corp)
   if (is.null(id)) stop("id variable not found.")
 
-  ##mcall$formula <- formula
+  mcall$formula <- eval(mcall$formula) ## suggested by Charles C. Berry, 4/16/03
   mcall$formula[3] <- switch(match(length(sformula), c(0,2,3)),
                              1, sformula[2], sformula[3])
   m <- eval(mcall, parent.frame())
@@ -145,20 +145,24 @@ geese.fit <- function(x, y, id,
   q <- ncol(zcor)
   r <- ncol(zsca)
   
-  if (is.na(b)){
+  ## Initial values setup
+  fit0 <- glm.fit(x, y, weights=weights, offset=offset, family=family)
+  if (is.null(b)){
     ##b <- rep(1,p)
-   b <- glm.fit(x, y, weights=weights, offset=offset, family=family)$coef
+    b <- fit0$coef
   }
-  if (is.na(alpha)) alpha <- rep(0,q);
-  if (is.na(gm)) gm <- rep(scale.value, r)
+  if (is.null(alpha)) alpha <- rep(0,q)
+  if (is.null(gm)) {
+    ##gm <- rep(scale.value, r)
+    qlf <- quasi(LINKS[sca.link.v])$linkfun
+    pr2 <- (residuals.glm(fit0, type="pearson")) ^ 2
+    gm <- lm.fit(zsca, qlf(pr2), offset = soffset)$coef
+  }
   param <- list(b, alpha, gm)
 
   ans <- .Call("gee_rap", y, x, offset, soffset, weights,
                linkwaves, zsca, zcor, corp,
                clusz, geestr, corr, param, control, PACKAGE = "geepack")
-  ##geese.fit(y, x, ##offset, weight,
-  ##          waves, zsca, zcor, corp, ##corp is the corr coordinates
-  ##          clusz, geestr, corr, param, con)
   names(ans) <- c("beta", "alpha", "gamma", "vbeta", "valpha", "vgamma",
                   "vbeta.naiv", "valpha.naiv", "valpha.stab",
                   "vbeta.ajs", "valpha.ajs", "vgamma.ajs",
@@ -171,7 +175,7 @@ geese.fit <- function(x, y, id,
   if (is.null(ans$zcor.names)) ans$zcor.names = paste("alpha", 1:ncol(zcor), sep=":")
   names(ans$beta) <- ans$xnames
   names(ans$gamma) <- ans$zsca.names
-  names(ans$alpha) <- ans$zcor.names
+  if (length(ans$alpha) > 0)  names(ans$alpha) <- ans$zcor.names
 
   ans <- c(ans, list(clusz=clusz, control=control,
                      model=list(mean.link=mean.link,
