@@ -1,0 +1,12 @@
+dietox                  Growth curves of pigs in a 3x3 factorial
+                        experiment
+geeglm                  Fit Generalized Estimating Equations (GEE)
+geese                   Function to solve a Generalized Estimating
+                        Equation Model
+geese.control           Auxiliary for Controlling GEE Fitting
+koch                    Ordinal Data from Koch
+ohio                    Ohio Children Wheeze Status
+ordgee                  GEE for Clustered Ordinal Responses
+respdis                 Clustered Ordinal Respiratory Disorder
+seizure                 Epiliptic Seizures
+spruce                  Log-size of 79 Sitka spruce trees
