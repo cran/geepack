@@ -1,0 +1,10 @@
+2005-02-09  Jun Yan  <jyan@stat.uiowa.edu>
+
+	* Søren Højsgaard joined the development with geeglm, which 
+	"works like" glm and returns an object which is similar to 
+	a glm object. Residuals and predicted values can be extracted
+	using the generic functions as with a glm object. 
+
+	* An important feature of geeglm, is that an anova method 
+	exists for these models.
+	
