@@ -16,14 +16,14 @@ geese(formula = formula(data), sformula = ~1, id, waves = NULL,
       control = geese.control(...), b = NA, alpha = NA, gm = NA,
       family = gaussian(), mean.link = NULL, variance = NULL,
       cor.link = "identity", sca.link = "identity", link.same = TRUE,
-      scale.fix = F, scale.value = 1, corstr = "independence", ...)
+      scale.fix = FALSE, scale.value = 1, corstr = "independence", ...)
 
 geese.fit(x, y, id, offset = rep(0, N), soffset = rep(0, N),
           weights = rep(1,N), waves = NULL, zsca = matrix(1, N, 1),
           zcor = NULL, corp = NULL, control = geese.control(...),
           b = NA, alpha = NA, gm = NA, family = gaussian(),
           mean.link = NULL, variance = NULL, cor.link = "identity",
-          sca.link = "identity", link.same = TRUE, scale.fix = F,
+          sca.link = "identity", link.same = TRUE, scale.fix = FALSE,
           scale.value = 1, corstr = "independence", ...)
 }
 \arguments{
