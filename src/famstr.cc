@@ -204,11 +204,13 @@ DMatrix cor_rho_ar1(const DVector &rho, const DVector &wave) {
   int n = wave.size();
   DMatrix ans(n * (n - 1) / 2, 1);
   int k = 1;
-  for (int i = 1; i <= n - 1; i++)
+  for (int i = 1; i <= n - 1; i++) {
     for (int j = i + 1; j <= n; j ++) {
       double tmp = fabs(wave(j) - wave(i));
-      ans(k++, 1) = (tmp == 1.0) ? 1.0 : (tmp * pow(rho(1), tmp - 1.0));
+      ans(k, 1) = (tmp == 1.0) ? 1.0 : (tmp * pow(rho(1), tmp - 1.0));
+      k++;
     }
+  }
   return ans;
 }
 
