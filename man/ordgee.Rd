@@ -11,7 +11,7 @@ ordgee(formula = formula(data), ooffset = NULL, id, waves = NULL,
        contrasts = NULL, weights = NULL, z = NULL,
        mean.link = "logit", corstr = "independence",
        control = geese.control(...), b = NA, alpha = NA,
-       scale.fix = FALSE, scale.val = 1, int.const = TRUE,
+       scale.fix = TRUE, scale.val = 1, int.const = TRUE,
        rev = FALSE,...)
 }
 \arguments{
@@ -78,7 +78,7 @@ ordgee(formula = formula(data), ooffset = NULL, id, waves = NULL,
   \item{b}{an initial estimate for the mean parameters.}
   \item{alpha}{an initial estimate for the odds ratio parameters.}
   \item{scale.fix}{a logical variable indicating if scale is fixed; it
-    is set at TRUE currently.}
+    is set at TRUE currently (it can not be FALSE yet!).}
   \item{scale.val}{this argument is ignored currently.}
   \item{int.const}{a logical variable; if true, the intercepts are
     constant, and if false, the intercepts are different for different
