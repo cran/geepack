@@ -13,7 +13,7 @@
 geese(formula = formula(data), sformula = ~1, id, waves = NULL,
       data = parent.frame(), subset = NULL, na.action = na.omit,
       contrasts = NULL, weights = NULL, zcor = NULL, corp = NULL,
-      control = geese.control(...), b = NA, alpha = NA, gm = NA,
+      control = geese.control(...), b = NULL, alpha = NULL, gm = NULL,
       family = gaussian(), mean.link = NULL, variance = NULL,
       cor.link = "identity", sca.link = "identity", link.same = TRUE,
       scale.fix = FALSE, scale.value = 1, corstr = "independence", ...)
@@ -21,7 +21,7 @@ geese(formula = formula(data), sformula = ~1, id, waves = NULL,
 geese.fit(x, y, id, offset = rep(0, N), soffset = rep(0, N),
           weights = rep(1,N), waves = NULL, zsca = matrix(1, N, 1),
           zcor = NULL, corp = NULL, control = geese.control(...),
-          b = NA, alpha = NA, gm = NA, family = gaussian(),
+          b = NULL, alpha = NULL, gm = NULL, family = gaussian(),
           mean.link = NULL, variance = NULL, cor.link = "identity",
           sca.link = "identity", link.same = TRUE, scale.fix = FALSE,
           scale.value = 1, corstr = "independence", ...)
@@ -146,14 +146,10 @@ geese.fit(x, y, id, offset = rep(0, N), soffset = rep(0, N),
   An object of class \code{"geese"} representing the fit.
 }
 \references{
-  Liang, K.Y. and Zeger, S.L. (1986)
-  Longitudinal data analysis using generalized linear models.
-  \emph{Biometrika}, \bold{73} 13--22.
-
-  Prentice, R.L. and Zhao, L.P. (1991).
-  Estimating equations for parameters in means and covariances of
-  multivariate discrete and continuous responses.
-  \emph{Biometrics}, \bold{47} 825--839.
+  Yan, J. and J.P. Fine (2004)
+  Estimating Equations for Association Structures.
+  \emph{Statistics in Medicine}, \bold{23}, 859--880. 
+  
 }
 \author{Jun Yan \email{jyan@stat.uiowa.edu}}
 \seealso{

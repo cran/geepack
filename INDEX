@@ -1,9 +1,0 @@
-geese-internal          Internal geese functions
-geese                   Function to solve a Generalize Estimating
-                        Equation Model
-geese.control           Auxiliary for Controlling GEE Fitting
-ohio                    Ohio Children Wheeze Status
-ordgee                  GEE for Clustered Ordinal Responses
-respdis                 Clustered Ordinal Respiratory Disorder
-seizure                 Epiliptic Seizures
-spruce                  Log-size of 79 Sitka spruce trees

@@ -1,3 +1,5 @@
+using namespace std;
+
 //  #include "tntsupp.h"
 //  #include "geese.h"
 

@@ -75,7 +75,7 @@ geese.fit <- function(x, y, id,
                       zcor = NULL, corp = NULL,
                       control = geese.control(...),
                       ## param 
-                      b = NA, alpha = NA, gm = NA,
+                      b = NULL, alpha = NULL, gm = NULL,
                       ## geestr
                       family = gaussian(),
                       mean.link = NULL,
@@ -87,7 +87,9 @@ geese.fit <- function(x, y, id,
                       ## corr
                       corstr = "independence", ...) {
   N <- length(id)
-  clusz <- unlist(lapply(split(id, id), length))
+  ##clusz <- unlist(lapply(split(id, id), length))
+  clusnew <- c(which(diff(as.numeric(id)) != 0), length(id))
+  clusz <- c(clusnew[1], diff(clusnew))
   maxclsz <- max(clusz)
   if (is.null(waves)) waves <- unlist(sapply(clusz, function(x) 1:x))
   waves <- as.integer(waves)
