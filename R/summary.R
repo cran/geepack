@@ -17,7 +17,7 @@ summary.geese <- function(object, ...) {
                          fij.se = sqrt(diag(object$valpha.fij)))
   corr.sum$wald <- (corr.sum$estimate / corr.sum$san.se)^2
   corr.sum$p <- 1 - pchisq(corr.sum$wald, df=1)
-  rownames(corr.sum) <- object$zcor.names
+  if (nrow(corr.sum) > 0) rownames(corr.sum) <- object$zcor.names
 
   scale.sum <- data.frame(estimate = object$gamma,
                           san.se = sqrt(diag(object$vgamma)),

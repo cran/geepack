@@ -148,6 +148,7 @@ double update_gamma(DVector &PR, DVector &W, IVector &LinkWave,
     //G = G + AtBiC(D2i, WiV2, Si - Phii);
   }
   DVector Del = solve(H, G);
+  //cout << "H = " << H << "G = " << G;
   //par.set_gamma((double) N / (double)(N - p) * (par.gamma() + Del));
   par.set_gamma(par.gamma() + Del);
   del = fmax(fabs(Del));
@@ -234,6 +235,7 @@ void gee_est(DVector &Y, DMatrix &X,
 
     //updating gamma;
     PR = getPR(Y, X, Offset, LinkWave, par, geestr);
+    //cout << "PR = " << PR;
     //PR = (double) (N / (N - p)) * PR; //df adjusting
     Del(2) = update_gamma(PR, W, LinkWave, Clusz, Jack, Doffset, Zsca, par, geestr);
 
