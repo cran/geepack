@@ -363,6 +363,11 @@ inline Fortran_Matrix<T> operator*(const T &x, const Fortran_Matrix<T>  &A) {
 }
 
 // utilities:
+template <class T>
+Region2D<Fortran_Matrix<T> > MatSubs(Fortran_Matrix<T> &x, 
+				     const Index1D &I, const Index1D &J) {
+  return X(I, J);
+}
 
 template <class T>
 Region2D<Fortran_Matrix<T> > MatRow(Fortran_Matrix<T> &x, int i) {
@@ -489,6 +494,7 @@ T fmin(const Fortran_Matrix<T> &m) {
       if (ans > m(i, j)) ans = m(i, j);
   return ans;
 }
+
 template <class T>
 T sum(const Vector<T> &v) {
   T ans = 0;

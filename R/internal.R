@@ -16,6 +16,7 @@ genZcor <- function(clusz, waves, corstrv) {
   crs <- clusz * (clusz - 1) / 2
   if (corstrv == 2 || corstrv == 3) {
     ans <-  matrix(1, length(clusz), 1)
+    ##ans <-  matrix(1, sum(crs), 1)
     colnames(ans) <- c("alpha")
   }
   else {

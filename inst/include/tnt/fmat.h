@@ -33,7 +33,7 @@
 #include <cstdlib>
 #include <cassert>
 #include <iostream>
-#include <strstream>
+#include <sstream>
 #ifdef TNT_USE_REGIONS
 #include "tnt/region2d.h"
 #endif
@@ -196,7 +196,7 @@ class Fortran_Matrix
     Fortran_Matrix(Subscript M, Subscript N, char *s)
     {
         initialize(M,N);
-        std::istrstream ins(s);
+        std::istringstream ins(s);
 
         Subscript i, j;
 

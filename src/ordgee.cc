@@ -16,7 +16,7 @@
 #include "ordgee.h"
 
 double odds2p11(double psi, double mu1, double mu2) {
-  if (psi == 1.0) return mu1 * mu2;
+  if (fabs(psi - 1.0) < .001) return mu1 * mu2;
   else {
     double exp1 = 1 + (mu1 + mu2) * ( psi - 1);
     double s = exp1 * exp1 + 4 * psi * (1 - psi) * mu1 * mu2;
@@ -26,11 +26,13 @@ double odds2p11(double psi, double mu1, double mu2) {
 }
 
 DMatrix odds2p11(DVector &Psi, DVector &Mu1, DVector &Mu2) {
+  //Psi is c^2 by 1, contains odds ratio in the sequence: 1-1, 1-2, 2-1, 2-2
+  //which can be viewed as the result of hvec of PSI matrix
   int c = Mu1.size(), k = 1;
   DMatrix ans(c, c);
   for (int i = 1; i <= c; i++)
     for (int j = 1; j <= c; j++)
-      ans(i, j) = odds2p11(Psi(k++), Mu1(i), Mu2(j));
+      ans(i, j) = odds2p11(Psi(k++), Mu1(i), Mu2(j)); 
   return ans;
 }
 
@@ -39,7 +41,7 @@ f <- deriv( ~ .5 / (psi - 1) * (1 + (mu1 + mu2) * ( psi - 1) - (((1 + (mu1 + mu2
 */
 
 double p11_odds(double psi, double mu1, double mu2) {
-  if (psi == 1.0) return mu1*mu2*( - (mu1 + mu2) + mu1*mu2 + 1);
+  if (fabs(psi - 1.0) < .001) return mu1*mu2*( - (mu1 + mu2) + mu1*mu2 + 1);
   else {
     double expr1 = psi - 1.0;
     double expr2 = .5 / expr1;
@@ -61,6 +63,10 @@ double p11_odds(double psi, double mu1, double mu2) {
 
 DVector p11_mu(double psi, double mu1, double mu2) {
   DVector ans(2);
+  if (fabs(psi - 1.0) < .001) {
+    ans(1) = mu2; ans(2) = mu1;
+    return ans;
+  }
   double expr1 = psi - 1.0;
   double expr2 = .5 / expr1;
   double expr3 = mu1 + mu2;
@@ -87,7 +93,7 @@ DVector p11_odds(DVector &Psi, DVector &Mu1, DVector &Mu2) {
   for (int i = 1; i <= c; i++) 
     for (int j = 1; j <= c; j++) {
       ans(k) = p11_odds(Psi(k), Mu1(i), Mu2(j)); 
-      //need more attention to the ordering of Mu1 and Mu2, row-major or col-major
+      //need more attention to the ordering of Mu1 and Mu2, row-major or col-major; this is row major!!!
       k++;
     }
   return ans;
@@ -119,7 +125,7 @@ DMatrix Vijj(DVector &Mu, bool rev) {
 }
 
 DMatrix Vijk(DVector &Mu1, DVector &Mu2, DVector &Psi) {
-  //Psi is a c x c vector;
+  //Psi is a c^2 by 1 vector;
   int c = Mu1.size();
   DMatrix ans(c,c);
   int k = 1;
@@ -127,7 +133,7 @@ DMatrix Vijk(DVector &Mu1, DVector &Mu2, DVector &Psi) {
     for (int j = 1; j <= c; j++) {
       double psi = Psi(k++);
       double p11 = odds2p11(psi, Mu1(i), Mu2(j));
-      ans(i,j) = p11 - Mu1(i) * Mu2(j);
+      ans(i, j) = p11 - Mu1(i) * Mu2(j);
     }
   }
   return ans;
@@ -190,6 +196,27 @@ DMatrix Mu2V1(DVector &Mu, int clusz, bool rev) {
   return ans;
 }
 
+void ord_prep_beta(DVector &Yi, DMatrix &Xi, DVector &Offseti,
+		   DMatrix &Zi, DVector &Ooffseti,
+		   int clusz, int c, bool rev,
+		   IVector &LinkWavei, 
+		   GeeParam &par, GeeStr &geestr, Corr &cor,
+		   //output
+		   DMatrix &Di, DVector &PRi, DMatrix &Vi) {
+  DVector Etai = Xi * par.beta() + Offseti;
+  DVector Mui = geestr.MeanLinkinv(Etai, LinkWavei);
+  DVector Mu_Etai = geestr.MeanMu_eta(Etai, LinkWavei);
+  PRi = Yi - Mui;
+  Di = SMult(Mu_Etai, Xi);
+
+  if (clusz == 1) Vi = Vijj(Mui, rev);
+  else if (cor.nparam() == 0) Vi = Mu2V1(Mui, clusz, rev);
+  else { //cluster size greater than 1;
+    DVector Psii = geestr.CorrLinkinv(Zi * par.alpha() + Ooffseti);
+    Vi = ord2V1(Mui, Psii, clusz, rev);
+  }
+}
+
 void ord_prep_beta(DVector &Y, DMatrix &X, DVector &Offset,
 		   DMatrix &Z, DVector &Ooffset,
 		   Index1D &I, Index1D &J,
@@ -228,15 +255,29 @@ double update_beta(DVector &Y, DMatrix &X, DVector &Offset, DVector &Ooffset,
   int p = par.p(), n = Clusz.size(); 
   DMatrix H(p,p); DVector G(p);
   Index1D I(0,0), J(0,0);
+
   for (int i = 1; i <= n; i++) {
     int s1 = Clusz(i);
     int s2 = s1 * (s1 - 1) / 2;
     I = Index1D(1, s1 * c) + I.ubound(); 
     if (s2 > 0) J = Index1D(1, s2 * c * c) + J.ubound();
-    //if (Jack(i) == 1) continue;
+
+    //    cout << "i = " << i << " J.lbound = " << J.lbound() << " J.ubound = " << J.ubound() << endl;
     DVector PRi(s1 * c); DMatrix Di(s1 * c, p), Vi(s1 * c, s1 * c);
-    ord_prep_beta(Y, X, Offset, Z, Ooffset, I, J, s1, c, rev,
-		  LinkWave, par, geestr, cor, Di, PRi, Vi);
+    DVector Yi = asVec(VecSubs(Y, I));
+    DMatrix Xi = asMat(MatRows(X, I));
+    DVector Offseti = asVec(VecSubs(Offset, I));
+    IVector LinkWavei = asVec(VecSubs(LinkWave, I));
+    DMatrix Zi; DVector Ooffseti;
+    if (cor.nparam() == 0 || s2 == 0) {
+      Zi = DMatrix(1,1); Ooffseti = DVector(1);
+    } else {
+      Zi = asMat(MatRows(Z, J)); 
+      Ooffseti = asVec(VecSubs(Ooffset, J));
+    }
+
+    ord_prep_beta(Yi, Xi, Offseti, Zi, Ooffseti, s1, c, rev,
+		  LinkWavei, par, geestr, cor, Di, PRi, Vi);
     //if (i == 1) cout << "PRi = " << PRi << "Di = " << Di << "Vi = " << Vi;
     DVector rootWi = sqrt(asVec(VecSubs(W, I)));
     Di = SMult(rootWi, Di); PRi = SMult(rootWi, PRi);
@@ -266,28 +307,14 @@ DVector vec(const DMatrix &m) {
   return ans;
 }
 
-/*
-DMatrix ESSTijk(DVector &Mu1, DVector &Mu2, DMatrix &P11,
-	      int c1, int c3) {
-  //P11 is c x c matrix
-  int c = Mu1.size(), c13 = fmax(c1, c3); 
-  DMatrix ans(c, c);
-  for (int c2 = 1; c2 <= c; c2++) {
-    for (int c4 = c2; c4 <= c; c4++) {
-      ans(c2, c4) = 
-	P11(c13, c4) - P11(c13, c2) * Mu2(c4) 
-	- P11(c13, c4) * Mu2(c2) + Mu1(c13) * Mu2(c2) * Mu2(c4) 
-	- P11(c1, c4) * Mu1(c3) + P11(c1, c2) * Mu1(c3) * Mu2(c4)
-	+ P11(c1, c4) * Mu1(c3) * Mu2(c2) - 3 * Mu1(c1) * Mu1(c3) * Mu2(c2) * Mu2(c4)
-	- P11(c3, c4) * Mu1(c1) + P11(c3, c2) * Mu1(c1) * Mu2(c4)
-	+ P11(c3, c4) * Mu1(c1) * Mu2(c2)
-	+ Mu1(c1) * Mu1(c3) * Mu2(c4);
-      if (c4 > c2) ans(c4, c2) = ans(c2, c4);
-    }
-  }
+DVector hvec(const DMatrix &m) {
+  int r = m.num_rows(), c = m.num_cols(), k = 1;
+  DVector ans(r * c);
+  for (int i = 1; i <= r; i++) 
+    for (int j = 1; j <= c; j++)
+      ans(k++) = m(i, j);
   return ans;
 }
-*/
 
 DMatrix ESSTijk(DVector &Mu1, DVector &Mu2, DMatrix &P11,
 	      int c1, int c3, bool rev) {
@@ -313,24 +340,6 @@ DMatrix ESSTijk(DVector &Mu1, DVector &Mu2, DMatrix &P11,
   }
   return ans;
 }
-
-/*
-DMatrix ESST(DVector &Mu1, DVector &Mu2, DMatrix &P11) {
-  int c = Mu1.size();
-  DMatrix ans(c*c, c*c);
-  Index1D I(0,0), J(0,0);
-  for (int c1 = 1; c1 <= c; c1++) {
-    J = I;
-    I = Index1D(1, c) + I.ubound();
-    for (int c3 = c1; c3 <= c; c3++) {
-      J = Index1D(1, c) + J.ubound();
-      ans(I, J) = ESSTijk(Mu1, Mu2, P11, c1, c3);
-      if (c3 > c1) ans(J, I) = ans(I, J);
-    }
-  }
-  return ans;
-}
-*/
 
 DMatrix ESST(DVector &Mu1, DVector &Mu2, DMatrix &P11, bool rev) {
   int c = Mu1.size();
@@ -362,8 +371,8 @@ void ord_prep_alpha(DVector &PR1, DVector &PR2, //DMatrix &V,
   DVector S = kronecker(PR1, PR2);
   //cout << "S = " << S;
   DMatrix V = Vijk(Mu1, Mu2, Psi);
-  //cout << "V = " << V;
-  DVector Sigma = vec(V);
+  //  cout << "V = " << V;
+  DVector Sigma = hvec(V);
   U2 = S - Sigma;
 
   DVector P11_Odds = p11_odds(Psi, Mu1, Mu2);
@@ -389,7 +398,6 @@ double update_alpha(DVector &PR, DVector &Mu, DVector &W,
     int s2 = s1 * (s1 - 1) / 2;
     I = Index1D(1, s1 * c) + I.ubound(); 
     if (s2 > 0) J = Index1D(1, s2 * c * c) + J.ubound();
-    //if (Jack(i) == 1) continue;
     if (s1 == 1) continue;
 
     DVector PRi = asVec(VecSubs(PR, I));
@@ -410,11 +418,14 @@ double update_alpha(DVector &PR, DVector &Mu, DVector &W,
 	DVector Ooffsetijk = asVec(VecSubs(Ooffseti, K));
 	DMatrix Zijk = asMat(MatRows(Zi, K));
 	DVector U2(c*c, 1); DMatrix V2(c*c, c*c), D2(c*c, q);
+	//cout << "i = " << i << " j = " << j << " k = " << k;
 	ord_prep_alpha(PR1, PR2, Mu1, Mu2, Zijk, Ooffsetijk, rev,
 		       par, geestr, U2, V2, D2);
+
 	//if (i == 1) cout << "U2 = " << U2 << "D2 = " << D2 << "V2 = "<< V2;
 	H = H + AtBiC(D2, V2, D2);
-	//cout << "H = " << H;
+	//cout << " AtBiC(D2, V2, D2)  = " << AtBiC(D2, V2, D2);
+	//if (i == 37) cout << "V2 = "<< V2;
 	G = G + AtBiC(D2, V2, U2);
       }
     }
@@ -426,14 +437,17 @@ double update_alpha(DVector &PR, DVector &Mu, DVector &W,
   return del;
 }
 
+/* the following estimation procedure assumed that each cluster has size 
+at least 1.    Nov. 6, 2002.
+*/
+
 void ordgee_est(DVector &Y, DMatrix &X, 
 		DVector &Offset, DVector &Ooffset, DVector &W, 
 		IVector &LinkWave,
 		DMatrix &Z, IVector &Clusz, int c, bool rev,
 		GeeStr &geestr, Corr &cor, GeeParam &par,
 		Control &con) {
-  DVector Del(3); 
-  //  int I = Clusz.size();
+  DVector Del(3); Del = 0.0;
 
   int N = Y.size(); // N = sum(n_i) * c;  
   DVector PR(N), Mu(N);
@@ -462,10 +476,10 @@ void ordgee_est(DVector &Y, DMatrix &X,
   if (iter == con.maxiter()) par.set_err(1);
 }
 
-void HiandGi(DVector &Y, DMatrix &X, DVector &Offset, DVector &Ooffset,
-	     IVector &LinkWave, 
-	     DMatrix &Z,  int s1, int c, bool rev,
-	     Index1D &I, Index1D &J,
+void HiandGi(DVector &Yi, DMatrix &Xi, DVector &Offseti, DVector &Ooffseti,
+	     IVector &LinkWavei, 
+	     DMatrix &Zi,  int s1, int c, bool rev,
+	     //Index1D &I, Index1D &J,
 	     GeeParam &par, GeeStr &geestr, Corr &cor,
 	     //output
 	     Hess &Hi, Grad &Gi) {
@@ -473,17 +487,15 @@ void HiandGi(DVector &Y, DMatrix &X, DVector &Offset, DVector &Ooffset,
   int p = par.p(), q = par.q();
   DVector PRi(s1 * c); 
   DMatrix D1i(s1 * c, p), V1i(s1 * c, s1 * c);
-  ord_prep_beta(Y, X, Offset, Z, Ooffset, I, J, s1, c, rev,
-		LinkWave, par, geestr, cor, D1i, PRi, V1i);
+  ord_prep_beta(Yi, Xi, Offseti, Zi, Ooffseti, s1, c, rev,
+		LinkWavei, par, geestr, cor, D1i, PRi, V1i);
   Hi.set_A(AtBiC(D1i, V1i, D1i));
   Gi.set_U1(AtBiC(D1i, V1i, PRi));
   
   if (s1 == 1) return;
   if (cor.nparam() == 0) return;
   
-  DVector Mui = asVec(VecSubs(Y, I)) - PRi;
-  DMatrix Zi = asMat(MatRows(Z, J));
-  DVector Ooffseti = asVec(VecSubs(Ooffset, J));
+  DVector Mui = Yi - PRi;
   Index1D K(0,0);
   for (int j = 1; j <= s1 - 1; j++) {
     Index1D I1((j - 1) * c + 1, j * c);
@@ -533,7 +545,7 @@ void HnandGis(DVector &Y, DMatrix &X, DVector &Offset, DVector &Ooffset,
 //      H.inc(Hi); Gis(i) = Gi;
 //    }
 //    Hn = (1.0/(double) N) * H;
-  IVector Scur(Clusz.size()); Scur = 1;
+  IVector Scur(Y.size() / c); Scur = 1;
   HnandGis(Y, X, Offset, Ooffset, LinkWave, Z, Clusz, c, rev,
 	   par, geestr, cor, Scur, Hn, Gis);
 }
@@ -544,16 +556,49 @@ void HnandGis(DVector &Y, DMatrix &X, DVector &Offset, DVector &Ooffset,
 	      GeeParam &par, GeeStr &geestr, Corr &cor, IVector &Scur,
 	      Hess &Hn, Vector<Grad> &Gis) {
   Hess H(par), Hi(par); Grad Gi(par);
-  Index1D I(0,0), J(0,0);
+  Index1D I(0,0), J(0,0), K(0,0);
   int N = Clusz.size();
   for (int i = 1; i <= N; i++) {
     int s1 = Clusz(i);
     int s2 = s1 * (s1 - 1) / 2;
+    K = Index1D(1, s1) + K.ubound();
     I = Index1D(1, s1 * c) + I.ubound(); 
     if (s2 > 0) J = Index1D(1, s2 * c * c) + J.ubound();
-    if (Scur(i) == 0) continue;
+
+    IVector Scuri = asVec(VecSubs(Scur, K));
+    int clsz = sum(Scuri); //this is the new cluster size that should be passed down!!!!!!!
+    if (clsz == 0) continue; 
+
+    //get dat i
+    DVector Yi = asVec(VecSubs(Y, I));
+    DMatrix Xi = asMat(MatRows(X, I));
+    DVector Offseti = asVec(VecSubs(Offset, I));
+    IVector LinkWavei = asVec(VecSubs(LinkWave, I));
+    DMatrix Zi; DVector Ooffseti;
+
+    if (cor.nparam() == 0 || s2 == 0) {
+      Zi = DMatrix(1,1); Ooffseti = DVector(1);
+    } 
+    else {
+      Zi = asMat(MatRows(Z, J)); 
+      Ooffseti = asVec(VecSubs(Ooffset, J));
+    }
+
+    //valid data i
+    IVector VI = genVI(Scuri, c), VJ = genCrossVI(Scuri, c);
+    DVector VYi = Valid(Yi, VI), VOffseti = Valid(Offseti, VI); 
+    IVector VLinkWavei = Valid(LinkWavei, VI);
+    DMatrix VXi = Valid(Xi, VI);
+    DMatrix VZi;  DVector VOoffseti;
+    if (cor.nparam() == 0 || clsz == 1) {//clsz == 1: no need to go association
+      VZi = DMatrix(1,1); VOoffseti = DVector(1);
+    }
+    else {
+      VZi = Valid(Zi, VJ);
+      VOoffseti = Valid(Ooffseti, VJ);
+    }
     Hess Hi(par); Grad Gi(par);
-    HiandGi(Y, X, Offset, Ooffset, LinkWave, Z,  s1, c, rev, I, J,
+    HiandGi(VYi, VXi, VOffseti, VOoffseti, VLinkWavei, VZi, clsz, c, rev,
 	    par, geestr, cor, Hi, Gi);
     H.inc(Hi); Gis(i) = Gi;
   }
@@ -582,10 +627,13 @@ void ordgee_var(DVector &Y, DMatrix &X, DVector &Offset, DVector &Ooffset,
   par.set_vbeta_naiv(1.0/N * Hinv.A());
   par.set_vbeta(1.0/N/N * VB);
   if (cor.nparam() == 0) return;
+
+  //only those cluster with size 2 or more contributes to the variance of alpha
+  //int Nalp = 0;
+  //for (int i = 1; i <= N; i++) if (Clusz(i) > 1) Nalp++;
   par.set_valpha_naiv(1.0/N * Hinv.F());
+  //par.set_valpha(1.0/Nalp/Nalp * VA);
   par.set_valpha(1.0/N/N * VA);
-  //par.set_vbeta_naiv(1.0/N * Hinv.A());
-  //par.set_vbeta(1.0/N/N * Hinv.A() * outerprod(Gis);
 }
 
 void ordgee_top(DVector &Y, DMatrix &X, 
@@ -598,7 +646,6 @@ void ordgee_top(DVector &Y, DMatrix &X,
 	     geestr, cor, par, con);
   ordgee_var(Y, X, Offset, Ooffset, W, LinkWave, Z, Clusz, c, rev,
 	     geestr, cor, par);
-  
 }
 
 extern "C" {

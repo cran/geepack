@@ -181,6 +181,19 @@ void HiandGi(DVector &PRi, DVector &Phii, DMatrix &Di, DMatrix &R,
   }
 }
 
+void PRandD(DVector &Yi, DMatrix &Xi, DVector &Offseti,
+	    IVector &Wavei, GeeParam &par, GeeStr &geestr,
+	    DVector &PRi, DMatrix &Di) {
+  DVector Eta = Xi * par.beta() + Offseti;
+  DVector Mu = geestr.MeanLinkinv(Eta, Wavei);
+  DVector V = geestr.v(Mu, Wavei);
+  DVector Mu_Eta = geestr.MeanMu_eta(Eta, Wavei);
+
+  DVector InvRootV = reciproot(V);
+  Di = SMult(InvRootV, SMult(Mu_Eta, Xi));
+  PRi = SMult(InvRootV, Yi - Mu);
+}
+
 void PRandD(DVector &Y, DMatrix &X, DVector &Offset,
 	    Index1D &I, IVector &LinkWave, 
 	    GeeParam &par, GeeStr &geestr,
@@ -197,6 +210,21 @@ void PRandD(DVector &Y, DMatrix &X, DVector &Offset,
   DVector InvRootV = reciproot(V);
   Di = SMult(InvRootV, SMult(Mu_Eta, Xi));
   PRi = SMult(InvRootV, Yi - Mu);
+}
+
+void gee_prep(DVector &Yi, DMatrix &Xi, DVector &Offseti,
+	      IVector &Wavei, GeeParam &par, GeeStr &geestr,
+	      DVector &PRi, DMatrix &Di, DVector &Vi, DVector &V_Mui) {
+  DVector Eta = Xi * par.beta() + Offseti;
+  DVector Mu = geestr.MeanLinkinv(Eta, Wavei);
+  DVector V = geestr.v(Mu, Wavei);
+  DVector Mu_Eta = geestr.MeanMu_eta(Eta, Wavei);
+
+  DVector InvRootV = reciproot(V);
+  Di = SMult(InvRootV, SMult(Mu_Eta, Xi));
+  PRi = SMult(InvRootV, Yi - Mu);
+  Vi = geestr.v(Mu, Wavei);
+  V_Mui = geestr.v_mu(Mu, Wavei);
 }
 
 void gee_prep(DVector &Y, DMatrix &X, DVector &Offset,
@@ -219,6 +247,20 @@ void gee_prep(DVector &Y, DMatrix &X, DVector &Offset,
   V_Mui = geestr.v_mu(Mu, Wavei);
 }
 
+DMatrix getR(DMatrix &Zmati, DVector &corp, 
+	     GeeParam &par, GeeStr &geestr, Corr &cor) {
+  DVector alp = par.alpha(); 
+  int s = corp.dim(); // corp should determine meta par for R
+  if (s == 1) return ident(1); 
+  else if (cor.nparam() == 0) //indenpendence or fixed
+    return cor.mat(alp, corp); //if fixed, should have ident link
+  else {
+    DVector Eta = Zmati * alp;
+    DVector Rho = geestr.CorrLinkinv(Eta);
+    return cor.mat(Rho, corp);
+  }
+}
+
 DMatrix getR(DMatrix &Zmat, Index1D &I, Index1D &J, DVector &CorP,
 	     GeeParam &par, GeeStr &geestr, Corr &cor) {
   DVector alp = par.alpha(); 
@@ -232,6 +274,32 @@ DMatrix getR(DMatrix &Zmat, Index1D &I, Index1D &J, DVector &CorP,
     DVector Eta = Zmati * alp;
     DVector Rho = geestr.CorrLinkinv(Eta);
     return cor.mat(Rho, corp);
+  }
+}
+
+int RandE(DMatrix &Zmati, DVector &corp,
+	  GeeParam &par, GeeStr &geestr, Corr &cor,
+	  DMatrix &R, DMatrix &E) {
+  DVector alp = par.alpha();
+  //DVector corp = asVec(VecSubs(CorP, I));
+  int s = corp.dim();
+  if (s == 1) {
+    R = ident(1); 
+    return 0;
+  }
+  else if (cor.nparam() == 0) { //no need for E
+    R = cor.mat(alp, corp);
+    return 0;
+  }
+  else {
+    //DMatrix Zmati = asMat(MatRows(Zmat, J)); 
+    DVector Eta = Zmati * alp;
+    DVector Rho = geestr.CorrLinkinv(Eta);
+    R = cor.mat(Rho, corp);
+    DVector Rho_Alp = geestr.CorrMu_eta(Eta);
+    DMatrix Cor_Rho = cor.cor_rho(Rho, corp);
+    E = Cor_Rho * SMult(Rho_Alp,  Zmati);
+    return 0;
   }
 }
 
@@ -261,6 +329,17 @@ int RandE(DMatrix &Zmat, Index1D &I, Index1D &J, DVector &CorP,
   }
 }
 
+void gm_prep(DVector &PRi, IVector &Wavei,
+	     DVector &Doffseti, DMatrix &Zi, GeeParam &par, GeeStr &geestr,
+	     DVector &Phii, DVector &Si, DMatrix &D2i) {
+  DVector Zeta = Zi * par.gamma() + Doffseti;
+  DVector Phi_Zeta = geestr.ScaleMu_eta(Zeta, Wavei);
+  
+  Phii = geestr.ScaleLinkinv(Zeta, Wavei);
+  Si = square(PRi);
+  D2i = Phi_Zeta * Zi;
+}
+
 void gm_prep(DVector &PR, Index1D &I, IVector &LinkWave,
 	     DVector &Doffset, DMatrix &Zsca, GeeParam &par, GeeStr &geestr,
 	     DVector &Phii, DVector &Si, DMatrix &D2i) {
@@ -273,6 +352,16 @@ void gm_prep(DVector &PR, Index1D &I, IVector &LinkWave,
   
   Phii = geestr.ScaleLinkinv(Zeta, Wavei);
   Si = square(PRi);
+  D2i = Phi_Zeta * Zi;
+}
+
+void PhiandD2(IVector &Wavei,
+	      DVector &Doffseti, DMatrix &Zi, GeeParam &par, GeeStr &geestr,
+	      DVector &Phii, DMatrix &D2i) {
+  DVector Zeta = Zi * par.gamma() + Doffseti;
+  Phii = geestr.ScaleLinkinv(Zeta, Wavei);
+  if (geestr.ScaleFix() == 1) return;
+  DVector Phi_Zeta = geestr.ScaleMu_eta(Zeta, Wavei);
   D2i = Phi_Zeta * Zi;
 }
 
@@ -304,7 +393,50 @@ DVector getPhi(DVector &Doffset, DMatrix &Zsca, IVector &LinkWave,
   return geestr.ScaleLinkinv(Zeta, LinkWave);
 }
 
-void HnandGis(DVector &Ycur, DMatrix &X, 
+
+void getDatI(DVector &Y, DVector &Offset, DVector &Doffset, 
+	     DVector &W, DVector &CorP, 
+	     DMatrix &X, DMatrix &Zsca, DMatrix &Zcor,
+	     IVector &LinkWave, 
+	     //extract indicator
+	     Index1D &I, Index1D &J, IVector Scuri,
+	     Corr &cor,
+	     //output
+	     DVector &VYi, DVector &VOffseti, DVector &VDoffseti, 
+	     DVector &VWi, DVector &VCorPi,
+	     DMatrix &VXi, DMatrix &VZscai, DMatrix &VZcori,
+	     IVector &VLinkWavei) {
+  int s = Scuri.size();
+  //get dat i
+  DVector Yi = asVec(VecSubs(Y, I));
+  DVector Offseti = asVec(VecSubs(Offset, I));
+  DVector Wi = asVec(VecSubs(W, I));
+  DVector CorPi = asVec(VecSubs(CorP, I));
+  DMatrix Xi = asMat(MatRows(X, I));
+  DMatrix Zscai = asMat(MatRows(Zsca, I));
+  IVector LinkWavei = asVec(VecSubs(LinkWave, I));
+  DMatrix Zcori; DVector Doffseti;
+  if (cor.nparam() > 0 && s > 1 )  {
+    Zcori = asMat(MatRows(Zcor, J));
+  }
+  Doffseti = asVec(VecSubs(Doffset, I));
+
+  //valid dat i
+  IVector VI = genVI(Scuri), VJ = genCrossVI(Scuri);
+  VYi = Valid(Yi, VI); VOffseti = Valid(Offseti, VI); 
+  VWi = Valid(Wi, VI); VCorPi = Valid(CorPi, VI);
+  VXi = Valid(Xi, VI);
+  VZscai = Valid(Zscai, VI);
+  VLinkWavei = Valid(LinkWavei, VI);
+  if (cor.nparam() > 0 && s > 1) {
+    if (cor.nparam() == 1) VZcori = Zcori;
+    else VZcori = Valid(Zcori, VJ);
+    //VDoffseti = Valid(Doffseti, VJ); //this is for log odds for ordinal
+  }
+  VDoffseti = Valid(Doffseti, VI);
+}
+
+void HnandGis(DVector &Y, DMatrix &X, 
 	      DVector &Offset, DVector &Doffset, DVector &W, 
 	      IVector &LinkWave, IVector &Clusz, IVector &ZcorSize,
 	      DMatrix &Zsca, DMatrix &Zcor, DVector &CorP,
@@ -312,35 +444,17 @@ void HnandGis(DVector &Ycur, DMatrix &X,
 	      IVector &Scur, IVector &level, //Scur is the valid data indicator
 	      //output
 	      Hess &Hn, Vector<Grad> &Gis) {
-  Index1D I(0,0), J(0,0);
   int N = Clusz.size();
-  int pb = par.p(), pg = par.r(), pa = par.q();
-  DVector V0(pb);
-  Hess H(par), Hi(par); Grad Gi(par);
-  //cout << "N = " << N;
-  for (int i = 1; i <= N; i++) {
-    int s1 = Clusz(i), s2 = ZcorSize(i);
-    I = Index1D(1, s1) + I.ubound();
-    if (s2 > 0) J = Index1D(1, s2) + J.ubound();
-    if (Scur(i) == 0) {
-      //Gis(i).set_U1(V0);
-      continue;
-    }
-    DVector PRi(s1), Vi(s1), V_Mui(s1); DMatrix Di(s1,pb);
-    gee_prep(Ycur, X, Offset, I, LinkWave, par, geestr, PRi, Di, Vi, V_Mui);
-    DVector Phii(s1); DMatrix D2i(s1, pg);
-    PhiandD2(I, LinkWave, Doffset, Zsca, par, geestr, Phii, D2i);
-    DMatrix R(s1, s1), E(s2, pa);
-    RandE(Zcor, I, J, CorP, par, geestr, cor, R, E);
-
-    DVector Wi = asVec(VecSubs(W, I));
-    HiandGi(PRi, Phii, Di, R, Vi, V_Mui, D2i, E, Wi, level, Hi, Gi);
-    H.inc(Hi); Gis(i) = Gi;
-  }
+  Hess H(par);
+  Vector<Hess> His(N); His = H; 
+  HisandGis(Y, X, Offset, Doffset, W, LinkWave, Clusz, ZcorSize,
+	    Zsca, Zcor, CorP, par, geestr, cor, Scur, level,
+	    His, Gis);
+  for (int i = 1; i <= N; i++) H.inc(His(i));
   Hn = (1.0/(double) N) * H;
 }
 
-void HisandGis(DVector &Ycur, DMatrix &X, 
+void HisandGis(DVector &Y, DMatrix &X, 
 	      DVector &Offset, DVector &Doffset, DVector &W, 
 	      IVector &LinkWave, IVector &Clusz, IVector &ZcorSize,
 	      DMatrix &Zsca, DMatrix &Zcor, DVector &CorP,
@@ -358,112 +472,80 @@ void HisandGis(DVector &Ycur, DMatrix &X,
     int s1 = Clusz(i), s2 = ZcorSize(i);
     I = Index1D(1, s1) + I.ubound();
     if (s2 > 0) J = Index1D(1, s2) + J.ubound();
-    if (Scur(i) == 0) {
-      //Gis(i).set_U1(V0);
-      continue;
-    }
-    DVector PRi(s1), Vi(s1), V_Mui(s1); DMatrix Di(s1,pb);
-    gee_prep(Ycur, X, Offset, I, LinkWave, par, geestr, PRi, Di, Vi, V_Mui);
-    DVector Phii(s1); DMatrix D2i(s1, pg);
-    PhiandD2(I, LinkWave, Doffset, Zsca, par, geestr, Phii, D2i);
-    DMatrix R(s1, s1), E(s2, pa);
-    RandE(Zcor, I, J, CorP, par, geestr, cor, R, E);
 
-    DVector Wi = asVec(VecSubs(W, I));
+    IVector Scuri = asVec(VecSubs(Scur, I));
+    if (sum(Scuri) == 0)  continue;
+    //get and valid data i
+    DVector Yi, Offseti, Doffseti, Wi, CorPi;
+    DMatrix Xi, Zscai, Zcori;
+    IVector LinkWavei;
+
+    getDatI(Y, Offset, Doffset, W, CorP, X, Zsca, Zcor, LinkWave, 
+	    I, J, Scuri, cor,
+	    Yi, Offseti, Doffseti, Wi, CorPi, Xi, Zscai, Zcori, LinkWavei);
+   
+    DVector PRi(s1), Vi(s1), V_Mui(s1); DMatrix Di(s1,pb);
+    gee_prep(Yi, Xi, Offseti, LinkWavei, par, geestr, PRi, Di, Vi, V_Mui);
+    DVector Phii(s1); DMatrix D2i(s1, pg);
+    PhiandD2(LinkWavei, Doffseti, Zscai, par, geestr, Phii, D2i);
+    DMatrix R(s1, s1), E(s2, pa);
+    RandE(Zcori, CorPi, par, geestr, cor, R, E);
+
     HiandGi(PRi, Phii, Di, R, Vi, V_Mui, D2i, E, Wi, level, Hi, Gi);
-    //H.inc(Hi); Gis(i) = Gi;
     His(i) = Hi; Gis(i) = Gi;
   }
-  //Hn = (1.0/(double) N) * H;
 }
 
-/*
-DVector interpprev(double t, Vector<DVector> &VV, DVector &tis) {
-  if (t < tis(1)) return VV(1);
-  if (t >= tis(tis.size())) return VV(VV.size());
-  for (int i = 1; i <= tis.size() - 1; i++) 
-    if (tis(i) <= t && tis(i + 1) > t) return VV(i);
-}
 
-double interpprev(double t, DVector &v, DVector &tis) {
-  if (t < v(1)) return v(1);
-  if (t >= tis(tis.size())) return v(v.size());
-  for (int i = 1; i <= tis.size() - 1; i++) 
-    if (tis(i) <= t && tis(i + 1) > t) return v(i);
-}
-
-//double interplinear(double t, DVector &
-
-DVector getY(double t, DVector &Yall) {
-  DVector ans(Yall.size());
-  for (int i = 1; i <= ans.size(); i++)
-    ans(i) = (Yall(i) <= t) ? 1.0 : 0.0;
-  return ans;
-}
-
-IVector getS(double t, DVector &S) {
-  IVector ans(S.size());
-  for (int i = 1; i <= ans.size(); i++) 
-    ans(i) = (S(i) <= t) ? 0 : 1;
-  return ans;
-}
-
-void AandCis(Vector<Lgtdl> &Yall, DMatrix &X, 
-	     Vector<DVector> &Offset, Vector<DVector> &Doffset,
-	     Vector<DVector> &Weight,
-	     IVector &LinkWave, 
-	     IVector &Clusz, IVector &ZcorSize,
-	     DMatrix &Zsca, DMatrix &Zcor, DVector &CorP,
-	     Vector<DVector> &Beta, 
-	     Vector<DVector> &Gamma, 
-	     Vector<DVector> &Alpha,
-	     DVector &W, DVector &S, DVector &Tis, DVector &Tlim,
-	     int l, DVector &Ita,
-	     GeeStr &geestr, Corr &cor, 
-	     int ndivs, int fgconf,
-	     //output:
-	     DMatrix &A, Vector<DVector> &Cis) {
-  int N = Clusz.size();
-  double det = (Tlim(2) - Tlim(1))/(double) ndivs;
-  Fgee fg(fgconf);
-  
-  for (double t = Tlim(1) + det/2; t <= Tlim(2); t += det) {
-    DVector g = fg.g(t, Ita);
-    double  w = interpprev(t, W, Tis);
-
-    DVector beta = interpprev(t, Beta, Tis);
-    DVector gamma = interpprev(t, Gamma, Tis);
-    DVector alpha = interpprev(t, Alpha, Tis);
-    DVector offset = interpprev(t, Offset, Tis);
-    DVector doffset = interpprev(t, Doffset, Tis);
-    DVector weight = interpprev(t, Weight, Tis);
-    beta(l) = fg.f(t, Ita);  //l is the lth component in beta;
-
-    //cout << "beta = " << beta;
-    GeeParam par(beta, alpha, gamma);
-    int pb = par.p(), pg = par.r(), pa = par.q();
-    DMatrix L(1, pb); L(1,l) = 1.0;
-    //cout << "L = " << L;
-    
-    DVector Ycur = getY(t, Yall); //Y is the time to event;
-    IVector Scur = getS(t, S); //S is the time to screened out;
-    // X, Zcor, Zsca are all time independent;
-
-    Hess Hn(par); Vector<Grad> Gis(N); Grad G0(par); Gis = G0;
-    IVector level(2); level(1) = 0; level(2) = 0;
-    HnandGis(Ycur, X, offset, doffset, weight, 
-	     LinkWave, Clusz, ZcorSize, Zsca, Zcor, CorP,
-	     par, geestr, cor, Scur, level, Hn, Gis);
-    //cout << "H = " << Hn.A();
-    Hess Hinv = inv(Hn, level);
-    //cout << "Hinv = " << Hinv.A();
-    for (int i = 1; i <= N; i++) {
-      if (Scur(i) == 0) continue; //screening
-      Cis(i) = Cis(i) + w * asColMat(g) * L * Hinv.A() * Gis(i).U1();
-    }
-    A = A + w * outerprod(g, g);
+//get the valid components in X by valid indicator VI
+template<class T>
+Vector<T> Valid(Vector<T> &X, IVector &VI) {
+  int l = sum(VI), k = 1;
+  Vector<T> ans(l); 
+  for (int i = 1; i <= VI.dim(); i++) {
+    if (VI(i) == 1) ans(k++) = X(i);
   }
-  A = inv(det * A);
-  for (int i = 1; i <= N; i++) Cis(i) = det * Cis(i);
+  return ans;
 }
-*/
+
+template<class T>
+Fortran_Matrix<T> Valid(Fortran_Matrix<T> &X, IVector &VI) {
+  int l = sum(VI), k = 1, nc = X.num_cols();
+  Fortran_Matrix<T> ans(l, nc);
+  for (int i = 1; i <= VI.dim(); i++) {
+    if (VI(i) == 1) {
+      for (int j = 1; j <= nc; j++) ans(k, j) = X(i, j);
+      k++;
+    }
+  }
+  return ans;
+}
+
+IVector genVI(IVector &Si, int c) {
+  int s = Si.size(), k = 1;
+  IVector ans(s * c); ans = 0;
+  for (int i = 1; i <= s; i++) {
+    if (Si(i) == 1) {
+      for (int j = 1; j <= c; j++) {
+	ans(k) = 1;
+	k++;
+      }
+    }
+  }
+  return ans;
+}
+
+IVector genCrossVI(IVector &Si, int c) {
+  int s = Si.size();
+  IVector ans(s * (s - 1) * c * c / 2); ans = 0;
+  IVector vv(c * c); vv = 1;
+  Index1D I(0,0);
+  for (int i = 1; i <= s - 1; i++) {
+    for (int j = i + 1; j <= s; j++) {
+      I = Index1D(1, c * c) + I.ubound();
+      if (Si(i) == 1 && Si(j) == 1) 
+	VecSubs(ans, I) = vv;
+    }
+  }
+  return ans;
+}

@@ -39,7 +39,7 @@ DMatrix solve(const DMatrix &a, const DMatrix &b) {
   DMatrix T(a), B(b);
   DMatrix ans(n,l);
   if (LU_factor(T, index) != 0) {
-    //cerr << "LU_factor() failed." << endl; 
+    cerr << "LU_factor() failed." << endl; 
     return ans;
   }
   DVector v(m);
@@ -55,12 +55,12 @@ DVector solve(const DMatrix &A, const DVector &b) {
   DMatrix T(A); Vector<Subscript> index(b.size());
   DVector ans(b);
   if (LU_factor(T, index) !=0) {
-    //cerr << "LU_factor() failed." << endl;
+    cerr << "LU_factor() failed." << endl;
     return ans;
   }
 
   if (LU_solve(T, index, ans) != 0)  {
-    //cerr << "LU_Solve() failed." << endl;
+    cerr << "LU_Solve() failed." << endl;
     return ans;
   }
   return ans;

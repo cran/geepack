@@ -23,7 +23,7 @@ geese <- function(formula = formula(data),
                   corstr = "independence",
                   ...) {
   scall <- match.call()
-  mnames <- c("", "formula", "data", "offset", "weights", "subset", "na.action", "id", "waves")
+  mnames <- c("", "formula", "data", "offset", "weights", "subset", "na.action", "id", "waves", "corp")
   cnames <- names(scall)
   cnames <- cnames[match(mnames,cnames,0)]
   mcall <- scall[cnames]
@@ -41,6 +41,7 @@ geese <- function(formula = formula(data),
   if (is.null(w)) w <- rep(1, N)
   id <- model.extract(m, id)
   waves <- model.extract(m, waves)
+  corp <- model.extract(m, corp)
   if (is.null(id)) stop("id variable not found.")
 
   ##mcall$formula <- formula
@@ -135,10 +136,10 @@ geese.fit <- function(x, y, id,
   else {
     if (!is.matrix(zcor)) zcor <- as.matrix(zcor)
     if (corstrv >= 4 && nrow(zcor) != sum(clusz * (clusz - 1) / 2)) stop("nrow(zcor) need to be equal sum(clusz * (clusz - 1) / 2) for unstructured or userdefined corstr.")
-    else if (corstrv >= 2 && nrow(zcor) != length(clusz)) stop("nrow(zcor) need to be equal to the number of clusters for exchangeable or ar1 corstr.")
+    if (corstrv %in% c(2,3) && nrow(zcor) != length(clusz)) stop("nrow(zcor) need to be equal to the number of clusters for exchangeable or ar1 corstr.")
   }
   if (!is.matrix(zcor)) zcor <- as.matrix(zcor)
-  if (is.null(corp)) corp <- as.double(unlist(sapply(clusz, function(x) 1:x)))
+  if (is.null(corp)) corp <- as.double(waves)
 
   p <- ncol(x)
   q <- ncol(zcor)
@@ -151,10 +152,10 @@ geese.fit <- function(x, y, id,
   if (is.na(alpha)) alpha <- rep(0,q);
   if (is.na(gm)) gm <- rep(scale.value, r)
   param <- list(b, alpha, gm)
-  
+
   ans <- .Call("gee_rap", y, x, offset, soffset, weights,
                linkwaves, zsca, zcor, corp,
-               clusz, geestr, corr, param, control)
+               clusz, geestr, corr, param, control, PACKAGE = "geepack")
   ##geese.fit(y, x, ##offset, weight,
   ##          waves, zsca, zcor, corp, ##corp is the corr coordinates
   ##          clusz, geestr, corr, param, con)
@@ -167,6 +168,7 @@ geese.fit <- function(x, y, id,
   ans$xnames <- dimnames(x)[[2]]
   ans$zsca.names <- dimnames(zsca)[[2]]
   ans$zcor.names <- dimnames(zcor)[[2]]
+  if (is.null(ans$zcor.names)) ans$zcor.names = paste("alpha", 1:ncol(zcor), sep=":")
   names(ans$beta) <- ans$xnames
   names(ans$gamma) <- ans$zsca.names
   names(ans$alpha) <- ans$zcor.names
@@ -179,8 +181,8 @@ geese.fit <- function(x, y, id,
 }
 
 geese.control <- function (epsilon = 1e-04, maxit = 25, trace = FALSE,
-                         scale.fix = FALSE, jack = FALSE,
-                         j1s = FALSE, fij = FALSE) {
+                           scale.fix = FALSE, jack = FALSE,
+                           j1s = FALSE, fij = FALSE) {
   if (!is.numeric(epsilon) || epsilon <= 0) 
     stop("value of epsilon must be > 0")
   if (!is.numeric(maxit) || maxit <= 0) 

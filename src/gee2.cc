@@ -29,7 +29,7 @@ void gee_var(DVector &Y, DMatrix &X,
 	     GeeStr &geestr, Corr &cor, GeeParam &par, Control &con) {
   Hess Hi(par), H(par); Grad Gi(par);
 
-  IVector level(2);
+  IVector level(2); level = 0;
   if (geestr.ScaleFix() != 1) level(1) = 1;
   if (cor.nparam() > 0) level(2) = 1;
   
@@ -128,6 +128,7 @@ double update_gamma(DVector &PR, DVector &W, IVector &LinkWave,
 		    GeeParam &par, GeeStr &geestr) {
   double del = 0;
   int r = par.r(), n = Clusz.size();
+  //  double adj = (double) (PR.size()) / (double)(PR.size() - par.p());
   if (geestr.ScaleFix() == 1) return del; 
   DMatrix H(r,r); DVector G(r);
   Index1D I(0,0);
@@ -142,7 +143,7 @@ double update_gamma(DVector &PR, DVector &W, IVector &LinkWave,
     //independence working structure only now, so no inverting below
     DVector WiV2inv = SMult(asVec(VecSubs(W, I)), recip(2.0 * Phii));
     H = H + Transpose_view(D2i) * SMult(WiV2inv, D2i);
-    G = G + Transpose_view(D2i) * SMult(WiV2inv, Si - Phii);
+    G = G + Transpose_view(D2i) * SMult(WiV2inv, Si - Phii); //adj * Si
     //H = H + AtBiC(D2i, WiV2, D2i);
     //G = G + AtBiC(D2i, WiV2, Si - Phii);
   }
