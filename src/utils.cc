@@ -1,3 +1,5 @@
+using namespace std;
+
 #include <math.h>
 
 #include "tntsupp.h"

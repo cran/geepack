@@ -11,8 +11,6 @@
 #include "tnt/transv.h"
 #include "tnt/lu.h"
 
-//using namespace std;
-//using namespace TNT;
 
 
 namespace TNT
@@ -366,7 +364,7 @@ inline Fortran_Matrix<T> operator*(const T &x, const Fortran_Matrix<T>  &A) {
 template <class T>
 Region2D<Fortran_Matrix<T> > MatSubs(Fortran_Matrix<T> &x, 
 				     const Index1D &I, const Index1D &J) {
-  return X(I, J);
+  return x(I, J);
 }
 
 template <class T>

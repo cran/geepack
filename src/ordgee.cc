@@ -1,3 +1,5 @@
+using namespace std;
+
 //  #include "tnt/region1d.h"
 //  #include "tntsupp.h"
 //  #include "geese.h"
