@@ -4,21 +4,22 @@
 \title{Clustered Ordinal Respiratory Disorder}
 \usage{data(respdis)}
 \description{
-The \code{respdis} data frame has 444 rows and 3 columns. The study
+The \code{respdis} data frame has 111 rows and 3 columns. The study
 described in Miller et. al. (1993) is a randomized clinical trial of a
-new treatment of respiratory disorder.
+new treatment of respiratory disorder. The study was conducted in 111
+patients who were randomly assigned to one of two treatments (active,
+placebo). At each of four visits during the follow-up period, the
+response status of each patients was classified on an ordinal scale.
 }
 \format{
   This data frame contains the following columns:
   \describe{
-    \item{id}{a factor  for subject id with levels 0 - 110}
-    \item{resp}{an ordered factor for the response with levels}
-    \item{resp}{\code{1} < \code{2} < \code{3}, 1 = poor, 2 = good, and
-      3 = excellent}
-    \item{trt}{a factor for treatment with levels}
-    \item{trt}{\code{-1} }
-    \item{trt}{\code{1} }
-  }
+    \item{y1, y2, y3, y4}{ordered factor measured at 4 visits for
+      the response with levels, \code{1} < \code{2} < \code{3},
+      1 = poor, 2 = good, and 3 = excellent}
+    \item{trt}{a factor for treatment with levels, 1 = active, 0 =
+      placebo.}
+    }
 }
 \references{
 Miller, M.E., David, C.S., and Landis, R.J. (1993) The analysis of
@@ -27,7 +28,17 @@ connections with weighted least squares, \emph{Biometrics} \bold{49}: 1033-1048.
 }
 \examples{
 data(respdis)
-fit <- ordgee(resp ~ trt, id=id, data=respdis, int.const=FALSE)
+resp.l <- reshape(respdis, varying = list(c("y1", "y2", "y3", "y4")),
+                  v.names = "resp", direction = "long")
+resp.l <- resp.l[order(resp.l$id, resp.l$time),]
+fit <- ordgee(resp ~ trt, id = id, data = resp.l, int.const = FALSE)
+summary(fit)
+
+z <- model.matrix( ~ trt - 1, data = respdis)
+ind <- rep(1:111, 4*3/2 * 2^2)
+zmat <- z[ind,]
+fit <- ordgee(resp ~ trt, id = id, data = resp.l, int.const = FALSE,
+              z = zmat, corstr = "exchangeable")
 summary(fit)
 }
 \keyword{datasets}

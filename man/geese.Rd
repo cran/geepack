@@ -160,20 +160,28 @@ geese.fit(x, y, id, offset = rep(0, N), soffset = rep(0, N),
 }
 \examples{
 data(seizure)
-seizure$t <- ifelse(seizure$visit == 0, 8, 2)
-seizure$x <- ifelse(seizure$visit == 0, 0, 1)
-mm <- geese(y ~ offset(log(t)) + x + trt + x:trt, id = id,
-            data=seizure, corstr="exch", family=poisson)
-summary(mm)
-mm <- geese(y ~ offset(log(t)) + x + trt + x:trt, id = id,
-            data=seizure, subset=id!=49, corstr="exch", family=poisson)
-summary(mm)
-seiz2 <- subset(seizure, visit > 0)
-seiz2$lbase <- log(rep(subset(seizure, visit == 0)$y, rep(4, 59)) / 4)
-seiz2$lage <- log(seiz2$age)
-seiz2$v4 <- ifelse(seiz2$visit == 4, 1, 0)
-m2 <- geese(y ~ lbase + trt + lbase:trt + age + v4, id = id,
-            data=seiz2, subset=id!=49, corstr="exch", family=poisson)
+## Diggle, Liang, and Zeger (1994) pp166-168, compare Table 8.10
+seiz.l <- reshape(seizure,
+                  varying=list(c("base","y1", "y2", "y3", "y4")),
+                  v.names="y", times=0:4, direction="long")
+seiz.l <- seiz.l[order(seiz.l$id, seiz.l$time),]
+seiz.l$t <- ifelse(seiz.l$time == 0, 8, 2)
+seiz.l$x <- ifelse(seiz.l$time == 0, 0, 1)
+m1 <- geese(y ~ offset(log(t)) + x + trt + x:trt, id = id,
+            data=seiz.l, corstr="exch", family=poisson)
+summary(m1)
+m2 <- geese(y ~ offset(log(t)) + x + trt + x:trt, id = id,
+            data = seiz.l, subset = id!=49,
+            corstr = "exch", family=poisson)
+summary(m2)
+
+data(ohio)
+fit <- geese(resp ~ age + smoke + age:smoke, id=id, data=ohio,
+             family=binomial, corstr="exch", scale.fix=TRUE)
+summary(fit)
+fit.ar1 <- geese(resp ~ age + smoke + age:smoke, id=id, data=ohio,
+                 family=binomial, corstr="ar1", scale.fix=TRUE)
+summary(fit.ar1)
 }
 \keyword{nonlinear}
 \keyword{models}

@@ -89,22 +89,30 @@ ordgee <- function(formula = formula(data), ooffset = NULL,
   if (is.null(w)) w <- rep(1, length(id))
   w <- rep(w, rep(ncat, sum(clusz)))
 
-  CORSTRS <- c("independence", "exchangeable", "ar1", "unstructured", "userdefined")
-  corstrv <- pmatch(corstr, CORSTRS, -1)
+  CORSTRS <- c("independence", "exchangeable", "NA_ar1", "unstructured", "userdefined")
+  CORSTRS.ALLOWED <- c("independence", "exchangeable", "unstructured", "userdefined")
+  corstrv <- pmatch(corstr, CORSTRS.ALLOWED, -1)
   if (corstrv == -1) stop("invalid corstr.")
+  corstrv <- pmatch(corstr, CORSTRS)
   corr <- list(as.integer(corstrv), maxclsz)
 
-  if (is.null(ooffset)) ooffset <- rep(0, sum(clusz*(clusz-1)) * ncat^2)
+  if (is.null(ooffset)) ooffset <- rep(0, sum(clusz*(clusz-1)/2) * ncat^2)
   if (is.null(z)) {
     if (corstrv == 5) stop("need z matrix for userdefined corstr.") 
     else z <- genZodds(clusz, waves, corstrv, ncat)
   }
 
+  if (length(ooffset) != sum(clusz*(clusz-1)/2) * ncat^2) stop("length(ooffset) != sum(clusz*(clusz-1)) * ncat^2 detected.")
+  if (corstrv > 1 && nrow(z) != sum(clusz*(clusz-1)/2) * ncat^2) stop("nrow(z) != sum(clusz*(clusz-1)) * ncat^2 detected.")
+  
   waves <- rep(waves, rep(ncat, sum(clusz)))
   if (is.null(id)) stop("ID variable not found.")
 
-  LINKS <- c("identity", "logit", "probit", "cloglog", "log", "inverse", "fisherz", "lwybc2", "lwylog")
-  mean.link.v <- pmatch(mean.link, LINKS, -1, TRUE)
+  LINKS <- c("NA_identity", "logit", "probit", "cloglog", "NA_log", "NA_inverse", "NA_fisherz", "NA_lwybc2", "NA_lwylog")
+  LINKS.ALLOWED <- c("logit", "probit", "cloglog")
+  mean.link.v <- pmatch(mean.link, LINKS.ALLOWED, -1)
+  if (mean.link.v == -1) stop("mean.link invalid.")
+  mean.link.v <- pmatch(mean.link, LINKS, -1)
   
   geestr <- list(maxwave=maxclsz,
                  mean.link=rep(mean.link.v, maxclsz),
@@ -123,6 +131,7 @@ ordgee <- function(formula = formula(data), ooffset = NULL,
   if (is.na(alpha)) alpha <- rep(0,q);
   param <- list(b, alpha, gm=rep(scale.val, 1))
 
+
   ans <- .Call("ordgee_rap", Y, xmat, offset, ooffset, w, waves, z,
                clusz, ncat, rev, geestr, corr, param, control)
 
@@ -137,7 +146,7 @@ ordgee <- function(formula = formula(data), ooffset = NULL,
   names(ans$beta) <- ans$xnames
   names(ans$alpha) <- ans$zcor.names
 
-  ans <- c(ans, list(call=scall, control=control,
+  ans <- c(ans, list(call=scall, clusz=clusz, control=control,
                      model=list(mean.link=mean.link,
                        variance="binomial", sca.link=NULL,
                        cor.link="log", corstr=corstr, scale.fix=scale.fix)))

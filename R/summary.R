@@ -38,7 +38,7 @@ summary.geese <- function(object, ...) {
   
   ans <- list(mean=mean.sum, correlation=corr.sum, scale=scale.sum,
               call=object$call, model=object$model, control=object$control,
-              error=object$err)
+              error=object$err, clusz=object$clusz)
   class(ans) <- "summary.geese"
   ans
 }
@@ -72,7 +72,8 @@ print.geese <- function(x, digits = NULL, quote = FALSE, prefix = "", ...) {
   ##cat("\nMaximum cluster size   : ", x$max.id, "\n")
 
   cat("\nReturned Error Value:  ")
-  cat(x$error, "\n\n")
+  cat(x$error, "\n")
+  cat("Number of clusters:  ", length(x$clusz), "  Maximum cluster size:", max(x$clusz), "\n\n")
   invisible(x)
 }
 
@@ -107,6 +108,7 @@ print.summary.geese <- function(x, digits = NULL,
   ##cat("\nMaximum cluster size   : ", x$max.id, "\n")
 
   cat("\nReturned Error Value:    ")
-  cat(x$error, "\n\n")
+  cat(x$error, "\n")
+  cat("Number of clusters:  ", length(x$clusz), "  Maximum cluster size:", max(x$clusz), "\n\n")
   invisible(x)
 }

@@ -89,9 +89,6 @@ geese.fit <- function(x, y, id,
   if (is.null(waves)) waves <- unlist(sapply(clusz, function(x) 1:x))
   waves <- as.integer(waves)
 
-  ##con <- list(as.integer(scale.fix), as.integer(jack),
-  ##as.integer(j1s), as.integer(fij), as.integer(maxiter), tol)
-
   LINKS <- c("identity", "logit", "probit", "cloglog", "log", "inverse", "fisherz", "lwybc2", "lwylog")
   VARIANCES <- c("gaussian", "binomial", "poisson", "Gamma") ## quasi is not supported yet
 
@@ -113,7 +110,8 @@ geese.fit <- function(x, y, id,
   if (length(id) != length(y)) stop("id and y not same length.")
   if (length(offset) != length(y)) stop("offset and y not same length")
   if (length(soffset) != length(y)) stop("sca.offset and y not same length")
-
+  if (nrow(zsca) != length(y)) stop("nrow(zsca) and length(y) not match")
+  
   if (link.same) linkwaves <- rep(1, N)
   else {
     if (max(waves) != maxclsz) stop("maximum waves and maximum cluster size not equal")
@@ -134,12 +132,18 @@ geese.fit <- function(x, y, id,
     if (corstrv == 5) stop("need zcor matrix for userdefined corstr.") 
     else zcor <- genZcor(clusz, waves, corstrv)
   }
+  else {
+    if (!is.matrix(zcor)) zcor <- as.matrix(zcor)
+    if (corstrv >= 4 && nrow(zcor) != sum(clusz * (clusz - 1) / 2)) stop("nrow(zcor) need to be equal sum(clusz * (clusz - 1) / 2) for unstructured or userdefined corstr.")
+    else if (corstrv >= 2 && nrow(zcor) != length(clusz)) stop("nrow(zcor) need to be equal to the number of clusters for exchangeable or ar1 corstr.")
+  }
   if (!is.matrix(zcor)) zcor <- as.matrix(zcor)
   if (is.null(corp)) corp <- as.double(unlist(sapply(clusz, function(x) 1:x)))
 
   p <- ncol(x)
   q <- ncol(zcor)
   r <- ncol(zsca)
+  
   if (is.na(b)){
     ##b <- rep(1,p)
    b <- glm.fit(x, y, weights=weights, offset=offset, family=family)$coef
@@ -167,7 +171,7 @@ geese.fit <- function(x, y, id,
   names(ans$gamma) <- ans$zsca.names
   names(ans$alpha) <- ans$zcor.names
 
-  ans <- c(ans, list(control=control,
+  ans <- c(ans, list(clusz=clusz, control=control,
                      model=list(mean.link=mean.link,
                        variance=variance, sca.link=sca.link,
                        cor.link=cor.link, corstr=corstr, scale.fix=scale.fix)))
