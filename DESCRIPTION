@@ -1,6 +1,6 @@
 Package: geepack
-Version: 0.1-4
-Date: 2002/9/28
+Version: 0.2-4
+Date: 2003/3/27
 Title: Generalized Estimating Equation Package
 Author: Jun Yan <jyan@stat.wisc.edu>
 Maintainer: Jun Yan <jyan@stat.wisc.edu>

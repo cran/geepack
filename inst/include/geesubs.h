@@ -195,4 +195,28 @@ void AandCis(Vector<Lgtdl> &Yall, DMatrix &X,
 	     DMatrix &A, Vector<DVector> &Cis);
 */
 
+//get the valid components in X by valid indicator VI
+template<class T>
+Vector<T> Valid(Vector<T> &X, IVector &VI);
+
+template<class T>
+Fortran_Matrix<T> Valid(Fortran_Matrix<T> &X, IVector &VI);
+
+IVector genVI(IVector &Si, int c = 1);
+
+IVector genCrossVI(IVector &Si, int c = 1);
+
+void getDatI(DVector &Y, DVector &Offset, DVector &Doffset,    
+	     DVector &W, DVector &CorP, 
+	     DMatrix &X, DMatrix &Zsca, DMatrix &Zcor,
+	     IVector &LinkWave, 
+	     //extract indicator
+	     Index1D &I, Index1D &J, IVector Scuri,
+	     Corr &cor,
+	     //output
+	     DVector &VYi, DVector &VOffseti, DVector &VDoffseti, 
+	     DVector &VWi, DVector &VCorPi,
+	     DMatrix &VXi, DMatrix &VZscai, DMatrix &VZcori,
+	     IVector &VLinkWavei);
+ 
 #endif //GEESUBS_H

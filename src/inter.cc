@@ -57,7 +57,7 @@ SEXP asSEXP(const DMatrix &a) {
   double *p = NUMERIC_POINTER(val);
   const double *q = a.begin();
   for (int i = 0; i < size; i++) p[i] = q[i];
-  SET_CLASS(val, ScalarString(mkChar("matrix")));
+  //  SET_CLASS(val, ScalarString(mkChar("matrix")));
 
   SEXP dim;
   PROTECT(dim = NEW_INTEGER(2));
@@ -75,7 +75,7 @@ SEXP asSEXP(const DVector &a) {
   double *p = NUMERIC_POINTER(val);
   const double *q = a.begin();
   for (int i = 0; i < size; i++) p[i] = q[i];
-  SET_CLASS(val, ScalarString(mkChar("vector")));
+  //  SET_CLASS(val, ScalarString(mkChar("vector")));
 
   SEXP len;
   PROTECT(len = NEW_INTEGER(1));
@@ -92,7 +92,7 @@ SEXP asSEXP(const IVector &a) {
   int *p = INTEGER_POINTER(val);
   const int *q = a.begin();
   for (int i = 0; i < size; i++) p[i] = q[i];
-  SET_CLASS(val, ScalarString(mkChar("vector")));
+  //  SET_CLASS(val, ScalarString(mkChar("vector")));
 
   SEXP len;
   PROTECT(len = NEW_INTEGER(1));

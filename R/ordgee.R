@@ -26,7 +26,7 @@ ordgee <- function(formula = formula(data), ooffset = NULL,
   clusz <- unlist(lapply(split(id, id), length))
   maxclsz <- max(clusz)
   if (is.null(waves)) waves <- unlist(sapply(clusz, function(x) 1:x))
-  
+  else waves <- model.extract(m, waves)
 #   if (is.na(b)){
 #    foo <- polr(formula, data, ...)
 #    b <- c(foo$zeta, foo$coef)
@@ -123,6 +123,7 @@ ordgee <- function(formula = formula(data), ooffset = NULL,
 
   p <- ncol(xmat)
   q <- ncol(z)
+  if (!is.matrix(z)) z <- as.matrix(z)
 
   if (is.na(b)) {
     link <- mean.link
@@ -133,7 +134,8 @@ ordgee <- function(formula = formula(data), ooffset = NULL,
 
 
   ans <- .Call("ordgee_rap", Y, xmat, offset, ooffset, w, waves, z,
-               clusz, ncat, rev, geestr, corr, param, control)
+               clusz, ncat, rev, geestr, corr, param, control,
+               PACKAGE = "geepack")
 
   names(ans) <- c("beta", "alpha", "gamma", "vbeta", "valpha", "vgamma",
                   "vbeta.naiv", "valpha.naiv", "valpha.stab",
