@@ -1,7 +1,7 @@
 \name{koch}
 \alias{koch}
 \non_function{}
-\title{ ~~ 1-line description of the data frame ~~ }
+\title{Ordinal Data from Koch}
 \usage{data(koch)}
 \description{
 The \code{koch} data frame has 288 rows and 4 columns.
@@ -11,8 +11,8 @@ The \code{koch} data frame has 288 rows and 4 columns.
   \describe{
     \item{trt}{a numeric vector}
     \item{day}{a numeric vector}
-    \item{y}{an ordered factor with levels}
-    \item{y}{\code{1} < \code{2} < \code{3}}
+    \item{y}{an ordered factor with levels:
+      \code{1} < \code{2} < \code{3}}
     \item{id}{a numeric vector}
   }
 }

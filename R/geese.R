@@ -44,7 +44,9 @@ geese <- function(formula = formula(data),
   corp <- model.extract(m, corp)
   if (is.null(id)) stop("id variable not found.")
 
-  mcall$formula <- eval(mcall$formula) ## suggested by Charles C. Berry, 4/16/03
+  ## setting up the scale model;
+  ## borrowed idea from S+ function dglm by Gordon Smyth
+  mcall$formula <- formula
   mcall$formula[3] <- switch(match(length(sformula), c(0,2,3)),
                              1, sformula[2], sformula[3])
   m <- eval(mcall, parent.frame())
