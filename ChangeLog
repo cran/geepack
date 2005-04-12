@@ -1,3 +1,9 @@
+2005-04-11  Jun Yan  <jyan@stat.uiowa.edu>
+
+	* Søren Højsgaard made some minor changes to geeglm - 
+	basically, that geese.control did not work. Now it does.
+	
+
 2005-02-09  Jun Yan  <jyan@stat.uiowa.edu>
 
 	* Søren Højsgaard joined the development with geeglm, which 

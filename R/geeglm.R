@@ -20,19 +20,23 @@ geeglm <- function (formula, family = gaussian, data=parent.frame(), weights, su
   eprint("SHDgeese.fit - corstr")
   corstrv <- pmatch(corstr, CORSTRS, -1)
   corstr<-CORSTRS[corstrv]
-  
+
   eprint("geeglm is called")
   call <- match.call(expand.dots=TRUE)
 
   glmcall <- call
   glmcall$id <- glmcall$jack <- glmcall$control <- glmcall$corstr <- NULL
+
   
   glmcall[[1]]  <- as.name("glm")
+
   glmFit <- eval(glmcall, parent.frame())
+
   mf <- call
   mf[[1]] <- as.name("model.frame")
+
   mftmp <- mf
-  mftmp$family <- mftmp$corstr <- NULL
+  mftmp$family <- mftmp$corstr <- mftmp$control <- NULL
   mf <- eval(mftmp, parent.frame())
 
   
@@ -95,9 +99,10 @@ geeglm <- function (formula, family = gaussian, data=parent.frame(), weights, su
     xx <- as.matrix(xx)
     if (is.null(start))
       start <- glmFit$coef
-    ans <- geese.fit(xx, yy, id, offset, soffset, w, waves=NULL, zsca, 
-                     zcor=NULL, corp=NULL, control=geese.control(),
-                     b=start,
+
+  ans <- geese.fit(xx, yy, id, offset, soffset, w, waves=NULL, zsca, 
+                   zcor=NULL, corp=NULL, control=control, #geese.control(),
+                   b=start,
                      alpha=NULL, gm=NULL, family, mean.link=NULL, 
                      variance=NULL,
                      cor.link="identity", sca.link="identity",
