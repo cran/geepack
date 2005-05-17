@@ -58,7 +58,8 @@ anovageePrim2 <- function(m1, m2,...){
       rbeta[1:df]<-0
       beta0<-rev(rbeta)
       zeroidx <- beta0==0
-      X2<-t(beta[zeroidx])%*% solve(vbeta[zeroidx,zeroidx,drop=FALSE])%*%beta[zeroidx]      
+      X2<-t(beta[zeroidx])%*% solve(vbeta[zeroidx,zeroidx,drop=FALSE])%*%beta[zeroidx]
+      
 
       ## Make table with results
       topnote <- paste("Model 1", mf1,"\nModel 2", mf2)
@@ -102,100 +103,97 @@ anova.geeglmlist <-
 
 anova.geeglm<-function (object, ..., dispersion = NULL, test = NULL) 
 {
-    dotargs <- list(...)
-    named <- if (is.null(names(dotargs))) 
-        rep(FALSE, length(dotargs))
-    else (names(dotargs) != "")
-    if (any(named)) 
-        warning("The following arguments to anova.glm(..) are invalid and dropped: ", 
+  dotargs <- list(...)
+  named <- if (is.null(names(dotargs))) 
+    rep(FALSE, length(dotargs))
+  else (names(dotargs) != "")
+  if (any(named)) 
+    warning("The following arguments to anova.glm(..) are invalid and dropped: ", 
             paste(deparse(dotargs[named]), collapse = ", "))
-    dotargs <- dotargs[!named]
-    is.glm <- unlist(lapply(dotargs, function(x) inherits(x, 
-        "glm")))
-    dotargs <- dotargs[is.glm]
-    if (length(dotargs) > 0) 
-        return(anova.geeglmlist(c(list(object), dotargs), dispersion = dispersion, 
-            test = test))
-
-
-    varlist <- attr(object$terms, "variables")
-    #print(varlist)
-    x <- if (n <- match("x", names(object), 0)) 
-        object[[n]]
-    else model.matrix(object)
-    
-    varseq <- attr(x, "assign")
-    
-    nvars <- max(0, varseq)
-    ##resdev <- resdf <- NULL
-    betaList <- vbetaList <- NULL
-
-
-    
-    if (nvars > 1) {
-        method <- object$method
-        if (!is.function(method)) 
-            method <- get(method, mode = "function", envir = parent.frame())
-        for (i in 1:(nvars - 1)) {
-          eprint("calling fit....")
-          ##print(length(object$y))
-          fit <- method(x = x[, varseq <= i, drop = FALSE], 
-                y = object$y, weights = object$prior.weights, 
-                        corstr = object$corstr,
-                        start = object$start, offset = object$offset,   id=object$id,
-                family = object$family, control = object$control)
-
-          #print(fit)
-          betaList <- c(betaList,list(fit$beta))
-          vbetaList <- c(vbetaList,list(fit$vbeta))
-          #resdev <- c(resdev, fit$deviance)
-          #resdf <- c(resdf, fit$df.residual)
-        }
+  dotargs <- dotargs[!named]
+  is.glm <- unlist(lapply(dotargs, function(x) inherits(x, "glm")))
+  dotargs <- dotargs[is.glm]
+  if (length(dotargs) > 0) 
+    return(anova.geeglmlist(c(list(object), dotargs), dispersion = dispersion, 
+                            test = test))
+  
+  varlist <- attr(object$terms, "variables")
+  ##print(varlist)
+  x <- if (n <- match("x", names(object), 0)) 
+    object[[n]]
+  else model.matrix(object)
+  
+  varseq <- attr(x, "assign")
+  
+  nvars <- max(0, varseq)
+  betaList <- vbetaList <- NULL
+  
+  if (nvars > 1) {
+    method <- object$method
+    if (!is.function(method)) 
+      method <- get(method, mode = "function", envir = parent.frame())
+    for (i in 1:(nvars - 1)) {
+      eprint("calling fit....")
+      ##print(length(object$y))
+      fit <- method(x = x[, varseq <= i, drop = FALSE], 
+                    y = object$y, weights = object$prior.weights, 
+                    corstr = object$corstr,
+                    start = object$start, offset = object$offset,   id=object$id,
+                    family = object$family, control = object$control)
+      
+      betaList <- c(betaList,list(fit$beta))
+      vbetaList <- c(vbetaList,list(fit$vbeta))
     }
+  }
+  
+  betaList <- c(betaList, list( object$geese$beta ))
+  vbetaList <- c(vbetaList, list( object$geese$vbeta ))
+  
+  hasIntercept <- (length(grep("(Intercept)",names(betaList[[1]])))!=0)
+  dimVec <- unlist(lapply(betaList,length))
 
-    betaList <- c(betaList, list( object$geese$beta ))
-    vbetaList <- c(vbetaList, list( object$geese$vbeta ))
+  if (hasIntercept){
+    dfVec <- dimVec[1]-1
+  } else {
+    dfVec <- dimVec[1]
+  }
+  for (i in 2:length(dimVec))
+    dfVec <- c(dfVec,dimVec[i]-dimVec[i-1])
+  
+  
+  ##print(dfVec)
+  X2Vec <- NULL
+  ## Calculate Wald statistics
+  for (i in 1:length(dfVec)){
+    beta <- betaList[[i]]
+    vbeta <- vbetaList[[i]]
+    beta0 <- rep(1,length(beta))
+    beta0[1:dfVec[i]] <- 0
+    beta0 <- rev(beta0)
+    zeroidx <- beta0==0
+    X2 <- t(beta[zeroidx])%*%solve(vbeta[zeroidx,zeroidx,drop=FALSE])%*%beta[zeroidx]
+    X2Vec <- c(X2Vec,X2)
+  }
+  
+  resdf <- dfVec
+  resdev <- X2Vec
+  table <- data.frame(resdf, resdev, 1-pchisq(resdev,resdf))
+  
+  tl <- attr(object$terms, "term.labels")
 
-    #print(betaList)
-    #print(vbetaList)
-    dimVec <- unlist(lapply(betaList,length))
-    #print(dimVec)
-    dfVec <- 1
-    for (i in 2:length(dimVec))
-      dfVec <- c(dfVec,dimVec[i]-dimVec[i-1])
-    #print(dfVec)
-    X2Vec <- NULL
-    ## Calculate Wald statistics
-    for (i in 1:length(dfVec)){
-      beta <- betaList[[i]]
-      vbeta <- vbetaList[[i]]
-      beta0 <- rep(1,length(beta))
-      beta0[1:dfVec[i]] <- 0
-      beta0 <- rev(beta0)
-      zeroidx <- beta0==0
-      X2 <- t(beta[zeroidx])%*%solve(vbeta[zeroidx,zeroidx,drop=FALSE])%*%beta[zeroidx]
-      X2Vec <- c(X2Vec,X2)
-    }
-
-    resdf <- dfVec
-    resdev <- X2Vec
-    table <- data.frame(resdf, resdev, 1-pchisq(resdev,resdf))
-
-    tl <- attr(object$terms, "term.labels")
-    #print(tl)
-
-    if (length(tl) == 0) 
-        table <- table[1, , drop = FALSE]
-    
-    dimnames(table) <- list(c(tl), c("Df", "X2", "P(>|Chi|)"))
-    
-    title <- paste("Analysis of 'Wald statistic' Table", "\nModel: ", 
-        object$family$family, ", link: ", object$family$link, 
-        "\nResponse: ", as.character(varlist[-1])[1],
-                   "\nTerms added sequentially (first to last)\n", 
-        sep = "")
-
-    structure(table, heading = title, class = c("anova", "data.frame"))
+  #print(table)
+  if (length(tl) == 0) 
+    table <- table[1, , drop = FALSE]
+  
+  dimnames(table) <- list(c(tl), c("Df", "X2", "P(>|Chi|)"))
+  
+  title <- paste("Analysis of 'Wald statistic' Table", "\nModel: ", 
+                 object$family$family, ", link: ", object$family$link, 
+                 "\nResponse: ", as.character(varlist[-1])[1],
+                 "\nTerms added sequentially (first to last)\n", 
+                 sep = "")
+  
+  structure(table, heading = title, class = c("anova", "data.frame"))
 }
 
 

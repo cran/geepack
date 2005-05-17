@@ -1,3 +1,10 @@
+
+2005-05-11 Søren Højsgaard <sorenh@agrsci.dk>
+
+	* Søren Højsgaard has modified the anova function to make it
+	calculate the correct degrees of freedom.
+
+
 2005-04-11  Jun Yan  <jyan@stat.uiowa.edu>
 
 	* Søren Højsgaard made some minor changes to geeglm - 
