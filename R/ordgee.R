@@ -34,7 +34,10 @@ ordgee <- function(formula = formula(data), ooffset = NULL,
 
   y <- model.extract(m, response)
   if (length(y) != length(id)) stop("response and id are not of the same length.")
+
+  if (class(y)[1] != 'ordered') stop("response is not an ordered factor.")
   lev <- levels(y)
+
   nlev <- length(lev)
   ncat <- nlev - 1
   y <- unclass(y)
@@ -102,8 +105,11 @@ ordgee <- function(formula = formula(data), ooffset = NULL,
     else z <- genZodds(clusz, waves, corstrv, ncat)
   }
 
-  if (length(ooffset) != sum(clusz*(clusz-1)/2) * ncat^2) stop("length(ooffset) != sum(clusz*(clusz-1)) * ncat^2 detected.")
-  if (corstrv > 1 && nrow(z) != sum(clusz*(clusz-1)/2) * ncat^2) stop("nrow(z) != sum(clusz*(clusz-1)) * ncat^2 detected.")
+  if (length(ooffset) != sum(clusz*(clusz-1)/2) * ncat^2) 
+	stop("length(ooffset) != sum(clusz*(clusz-1)) * ncat^2 detected.")
+
+  if (corstrv > 1 && nrow(z) != sum(clusz*(clusz-1)/2) * ncat^2) 
+	stop("nrow(z) != sum(clusz*(clusz-1)) * ncat^2 detected.")
   
   waves <- rep(waves, rep(ncat, sum(clusz)))
   if (is.null(id)) stop("ID variable not found.")

@@ -1,6 +1,6 @@
 \name{geese-internal}
 \alias{crossutri}
-\alias{genZcor}
+%\alias{genZcor}
 \alias{genZodds}
 \title{Internal geese functions}
 \description{

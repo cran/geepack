@@ -8,14 +8,31 @@ geeglm <- function (formula, family = gaussian, data=parent.frame(), weights, su
                   control = geese.control(...), 
                   method = "glm.fit", x = FALSE, y = TRUE,
                   contrasts = NULL, 
-                  id,
+                  id, waves = NULL,
+		  zcor=NULL,
                   corstr = "independence",
                   scale.fix = FALSE,
                   scale.value =1,
-                  ...) 
+                  std.err = 'san.se',  
+                    ...) 
 {
 
 
+  STDERRS <- c("san.se", "jack", "j1s", "fij")
+  stderrv <- pmatch(std.err, STDERRS, -1)
+  std.err <- STDERRS[stderrv]
+  ##print(std.err)
+
+  jackB <- j1sB <- fijB <- FALSE
+
+  if (std.err=='jack') jackB <- TRUE
+  if (std.err=='j1s')  j1sB  <- TRUE
+  if (std.err=='fij')  fijB  <- TRUE
+
+  control$jack <- as.integer(jackB)
+  control$j1s  <- as.integer(j1sB)
+  control$fij  <- as.integer(fijB)
+  
   CORSTRS <- c("independence", "exchangeable", "ar1", "unstructured", "userdefined")
   eprint("SHDgeese.fit - corstr")
   corstrv <- pmatch(corstr, CORSTRS, -1)
@@ -25,111 +42,111 @@ geeglm <- function (formula, family = gaussian, data=parent.frame(), weights, su
   call <- match.call(expand.dots=TRUE)
 
   glmcall <- call
-  glmcall$id <- glmcall$jack <- glmcall$control <- glmcall$corstr <- NULL
+  glmcall$id <- glmcall$jack <- glmcall$control <- glmcall$corstr <- glmcall$waves <- glmcall$zcor<- glmcall$std.err <- NULL
 
-  
+
   glmcall[[1]]  <- as.name("glm")
-
   glmFit <- eval(glmcall, parent.frame())
 
   mf <- call
   mf[[1]] <- as.name("model.frame")
-
   mftmp <- mf
-  mftmp$family <- mftmp$corstr <- mftmp$control <- NULL
+  mftmp$family <- mftmp$corstr <- mftmp$control  <-   mftmp$zcor<- mftmp$std.err <- NULL
   mf <- eval(mftmp, parent.frame())
 
-  
+
 ### Copy from "geese" starts here
 #################################
-    id <- model.extract(mf, id)
-    if (is.null(id)) 
-      stop("id variable not found.")
-
-    mt <- attr(mf, "terms")
-    Y <- model.response(mf, "numeric")
-    X <- if (!is.empty.model(mt)) 
-      model.matrix(mt, mf, contrasts)
-    else matrix(, NROW(Y), 0)
+  id <- model.extract(mf, id)
+  if (is.null(id)) 
+    stop("id variable not found.")
+  
+  waves <- model.extract(mf, waves)
+  if (!is.null(waves))		
+    waves <- as.factor(waves)
+  
+  mt <- attr(mf, "terms")
+  Y <- model.response(mf, "numeric")
+  X <- if (!is.empty.model(mt)) 
+    model.matrix(mt, mf, contrasts)
+  else matrix(, NROW(Y), 0)
   
   N <- NROW(Y)
-
-    yy <- Y
-    xx <- X
-    
-    soffset <- rep(0, N)
-    
-    mnames <- c("", "formula", "data", "offset", "weights", "subset", "na.action")
-    cnames <- names(call)
-    cnames <- cnames[match(mnames, cnames, 0)]
-    mcall <- call[cnames]
+  
+  yy <- Y
+  xx <- X
+  
+  soffset <- rep(0, N)
+  
+  mnames <- c("", "formula", "data", "offset", "weights", "subset", "na.action")
+  cnames <- names(call)
+  cnames <- cnames[match(mnames, cnames, 0)]
+  mcall <- call[cnames]
   mcall$drop.unused.levels <- TRUE
   mcall[[1]] <- as.name("model.frame")
-
-  mcall$formula <- formula
-    sformula <- ~1
-    mcall$formula[3] <-
-      switch(match(length(sformula),
-                   c(0, 2, 3)), 1, sformula[2], sformula[3])
-    m <- eval(mcall, parent.frame())
-    terms <- attr(m, "terms")
-    zsca <- model.matrix(terms, m, contrasts)
-    
-    colnames(zsca) <- c("(Intercept)")
-                                        #corstr <- "independence"
-    w <- model.weights(mf)
-    if (is.null(w)) 
-      w <- rep(1, N)
-    
-    offset <- model.offset(mf)
-    if (is.null(offset)) 
-      offset <- rep(0, N)
   
-    if (glmFit$family$family=="binomial"){
-      if (is.matrix(yy) && ncol(yy)==2){
-        w <- apply(yy,1,sum)
-        yy<- yy[,1]/w
-      }
+  mcall$formula <- formula
+  sformula <- ~1
+  mcall$formula[3] <-
+    switch(match(length(sformula),
+                 c(0, 2, 3)), 1, sformula[2], sformula[3])
+  m <- eval(mcall, parent.frame())
+  terms <- attr(m, "terms")
+  zsca <- model.matrix(terms, m, contrasts)
+  
+  colnames(zsca) <- c("(Intercept)")
+                                        #corstr <- "independence"
+  w <- model.weights(mf)
+  if (is.null(w)) 
+    w <- rep(1, N)
+  
+  offset <- model.offset(mf)
+  if (is.null(offset)) 
+    offset <- rep(0, N)
+  
+  if (glmFit$family$family=="binomial"){
+    if (is.matrix(yy) && ncol(yy)==2){
+      w <- apply(yy,1,sum)
+      yy<- yy[,1]/w
     }
-
-    family <- glmFit$family
-    nacoef <- as.numeric(which(is.na(glmFit$coef)))
-    xx <- as.data.frame(xx)
-    xx[,nacoef] <- NULL
-    xx <- as.matrix(xx)
-    if (is.null(start))
-      start <- glmFit$coef
-
-  ans <- geese.fit(xx, yy, id, offset, soffset, w, waves=NULL, zsca, 
-                   zcor=NULL, corp=NULL, control=control, #geese.control(),
+  }
+  
+  family <- glmFit$family
+  nacoef <- as.numeric(which(is.na(glmFit$coef)))
+  xx <- as.data.frame(xx)
+  xx[,nacoef] <- NULL
+  xx <- as.matrix(xx)
+  if (is.null(start))
+    start <- glmFit$coef
+  
+  ans <- geese.fit(xx, yy, id, offset, soffset, w, waves=waves, zsca, 
+                   zcor=zcor, corp=NULL, control=control, 
                    b=start,
-                     alpha=NULL, gm=NULL, family, mean.link=NULL, 
-                     variance=NULL,
-                     cor.link="identity", sca.link="identity",
-                     link.same=TRUE, scale.fix=scale.fix, scale.value=scale.value, 
-                     corstr, ...)
-    ans <- c(ans, list(call = call, formula = formula))
-    class(ans) <- "geese"
+                   alpha=NULL, gm=NULL, family, mean.link=NULL, 
+                   variance=NULL,
+                   cor.link="identity", sca.link="identity",
+                   link.same=TRUE, scale.fix=scale.fix, scale.value=scale.value, 
+                   corstr, ...)
+  ans <- c(ans, list(call = call, formula = formula))
+  class(ans) <- "geese"
 ### Copy from geese ends here
 #############################    
 
-
-    ans$X <- xx
-    ans$id <- id
-    ans$weights <- w
-
-    value <- glmFit
-    toDelete <- c("R","deviance","aic","null.deviance","iter","df.null",
-                  "converged","boundary")
-    value[match(toDelete,names(value))] <- NULL
-
-
+  ans$X <- xx
+  ans$id <- id
+  ans$weights <- w
+  
+  
+  value <- glmFit
+  toDelete <- c("R","deviance","aic","null.deviance","iter","df.null",
+                "converged","boundary")
+  value[match(toDelete,names(value))] <- NULL
+  
   value$method <- "geese.fit"
-    value$geese             <- ans
-    value$weights           <- ans$weights
-    value$coefficients      <- ans$beta
-
-
+  value$geese             <- ans
+  value$weights           <- ans$weights
+  value$coefficients      <- ans$beta
+    
   ## Kludgy..
   value$offset <- offset
   if(is.null(value$offset))
@@ -144,11 +161,10 @@ geeglm <- function (formula, family = gaussian, data=parent.frame(), weights, su
   value$corstr <- ans$model$corstr
   value$cor.link <- ans$model$cor.link
   value$control <- ans$control
-
-
+  value$std.err <- std.err
   class(value)            <- c("geeglm", "gee", "glm")
-    return(value)
-  }
+  return(value)
+}
 
 
 
@@ -165,19 +181,60 @@ summary.geeglm <- function(object,...){
   idx <- match(toDelete,names(value))
   value[idx]  <- NULL
 
-  value$coefficients <- v1$mean
-  value$dispersion   <-  v1$scale  
-  value$cov.scaled   <-  object$geese$vbeta
-  value$cov.unscaled <-  object$geese$vbeta
+
+ 
+  covmat <- 
+    switch(object$std.err,
+           'jack'={object$geese$vbeta.ajs},
+           'j1s'={object$geese$vbeta.j1s},
+           'fij'={object$geese$vbeta.fij},
+           object$geese$vbeta
+           )
+  value$cov.scaled   <-   value$cov.unscaled <-  covmat
+  
+  mean.sum  <- data.frame(estimate = object$geese$beta, std.err=sqrt(diag(covmat)))
+  mean.sum$wald <- (mean.sum$estimate / mean.sum$std.err)^2
+  mean.sum$p <- 1 - pchisq(mean.sum$wald, df=1)
+  names(mean.sum) <- c("Estimate", "Std.err", "Wald", "p(>W)")
+  value$coefficients <- mean.sum
+
+
+  covmatgam <- 
+    switch(object$std.err,
+           'jack'={object$geese$vgamma.ajs},
+           'j1s'={object$geese$vgamma.j1s},
+           'fij'={object$geese$vgamma.fij},
+           object$geese$vgamma
+           )
+  scale.sum  <- data.frame(Estimate = object$geese$gamma, Std.err=sqrt(diag(covmatgam)))
+  #scale.sum$wald <- (scale.sum$Estimate / scale.sum$Std.err)^2
+  #scale.sum$p <- 1 - pchisq(scale.sum$wald, df=1)
+
+  if (!is.null(object$geese$zsca.names)) rownames(scale.sum) <- object$geese$zsca.names
+  value$dispersion   <-  scale.sum
+
+  covmatalpha <- 
+    switch(object$std.err,
+           'jack'={object$geese$valpha.ajs},
+           'j1s'={object$geese$valpha.j1s},
+           'fij'={object$geese$valpha.fij},
+           object$geese$valpha
+           )
+
+  corr.sum <- data.frame(Estimate = object$geese$alpha, Std.err=sqrt(diag(covmatalpha)))
+  #corr.sum$wald <- (corr.sum$Estimate / corr.sum$Std.err)^2
+  #corr.sum$p <- 1 - pchisq(corr.sum$wald, df=1)
+  #if (nrow(corr.sum) > 0) rownames(corr.sum) <- object$geese$zcor.names
+  value$corr <- corr.sum
+  
+  
   value$corstr    <- object$geese$model$corstr
   value$scale.fix <- object$geese$model$scale.fix
   value$cor.link  <-  object$geese$model$cor.link
-  value$corr <- v1$corr
+
   value$clusz <- v1$clusz
   value$error <- object$geese$error
   value$geese <- v1
-
-
   return(value)
 }
 
