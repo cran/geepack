@@ -1,4 +1,23 @@
+2005-06-13 Søren Højsgaard <sorenh@agrsci.dk>
 
+	* Søren Højsgaard has modified the geeglm function so that it can
+	take the 'waves' argument which is used for explicitely specifying
+	the ordering of repeated measurements on the same unit. geeglm can
+	also take the 'zcor' argument for a user defined working
+	correlation structure. 
+
+	* A documentation file for the genZcor
+	function has been added. 
+
+	* All data sets provided are now saved as
+	text files.
+
+	* ordgee has been modified to check if the response variable is an
+	ordered factor.
+
+	* geeglm can now take the argument std.err which specifies the
+	type of variance estimate to be calculated.
+	
 2005-05-11 Søren Højsgaard <sorenh@agrsci.dk>
 
 	* Søren Højsgaard has modified the anova function to make it

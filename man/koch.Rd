@@ -27,7 +27,7 @@ The \code{koch} data frame has 288 rows and 4 columns.
 }
 \examples{
 data(koch)
-fit <- ordgee(y ~ trt + as.factor(day), id=id, data=koch, corstr="exch")
+fit <- ordgee(ordered(y) ~ trt + as.factor(day), id=id, data=koch, corstr="exch")
 summary(fit)
 }
 \keyword{datasets}

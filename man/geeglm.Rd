@@ -3,11 +3,10 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Fit Generalized Estimating Equations (GEE)}
 \description{
-  The geeglm function fits generalized estimating equations using the 'geese' function
-  of the 'geepack' package for doing the actual computations. The virtue
-  of geeglm in relation to geese is, that the geeglm "works like" glm and it
-  returns an object which is similar to a glm object. Some features of
-  geese are however not available in geeglm. An important feature of geeglm,
+  The geeglm function fits generalized estimating equations using the 'geese.fit' function 
+  of the 'geepack' package for doing the actual computations. geeglm has a syntax similar to 
+  glm and returns an object similar to a glm object. 
+	An important feature of geeglm,
   is that an anova method exists for these models.
 }
 \usage{
@@ -16,10 +15,10 @@ geeglm(formula, family = gaussian, data=parent.frame(), weights, subset,
                   control = geese.control(...), 
                   method = "glm.fit", x = FALSE, y = TRUE,
                   contrasts = NULL, 
-                  id,
+                  id, waves=NULL, zcor=NULL, 
                   corstr = "independence",
                   scale.fix = FALSE,
-                  scale.value =1,
+                  scale.value =1, std.err="san.se",
                   ...) 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -45,13 +44,24 @@ geeglm(formula, family = gaussian, data=parent.frame(), weights, subset,
           should be the same as the number of observations.  Data are
           assumed to be sorted so that observations on a cluster are
           contiguous rows for all entities in the formula. }
+\item{waves}{Wariable specifying the ordering of repeated mesurements on the same unit. 
+	Also used in connection with missing values. See examples below.}
+\item{zcor}{Used for entering a user defined working correlation structure.}
   \item{corstr}{a character string specifying the correlation structure. The
           following are permitted: '"independence"', '"exchangeable"',
           '"ar1"', '"unstructured"' and '"userdefined"' }
   \item{scale.fix}{a logical variable; if true, the scale parameter is fixed at
           the value of 'scale.value'. }
   \item{scale.value}{numeric variable giving the value to which the scale
-          parameter should be fixed; used only if 'scale.fix == TRUE'.}
+    parameter should be fixed; used only if 'scale.fix == TRUE'.}
+  \item{std.err}{Type of standard error to be calculated. Defualt
+    'san.se' is the usual robust estimate.  Other options are 'jack':
+    if approximate jackknife variance estimate
+          should be computed.
+     'j1s': if 1-step jackknife variance estimate
+          should be computed.
+     'fij': logical indicating if fully iterated jackknife variance
+          estimate should be computed. }
   \item{\dots}{further arguments passed to or from other methods.}
 }
 %\details{
@@ -88,6 +98,10 @@ summary(gee1)
 mf2 <- formula(Weight~Cu*Time+I(Time^2)+I(Time^3))
 gee2 <- geeglm(mf2, data=dietox, id=Pig, family=poisson("identity"),corstr="ar1")
 anova(gee2)
+
+
+
+
 }
 \keyword{models}% at least one, from doc/KEYWORDS
 
