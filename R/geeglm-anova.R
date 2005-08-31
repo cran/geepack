@@ -157,9 +157,11 @@ anova.geeglm<-function (object, ..., dispersion = NULL, test = NULL)
   } else {
     dfVec <- dimVec[1]
   }
-  for (i in 2:length(dimVec))
-    dfVec <- c(dfVec,dimVec[i]-dimVec[i-1])
-  
+
+  if (length(dimVec)>1){
+    for (i in 2:length(dimVec))
+      dfVec <- c(dfVec,dimVec[i]-dimVec[i-1])
+  }
   
   ##print(dfVec)
   X2Vec <- NULL

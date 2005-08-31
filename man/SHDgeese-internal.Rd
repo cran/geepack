@@ -8,7 +8,6 @@
 \alias{print.summary.geeglm}
 \alias{residuals.geeglm}
 \alias{summary.geeglm}
-\alias{}
 
 \title{Internal geese functions}
 \description{

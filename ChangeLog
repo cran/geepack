@@ -1,3 +1,17 @@
+2006-01-24 Søren Højsgaard <sorenh@agrsci.dk>
+
+	* Bug in anova.geeglm fixed (showed up when there was only one
+	term on the right hand side of ~). 
+
+	* geeglm only works on complete data. This has been pointed out in
+	the man pages. (At some point of time, a proper na.action should be
+	taken). 
+
+	* All datasets are saved as .txt files (previously some were saved
+	as .rda files but that caused problems in building the package on
+	windows xp).
+
+	
 2005-08-13  Jun Yan  <jyan@stat.uiowa.edu>
 
 	* The working correlation structure can now be "fixed".

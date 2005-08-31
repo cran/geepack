@@ -21,7 +21,6 @@ geeglm <- function (formula, family = gaussian, data=parent.frame(), weights, su
   STDERRS <- c("san.se", "jack", "j1s", "fij")
   stderrv <- pmatch(std.err, STDERRS, -1)
   std.err <- STDERRS[stderrv]
-  ##print(std.err)
 
   jackB <- j1sB <- fijB <- FALSE
 
@@ -49,6 +48,8 @@ geeglm <- function (formula, family = gaussian, data=parent.frame(), weights, su
   glmFit <- eval(glmcall, parent.frame())
 
   mf <- call
+  ##call$data <- mf$data <- na.omit(eval(mf$data))
+  
   mf[[1]] <- as.name("model.frame")
   mftmp <- mf
   mftmp$family <- mftmp$corstr <- mftmp$control  <-   mftmp$zcor<- mftmp$std.err <- NULL
@@ -72,10 +73,10 @@ geeglm <- function (formula, family = gaussian, data=parent.frame(), weights, su
   else matrix(, NROW(Y), 0)
   
   N <- NROW(Y)
-  
+
   yy <- Y
   xx <- X
-  
+
   soffset <- rep(0, N)
   
   mnames <- c("", "formula", "data", "offset", "weights", "subset", "na.action")
@@ -93,7 +94,7 @@ geeglm <- function (formula, family = gaussian, data=parent.frame(), weights, su
   m <- eval(mcall, parent.frame())
   terms <- attr(m, "terms")
   zsca <- model.matrix(terms, m, contrasts)
-  
+
   colnames(zsca) <- c("(Intercept)")
                                         #corstr <- "independence"
   w <- model.weights(mf)

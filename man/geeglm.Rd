@@ -28,7 +28,8 @@ geeglm(formula, family = gaussian, data=parent.frame(), weights, subset,
   \item{data}{See corresponding documentation to \code{glm}}
   \item{weights}{See corresponding documentation to \code{glm}}
   \item{subset}{See corresponding documentation to \code{glm}}
-  \item{na.action}{See corresponding documentation to \code{glm}}
+  \item{na.action}{No action is taken. Indeed geeglm only works on
+    complete data.}
   \item{start}{See corresponding documentation to \code{glm}}
   \item{etastart}{See corresponding documentation to \code{glm}}
   \item{mustart}{See corresponding documentation to \code{glm}}
@@ -65,14 +66,10 @@ geeglm(formula, family = gaussian, data=parent.frame(), weights, subset,
   \item{\dots}{further arguments passed to or from other methods.}
 }
 %\details{
-%  ~~ If necessary, more details than the __description__  above ~~
+%  
 %}
 \value{
-  ~Describe the value returned
-  If it is a LIST, use
-  \item{comp1 }{Description of 'comp1'}
-  \item{comp2 }{Description of 'comp2'}
-  ...
+  An object of type 'geeglm'
 }
 \references{Liang, K.Y. and Zeger, S.L. (1986) Longitudinal data analysis
      using generalized linear models. Biometrika, *73* 13-22.
@@ -82,7 +79,9 @@ geeglm(formula, family = gaussian, data=parent.frame(), weights, subset,
      continuous responses. Biometrics, *47* 825-839.}
 \author{Søren Højsgaard, sorenh@agrsci.dk}
 \note{See the documentation for the 'geese' function 
-   for additional information.}
+  for additional information. geeglm only works for complete data. Thus
+  if there are NA's in data you can specify data=na.omit(mydata).
+}
 
 \section{Warning }{geeglm has not been thoroughly tested. Please report bugs.} 
 
@@ -98,9 +97,6 @@ summary(gee1)
 mf2 <- formula(Weight~Cu*Time+I(Time^2)+I(Time^3))
 gee2 <- geeglm(mf2, data=dietox, id=Pig, family=poisson("identity"),corstr="ar1")
 anova(gee2)
-
-
-
 
 }
 \keyword{models}% at least one, from doc/KEYWORDS
