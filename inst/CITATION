@@ -11,7 +11,7 @@ citEntry(entry="Article",
          textVersion = 
          paste("Yan, J. & Fine, J.P. (2004)", 
                "Estimating Equations for Association Structures",
-               "Statistics in Medicine,  23, pp859--880")
+               "Statistics in Medicine,  23, pp859--880.")
 )
 
 citEntry(entry="Article",
@@ -24,5 +24,5 @@ citEntry(entry="Article",
          textVersion = 
          paste("Yan, J (2002)", 
                "geepack: Yet Another Package for Generalized Estimating Equations",
-               "R-News, 2/3, pp12-14")
+               "R-News, 2/3, pp12-14.")
 )

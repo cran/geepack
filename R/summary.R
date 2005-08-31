@@ -63,7 +63,7 @@ print.geese <- function(x, digits = NULL, quote = FALSE, prefix = "", ...) {
   else cat("\nScale is fixed.\n")
   cat("\nCorrelation Model:\n")
   cat(" Correlation Structure:    ", x$model$corstr, "\n")
-  if (pmatch(x$model$corstr, "independence", 0) == 0) {
+  if (pmatch(x$model$corstr, c("independence", "fixed"), 0) == 0) {
     cat(" Correlation Link:         ", x$model$cor.link, "\n")
     cat("\n Estimated Correlation Parameters:\n")
     print(unclass(x$alpha), digits = digits)
@@ -98,7 +98,7 @@ print.summary.geese <- function(x, digits = NULL,
   else cat("\nScale is fixed.\n")
   cat("\nCorrelation Model:\n")
   cat(" Correlation Structure:    ", x$model$corstr, "\n")
-  if (pmatch(x$model$corstr, "independence", 0) == 0) {
+  if (pmatch(x$model$corstr, c("independence", "fixed"), 0) == 0) {
     cat(" Correlation Link:         ", x$model$cor.link, "\n")
     cat("\n Estimated Correlation Parameters:\n")
     print(x$corr, digits = digits)

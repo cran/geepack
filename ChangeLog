@@ -1,3 +1,8 @@
+2005-08-13  Jun Yan  <jyan@stat.uiowa.edu>
+
+	* The working correlation structure can now be "fixed".
+
+
 2005-06-13 Søren Højsgaard <sorenh@agrsci.dk>
 
 	* Søren Højsgaard has modified the geeglm function so that it can

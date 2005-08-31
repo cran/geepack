@@ -127,8 +127,9 @@ geese.fit(x, y, id, offset = rep(0, N), soffset = rep(0, N),
     \code{"independence"},
     \code{"exchangeable"},
     \code{"ar1"},
-    \code{"unstructured"} and
-    \code{"userdefined"}
+    \code{"unstructured"},
+    \code{"userdefined"}, and
+    \code{"fixed"}
   }
   \item{x, y}{
     \code{x} is a design matrix of dimension \code{n * p}, and \code{y}
@@ -144,6 +145,11 @@ geese.fit(x, y, id, offset = rep(0, N), soffset = rep(0, N),
 }
 \value{
   An object of class \code{"geese"} representing the fit.
+}
+\details{
+  when the correlation structure is \code{fixed}, the specification
+  of \code{Zcor} should be a vector of length
+  \code{sum(clusz * (clusz - 1)) / 2.}
 }
 \references{
   Yan, J. and J.P. Fine (2004)
@@ -171,6 +177,18 @@ m2 <- geese(y ~ offset(log(t)) + x + trt + x:trt, id = id,
             data = seiz.l, subset = id!=49,
             corstr = "exch", family=poisson)
 summary(m2)
+## Using fixed correlation matrix
+cor.fixed <- matrix(c(1, 0.5, 0.25, 0.125, 0.125,
+                      0.5, 1, 0.25, 0.125, 0.125,
+                      0.25, 0.25, 1, 0.5, 0.125,
+                      0.125, 0.125, 0.5, 1, 0.125,
+                      0.125, 0.125, 0.125, 0.125, 1), 5, 5)
+cor.fixed
+zcor <- rep(cor.fixed[lower.tri(cor.fixed)], 59)
+m3 <- geese(y ~ offset(log(t)) + x + trt + x:trt, id = id,
+            data = seiz.l, family = poisson,
+            corstr = "fixed", zcor = zcor)
+summary(m3)
 
 data(ohio)
 fit <- geese(resp ~ age + smoke + age:smoke, id=id, data=ohio,
@@ -230,7 +248,6 @@ mdat <- dat[good,]
 summary(geese(y ~ x1 + x2, id = id, data = mdat, waves = visit,
               sformula = ~ x1, corstr="ar1",
               jack = TRUE, j1s = TRUE, fij = TRUE))
-
 
 }
 \keyword{nonlinear}

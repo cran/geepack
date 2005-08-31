@@ -193,6 +193,15 @@ DMatrix cor_rho_indep(const DVector &, const DVector &) {
   return ident(0);
 }
 
+DMatrix cor_fixed(const DVector &rho, const DVector &wave) {
+  return cor_unstr(rho, wave);
+}
+
+DMatrix cor_rho_fixed(const DVector &, const DVector &) {
+  return ident(0);
+}
+
+
 DMatrix cor_ar1(const DVector &rho, const DVector &wave) {
   int n = wave.size();
   DMatrix ans(n,n);
@@ -238,6 +247,8 @@ Corr:: Corr(int corst, int maxwave): _corst(corst), _maxwave(maxwave) {
     case UNSTRUCTURED:
     case USERDEFINED:
       _nparam = maxwave; init(cor_unstr, cor_rho_unstr); break;
+    case FIXED:
+      _nparam = 0; init(cor_fixed, cor_rho_fixed); break;
     }
 }
 

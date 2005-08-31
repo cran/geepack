@@ -9,7 +9,7 @@ typedef double fun1(double);
 enum links {L_0, IDENT, LOGIT, PROBIT, CLOGLOG, LOG, INVERSE, FISHERZ,
 	    LWYBC2, LWYLOG};
 enum variances {V_0, GAUSSIAN, BINOMIAL, POISSON, GAMMA};
-enum correlations {C_0, INDEPENDENCE, EXCHANGEABLE, AR1, UNSTRUCTURED, USERDEFINED};
+enum correlations {C_0, INDEPENDENCE, EXCHANGEABLE, AR1, UNSTRUCTURED, USERDEFINED,  FIXED};
 
 
 DMatrix cor_exch(const DVector &rho, const DVector &wave);
@@ -27,6 +27,10 @@ DMatrix cor_rho_ar1(const DVector &rho, const DVector &wave);
 DMatrix cor_unstr(const DVector &rho, const DVector &wave);
 
 DMatrix cor_rho_unstr(const DVector &rho, const DVector &wave);
+
+DMatrix cor_fixed(const DVector &, const DVector &wave); //get cor matrix
+
+DMatrix cor_rho_fixed(const DVector &, const DVector &); //derivative
 
 class Corr{
 public:
@@ -49,6 +53,7 @@ public:
     return _cor_rho(rho, wave);
   }
   int nparam(){return _nparam;}
+  int corst() {return _corst; }
 };
 
 class Link{
