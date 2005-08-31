@@ -367,7 +367,8 @@ void gee_top(DVector &Y, DMatrix &Xmat,
   int I = Clusz.size();
   IVector Jack(I), ZcorSize(I);
   //initializing ZcorSize
-  if (cor.nparam() > 1) 
+  //if (cor.nparam() > 1) 
+  if (cor.corst() > AR1) // == UNSTRUCTRUED || USERDEFINED || FIXED
     for (int i = 1; i <= I; i++) 
       ZcorSize(i) = Clusz(i) * (Clusz(i) - 1) / 2;
   else ZcorSize = 1;

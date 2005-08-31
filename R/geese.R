@@ -130,7 +130,7 @@ geese.fit <- function(x, y, id,
                  as.integer(variance.v), as.integer(sca.link.v),
                  as.integer(cor.link.v), as.integer(scale.fix))
 
-  CORSTRS <- c("independence", "exchangeable", "ar1", "unstructured", "userdefined")
+  CORSTRS <- c("independence", "exchangeable", "ar1", "unstructured", "userdefined", "fixed")
   corstrv <- pmatch(corstr, CORSTRS, -1)
   if (corstrv == -1) stop("invalid corstr.")
   corr <- list(as.integer(corstrv), maxclsz)
@@ -157,7 +157,10 @@ geese.fit <- function(x, y, id,
     ##b <- rep(1,p)
     b <- fit0$coef
   }
-  if (is.null(alpha)) alpha <- rep(0,q)
+  if (is.null(alpha)) {
+    if (corstrv == 6) alpha <- 1
+    else alpha <- rep(0,q)
+  }
   if (is.null(gm)) {
     ##gm <- rep(scale.value, r)
     qlf <- quasi(LINKS[sca.link.v])$linkfun

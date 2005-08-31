@@ -26,6 +26,9 @@ SEXP asSEXP(const DVector &a);
 
 SEXP asSEXP(const IVector &a);
 
+SEXP asSEXP(const Vector<DVector> &a);
+
+
 Control asControl(SEXP con);
 
 GeeParam asGeeParam(SEXP par);

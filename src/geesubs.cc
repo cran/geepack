@@ -254,8 +254,8 @@ DMatrix getR(DMatrix &Zmati, DVector &corp,
   DVector alp = par.alpha(); 
   int s = corp.dim(); // corp should determine meta par for R
   if (s == 1) return ident(1); 
-  else if (cor.nparam() == 0) //indenpendence or fixed
-    return cor.mat(alp, corp); //if fixed, should have ident link
+  else if (cor.corst() == INDEPENDENCE) //indenpendence
+    return cor.mat(alp, corp); 
   else {
     DVector Eta = Zmati * alp;
     DVector Rho = geestr.CorrLinkinv(Eta);
@@ -269,9 +269,9 @@ DMatrix getR(DMatrix &Zmat, Index1D &I, Index1D &J, DVector &CorP,
   DVector corp = asVec(VecSubs(CorP, I)); 
   int s = corp.dim(); // corp should determine meta par for R
   if (s == 1) return ident(1); 
-  else if (cor.nparam() == 0) //indenpendence or fixed
-    return cor.mat(alp, corp); //if fixed, should have ident link
-  else {
+  else if (cor.corst() == INDEPENDENCE) //indenpendence
+    return cor.mat(alp, corp); 
+  else{
     DMatrix Zmati = asMat(MatRows(Zmat, J));
     DVector Eta = Zmati * alp;
     DVector Rho = geestr.CorrLinkinv(Eta);
@@ -289,8 +289,14 @@ int RandE(DMatrix &Zmati, DVector &corp,
     R = ident(1); 
     return 0;
   }
-  else if (cor.nparam() == 0) { //no need for E
+  else if (cor.corst() == INDEPENDENCE) { //no need for E
     R = cor.mat(alp, corp);
+    return 0;
+  }
+  else if (cor.corst() == FIXED) {
+    DVector Eta = Zmati * alp;
+    DVector Rho = geestr.CorrLinkinv(Eta);
+    R = cor.mat(Rho, corp);
     return 0;
   }
   else {
@@ -315,8 +321,15 @@ int RandE(DMatrix &Zmat, Index1D &I, Index1D &J, DVector &CorP,
     R = ident(1); 
     return 0;
   }
-  else if (cor.nparam() == 0) { //no need for E
+  else if (cor.corst() == INDEPENDENCE) { //no need for E
     R = cor.mat(alp, corp);
+    return 0;
+  }
+  else if (cor.corst() == FIXED) {
+    DMatrix Zmati = asMat(MatRows(Zmat, J)); 
+    DVector Eta = Zmati * alp;
+    DVector Rho = geestr.CorrLinkinv(Eta);
+    R = cor.mat(Rho, corp);
     return 0;
   }
   else {
@@ -418,7 +431,7 @@ void getDatI(DVector &Y, DVector &Offset, DVector &Doffset,
   DMatrix Zscai = asMat(MatRows(Zsca, I));
   IVector LinkWavei = asVec(VecSubs(LinkWave, I));
   DMatrix Zcori; DVector Doffseti;
-  if (cor.nparam() > 0 && s > 1 )  {
+  if (cor.corst() > INDEPENDENCE && s > 1 )  {
     Zcori = asMat(MatRows(Zcor, J));
   }
   Doffseti = asVec(VecSubs(Doffset, I));
@@ -430,7 +443,7 @@ void getDatI(DVector &Y, DVector &Offset, DVector &Doffset,
   VXi = Valid(Xi, VI);
   VZscai = Valid(Zscai, VI);
   VLinkWavei = Valid(LinkWavei, VI);
-  if (cor.nparam() > 0 && s > 1) {
+  if (cor.corst() > INDEPENDENCE && s > 1) {
     if (cor.nparam() == 1) VZcori = Zcori;
     else VZcori = Valid(Zcori, VJ);
     //VDoffseti = Valid(Doffseti, VJ); //this is for log odds for ordinal

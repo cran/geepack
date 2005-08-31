@@ -1,6 +1,8 @@
 #ifndef TNTSUPP_H
 #define TNTSUPP_H
 
+using namespace std;
+
 #include <iostream>
 #include "tnt/subscript.h"
 #include "tnt/tnt.h"
@@ -433,12 +435,51 @@ Fortran_Matrix<T> matmult(
 }
 
 template <class Matrix, class T>
+Fortran_Matrix<T> matmult(
+    const Fortran_Matrix<T> & A, 
+    const Transpose_View<Matrix> &B)
+{
+    Subscript  M = A.num_rows();
+    Subscript  N = A.num_cols();
+
+    assert(B.num_rows() == N);
+    Subscript L = B.num_cols();
+
+    Fortran_Matrix<T> x(M,L);
+    Subscript i, j, k;
+    T tmp = 0;
+
+    for (i=1; i<=M; i++) {
+      for (j=1; j<=L; j++) {
+        tmp = 0;
+	for (k = 1; k <= N; k++) tmp += A(i,k) * B(k,j);
+	x(i,j) = tmp;
+      }
+    }
+
+    return x;
+}
+
+template <class Matrix, class T>
 inline Fortran_Matrix<T> operator*(const Transpose_View<Matrix> & A, const Fortran_Matrix<T> &B)
+{
+    return matmult(A,B);
+}
+template <class Matrix, class T>
+inline Fortran_Matrix<T> operator*(const Fortran_Matrix<T> & A, const Transpose_View<Matrix> &B)
 {
     return matmult(A,B);
 }
 
 //crossprod
+template <class T>
+Fortran_Matrix<T> crossprod(const Fortran_Matrix<T> &B) {
+  return matmult(Transpose_View<Fortran_Matrix<T> >(B), B);
+}
+
+
+
+//outerprod
 template <class T>
 Fortran_Matrix<T> outerprod(const Vector<T> &v) {
   int n = v.size();
