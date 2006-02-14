@@ -21,10 +21,11 @@ genZcor <- function(clusz, waves, corstrv) {
   }
   else {
     id <- rep(1:length(clusz), clusz)
-    z <- as.factor(unlist(lapply(split(waves, id), crossutri)))
+    z1 <- unlist(lapply(split(waves, id), crossutri))
+    z2 <- unlist(crossutri(1:max(clusz)))
+    z <- factor(z1,levels=unique.default(z2))
     ans <- model.matrix(~z - 1)
-    znames <- paste("alpha", unlist(crossutri(1:max(clusz))), sep=".")
-    ##dimnames(ans) <- list(1:sum(crs), znames)
+    znames <- paste("alpha", z2, sep = ".")
     colnames(ans) <- znames
   }
   ans
@@ -41,7 +42,9 @@ genZodds <- function(clusz, waves, corstrv, ncat) {
   }
   else {
     id <- rep(1:length(clusz), clusz)
-    z <- as.factor(unlist(lapply(split(waves, id), crossutri)))
+    z1 <- unlist(lapply(split(waves, id), crossutri))
+    z2 <- unlist(crossutri(1:max(clusz)))
+    z <- factor(z1,levels=unique.default(z2))
     z <- model.matrix(~z - 1)
     ind <- gl(sum(crs), c2)
     ans <- z[ind,]
