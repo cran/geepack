@@ -1,3 +1,9 @@
+2007-03-21  Søren Højsgaard <sorenh@agrsci.dk>
+
+	* Bug in geeglm fixed so that it now works with a fixed
+	correlation structure. Thanks to Ulrich Halekoh for the fix.
+
+
 2006-02-13  Jun Yan  <jyan@stat.uiowa.edu>
 
 	* Bug in genZcor and genZodds fixed. 
