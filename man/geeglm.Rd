@@ -65,9 +65,11 @@ geeglm(formula, family = gaussian, data=parent.frame(), weights, subset,
           estimate should be computed. }
   \item{\dots}{further arguments passed to or from other methods.}
 }
-%\details{
-%  
-%}
+\details{
+  In the case of corstr="fixed" one must provide the zcor vector
+  if the clusters have unequal sizes. 
+  Clusters with size one must not be represented in zcor.
+}
 \value{
   An object of type 'geeglm'
 }

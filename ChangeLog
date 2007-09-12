@@ -1,5 +1,14 @@
 2007-03-21  Søren Højsgaard <sorenh@agrsci.dk>
 
+	* A remark on fixed correlation structures has been added to the
+	geeglm.Rd doc file.
+
+	* A Wishlist file has been added
+	
+	* Version 1.0-13 uploaded
+
+2007-03-21  Søren Højsgaard <sorenh@agrsci.dk>
+
 	* Bug in geeglm fixed so that it now works with a fixed
 	correlation structure. Thanks to Ulrich Halekoh for the fix.
 

@@ -1,0 +1,3 @@
+
+Create proper handling of fixed correlation structures when cluster sizes are unequal - either on the C-side or on the R-side.
+
