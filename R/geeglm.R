@@ -334,7 +334,9 @@ summary.geeglm <- function(object,...){
   mean.sum  <- data.frame(estimate = object$geese$beta, std.err=sqrt(diag(covmat)))
   mean.sum$wald <- (mean.sum$estimate / mean.sum$std.err)^2
   mean.sum$p <- 1 - pchisq(mean.sum$wald, df=1)
-  names(mean.sum) <- c("Estimate", "Std.err", "Wald", "p(>W)")
+  ## names(mean.sum) <- c("Estimate", "Std.err", "Wald", "p(>W)")
+  names(mean.sum) <- c("Estimate", "Std.err", "Wald", "Pr(>|W|)") ## Thanks, Achim
+
   value$coefficients <- mean.sum
 
 
@@ -382,14 +384,20 @@ summary.geeglm <- function(object,...){
 #                          "Wald","Pr(>|z|)")
 
 
-print.summary.geeglm <- function (x, digits = NULL, quote = FALSE, prefix = "", ...) 
+print.summary.geeglm <- function (x,
+         digits = max(3, getOption("digits") - 3),
+         quote = FALSE, prefix = "", ...) # Thanks, Achim...
+
+#print.summary.geeglm <- function (x, digits = NULL, quote = FALSE, prefix = "", ...) 
 {
   if (is.null(digits)) 
     digits <- options()$digits
   else options(digits = digits)
   cat("\nCall:\n");   print(x$call)
   cat("\n Coefficients:\n");
-  print(as.matrix(x$coef), digits = digits)
+  ##print(as.matrix(x$coef), digits = digits)
+  printCoefmat(as.matrix(x$coef), digits = digits) ## Thanks, Achim
+  
   if (x$scale.fix == FALSE) {
     cat("\nEstimated Scale Parameters:\n")
     print(x$dispersion[1:2], digits = digits)
