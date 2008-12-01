@@ -1,3 +1,12 @@
+2008-12-01  Søren Højsgaard <sorenh@agrsci.dk>
+
+	* When a factor has unused levels, the underlying C code
+	fails. This is now catured in geeglm. Thanks to Janet Young
+
+	* tests directory added to package
+	
+	* Version 1.0-15 uploaded
+
 2007-07-13  Søren Højsgaard <sorenh@agrsci.dk>
 
 	* Smaller 'standardization' changes implemented. Thanks to Achim
