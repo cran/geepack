@@ -26,12 +26,14 @@ geeglm<- function (formula, family = gaussian, data = parent.frame(),
   control$jack <- as.integer(jackB)
   control$j1s <- as.integer(j1sB)
   control$fij <- as.integer(fijB)
-    CORSTRS <- c("independence", "exchangeable", "ar1", "unstructured", 
-                 "userdefined","fixed")
+  CORSTRS <- c("independence", "exchangeable", "ar1", "unstructured", 
+               "userdefined","fixed")
   eprint("SHDgeese.fit - corstr")
   corstrv <- pmatch(corstr, CORSTRS, -1)
   corstr <- CORSTRS[corstrv]
   eprint("geeglm is called")
+
+
   call <- match.call(expand.dots = TRUE)
   glmcall <- call
   glmcall$id <- glmcall$jack <- glmcall$control <- glmcall$corstr <- glmcall$waves <- glmcall$zcor <- glmcall$std.err <- glmcall$scale.fix <- glmcall$scale.value <- NULL
@@ -39,10 +41,15 @@ geeglm<- function (formula, family = gaussian, data = parent.frame(),
   glmFit <- eval(glmcall, parent.frame())
   mf <- call
   mf[[1]] <- as.name("model.frame")
+
   mftmp <- mf
   mftmp$family <- mftmp$corstr <- mftmp$control <- mftmp$zcor <- mftmp$std.err <- NULL
+
+  mftmp$scale.fix <- NULL
   mf <- eval(mftmp, parent.frame())
+
   id <- model.extract(mf, id)
+
   if (is.null(id)) 
     stop("id variable not found.")
   waves <- model.extract(mf, waves)
@@ -61,7 +68,7 @@ geeglm<- function (formula, family = gaussian, data = parent.frame(),
   stopIt <- FALSE
   for(ii in seq_along(vars)){
     vv <- vars[ii]
-    if(is.factor(mf[,vv])){
+    if(!is.na(match(vv,names(mf))) && is.factor(mf[,vv])){
       if (length(unique(mf[,vv])) != length(levels(mf[,vv]))){
         cat("Factors not allowed to have unused levels...\n")
         cat(" Levels of factor",vv,":", paste(levels(mf[,vv]),sep=' '),"\n")  
@@ -73,7 +80,8 @@ geeglm<- function (formula, family = gaussian, data = parent.frame(),
   if (stopIt)
     stop("Can not continue...\n")
   
-  
+
+
   
   N <- NROW(Y)
   yy <- Y

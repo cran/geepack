@@ -68,6 +68,7 @@ geeglm(formula, family = gaussian, data=parent.frame(), weights, subset,
 \details{
   In the case of corstr="fixed" one must provide the zcor vector
   if the clusters have unequal sizes. 
+  
   Clusters with size one must not be represented in zcor.
 }
 \value{
@@ -85,7 +86,10 @@ geeglm(formula, family = gaussian, data=parent.frame(), weights, subset,
   if there are NA's in data you can specify data=na.omit(mydata).
 }
 
-\section{Warning }{geeglm has not been thoroughly tested. Please report bugs.} 
+\section{Warning }{
+  Use "unstructured" correlation structure only with great care. (It may
+  cause R to crash).
+} 
 
 \seealso{\code{\link{geese}}, \code{\link{glm}},\code{\link{anova.geeglm}} }
 \examples{
