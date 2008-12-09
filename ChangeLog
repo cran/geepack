@@ -1,3 +1,21 @@
+2008-12-08  Søren Højsgaard <sorenh@agrsci.dk>
+
+	* Bugfix in 1.0.15 caused problem in binomial case using
+	cbind(pos,neg). Thanks to Tobias Verbeke. Fixed now. 
+
+	* Bugfix in 1.0.15 caused problem when using variables derived
+	from gam package call to geeglm. Thanks to Eric Rexstad. Fixed now.
+	
+	* Using scale.fix argument gave problem in geeglm. Thanks to
+	Tobias Verbeke. Fixed now.  
+
+	* Fitting large data set with binomial model and 3 measurements
+	per unit using unstructured correlation crashes R. Thanks to
+	Tobias Verbeke. Problem has *NOT* been solved but a remark has
+	been added to doc file. 
+	
+	* Version 1.0-16 uploaded
+
 2008-12-01  Søren Højsgaard <sorenh@agrsci.dk>
 
 	* When a factor has unused levels, the underlying C code
