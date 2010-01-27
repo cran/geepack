@@ -1,3 +1,14 @@
+2010-01-26  Søren Højsgaard <sorenh@agrsci.dk>
+
+	* fixed2Zcor function has been added. This function makes it
+	easier to work with a fixed correlation matrix (in particular when
+	cluster sizes are not equal).
+
+	* A vignette on models with unequal cluster size, fixed
+	correlation matrices etc. has been added. 
+	
+	* Version 1.0-17 uploaded
+
 2008-12-08  Søren Højsgaard <sorenh@agrsci.dk>
 
 	* Bugfix in 1.0.15 caused problem in binomial case using
