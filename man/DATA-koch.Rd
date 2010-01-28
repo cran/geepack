@@ -16,15 +16,15 @@ The \code{koch} data frame has 288 rows and 4 columns.
     \item{id}{a numeric vector}
   }
 }
-\details{
+% \details{
 
-}
-\source{
+% }
+% \source{
 
-}
-\references{
+% }
+% \references{
 
-}
+% }
 \examples{
 data(koch)
 fit <- ordgee(ordered(y) ~ trt + as.factor(day), id=id, data=koch, corstr="exch")

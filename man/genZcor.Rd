@@ -23,18 +23,18 @@ genZcor(clusz, waves, corstrv)
 	   structures: 1=independence,2=exchangeable,3=ar1,
 	      4=unstructured}
 }
-\details{
-}
+% \details{
+% }
 \value{
   \item{}{the design matrix for the correlation structure}  
 }
-\references{ a }
+%\references{ a }
 \author{Jun Yan,  jyan@stat.uiowa.edu}
-\note{  }
+% \note{  }
 
 
 
-%\seealso{\code{\link{geese}} }
+\seealso{\code{\link{fixed2Zcor}} }
 \examples{
 #example to construct a Toeplitz correlation structure
 #    sigma_ij=sigma_|i-j|

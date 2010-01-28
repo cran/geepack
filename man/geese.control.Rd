@@ -35,7 +35,7 @@ geese.control(epsilon = 1e-04, maxit = 25, trace = FALSE,
 }
 \author{Jun Yan \email{jyan@stat.uiowa.edu} }
 \seealso{`geese.fit', the fitting procedure used by `geese'.}
-\examples{
-}
+% \examples{
+% }
 \keyword{optimize}
 \keyword{models}

@@ -28,6 +28,9 @@ geeglm<- function (formula, family = gaussian, data = parent.frame(),
   control$fij <- as.integer(fijB)
   CORSTRS <- c("independence", "exchangeable", "ar1", "unstructured", 
                "userdefined","fixed")
+  if (corstr=="fixed" && is.null(zcor)){
+    stop("When corstr is 'fixed' then 'zcor' must be given\n")
+  }
   eprint("SHDgeese.fit - corstr")
   corstrv <- pmatch(corstr, CORSTRS, -1)
   corstr <- CORSTRS[corstrv]
@@ -297,7 +300,7 @@ print.geeglm <- function (x, digits = NULL, quote = FALSE, prefix = "", ...)
   }
   else cat("\nScale is fixed.\n")
   
-  cat("\nCorrelation:  Structure =",xg$model$corstr)
+  cat("\nCorrelation:  Structure =",xg$model$corstr, " ")
   if (pmatch(xg$model$corstr, "independence", 0) == 0) {
     cat("  Link =", xg$model$cor.link, "\n")
     cat("Estimated Correlation Parameters:\n")

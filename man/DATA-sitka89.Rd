@@ -16,16 +16,16 @@ A dataframe
 }
 }
 
-\source{
-}
+% \source{
+% }
 
-\references{
-}
+% \references{
+% }
 
 
 \examples{
 data(sitka89)
-attach(sitka89)
+%attach(sitka89)
 }
 
 \keyword{datasets}

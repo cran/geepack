@@ -1,5 +1,7 @@
 dietox                  Growth curves of pigs in a 3x3 factorial
                         experiment
+fixed2Zcor              Construct zcor vector (of fixed correlations)
+                        from a fixed working correlation matrix
 geeglm                  Fit Generalized Estimating Equations (GEE)
 geese                   Function to solve a Generalized Estimating
                         Equation Model
