@@ -39,12 +39,29 @@ geeglm<- function (formula, family = gaussian, data = parent.frame(),
 
   call <- match.call(expand.dots = TRUE)
   glmcall <- call
-  glmcall$id <- glmcall$jack <- glmcall$control <- glmcall$corstr <- glmcall$waves <- glmcall$zcor <- glmcall$std.err <- glmcall$scale.fix <- glmcall$scale.value <- NULL
+  glmcall$id <- glmcall$jack <- glmcall$control <- glmcall$corstr <-
+    glmcall$waves <- glmcall$zcor <- glmcall$std.err <-
+      glmcall$scale.fix <- glmcall$scale.value <- NULL
   glmcall[[1]] <- as.name("glm")
   glmFit <- eval(glmcall, parent.frame())
   mf <- call
   mf[[1]] <- as.name("model.frame")
 
+  modelmat <- model.matrix(glmFit)
+  qqrr <- qr(modelmat)
+  if (qqrr$rank < ncol(modelmat)){
+    print(head(modelmat))
+    stop("Model matrix is rank deficient; geeglm can not proceed\n")
+  }
+
+
+
+
+
+    
+  
+
+  
   mftmp <- mf
   mftmp$family <- mftmp$corstr <- mftmp$control <- mftmp$zcor <- mftmp$std.err <- NULL
 

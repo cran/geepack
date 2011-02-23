@@ -1,3 +1,14 @@
+2011-02-23  Søren Højsgaard <sorenh@agrsci.dk>
+
+	* In geeglm is checked if the model matrix is rank deficient; if
+	so then geeglm exits. Thanks to Jason D Thorpe for pointing this out.
+
+	* Bug in anova fixed. Thanks to Stefan Boehringer for pointing
+	this out.
+	
+	* Version 1.0-18 uploaded.
+	
+
 2010-01-26  Søren Højsgaard <sorenh@agrsci.dk>
 
 	* fixed2Zcor function has been added. This function makes it

@@ -42,7 +42,11 @@ anovageePrim2 <- function(m1, m2,...){
                                 paste(c("-1",colnames(nymm1)),collapse="+"),collapse=""))
             
       m1call <- m1$call
-      nymm1[,paste(formula(m1call)[[2]])] <- m1$y
+
+      ## BUGFIX provided by Stefan Boehringer
+      ##nymm1[,paste(formula(m1call)[[2]])] <- m1$y
+      nymm1[, paste(formula(m1)[[2]])] <- m1$y
+
       nymm1[,paste(m1call$id)] <- m1$id
       m1call$offset <- m1$offset
       m1call$weights <- m1$weights
