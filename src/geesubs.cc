@@ -1,3 +1,6 @@
+//workaround since it does not compile otherwise
+#undef NDEBUG
+
 using namespace std;
 
 #include "tntsupp.h"
