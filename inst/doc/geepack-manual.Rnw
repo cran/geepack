@@ -4,6 +4,7 @@
 
 \documentclass{article}
 \usepackage{boxedminipage,color,a4wide,shortvrb,hyperref}
+\usepackage[latin1]{inputenc}
 \usepackage[T1]{fontenc}
 \MakeShortVerb|
 
