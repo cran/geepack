@@ -31,20 +31,20 @@ geese <- function(formula = formula(data),
   mcall[[1]] <- as.name("model.frame")
   m <- eval(mcall, parent.frame())
 
-  y <- model.extract(m, response)
+  y <- model.extract(m, "response")
   if (is.null(dim(y))) N <- length(y) else N <- dim(y)[1]
   mterms <- attr(m, "terms")
   x <- model.matrix(mterms, m, contrasts)
-  offset <- model.extract(m, offset)
+  offset <- model.extract(m, "offset")
   if (is.null(offset)) offset <- rep(0, N)
-  w <- model.extract(m, weights)
+  w <- model.extract(m, "weights")
   if (is.null(w)) w <- rep(1, N)
   id <- model.extract(m, id)
-  waves <- model.extract(m, waves)
-  corp <- model.extract(m, corp)
+  waves <- model.extract(m, "waves")
+  corp <- model.extract(m, "corp")
   if (is.null(id)) stop("id variable not found.")
 
-##print(control)
+  ##print(control)
   
   ## setting up the scale model;
   ## borrowed idea from S+ function dglm by Gordon Smyth
@@ -54,7 +54,7 @@ geese <- function(formula = formula(data),
   m <- eval(mcall, parent.frame())
   terms <- attr(m, "terms")
   zsca <- model.matrix(terms, m, contrasts)
-  soffset <- model.extract(m, offset)
+  soffset <- model.extract(m, "offset")
   if (is.null(soffset)) soffset <- rep(0, N)  
  
   if (is.character(family)) family <- get(family)
@@ -152,9 +152,11 @@ geese.fit <- function(x, y, id,
   r <- ncol(zsca)
   
   ## Initial values setup
-  fit0 <- glm.fit(x, y, weights=weights, offset=offset, family=family)
+  ## This may fail for binomial model with log link (relative risk)
+  ## fit0 <- glm.fit(x, y, weights=weights, offset=offset, family=family)
   if (is.null(b)){
     ##b <- rep(1,p)
+    fit0 <- glm.fit(x, y, weights=weights, offset=offset, family=family)
     b <- fit0$coef
   }
   if (is.null(alpha)) {
@@ -164,7 +166,9 @@ geese.fit <- function(x, y, id,
   if (is.null(gm)) {
     ##gm <- rep(scale.value, r)
     qlf <- quasi(LINKS[sca.link.v])$linkfun
-    pr2 <- (residuals.glm(fit0, type="pearson")) ^ 2
+    ## pr2 <- (residuals.glm(fit0, type="pearson")) ^ 2
+    mu <- quasi(LINKS[mean.link.v])$linkinv(x %*% b)
+    pr2 <- (y - mu) ^ 2 / family$variance(mu)
     gm <- lm.fit(zsca, qlf(pr2), offset = soffset)$coef
   }
   param <- list(b, alpha, gm)
@@ -186,10 +190,20 @@ geese.fit <- function(x, y, id,
   names(ans$gamma) <- ans$zsca.names
   if (length(ans$alpha) > 0)  names(ans$alpha) <- ans$zcor.names
 
-  ans <- c(ans, list(clusz=clusz, control=control,
-                     model=list(mean.link=mean.link,
-                       variance=variance, sca.link=sca.link,
-                       cor.link=cor.link, corstr=corstr, scale.fix=scale.fix)))
+  param <- list(ans$beta, ans$alpha, ans$gamma)
+  infls <- .Call("infls_rap",  y, x, offset, soffset, weights,
+               linkwaves, zsca, zcor, corp,
+               clusz, geestr, corr, param, control, PACKAGE = "geepack")
+  rownames(infls) <- c(paste("beta", names(ans$beta), sep="_"),
+                       if (length(ans$gamma) > 0) paste("gamma", names(ans$gamma), sep="_") else NULL,
+                       if (length(ans$alpha) > 0) paste("alpha", names(ans$alpha), sep="_") else NULL)
+
+  ans <- c(ans,
+           list(infls=infls,
+                clusz=clusz, control=control,
+                model=list(mean.link=mean.link,
+                  variance=variance, sca.link=sca.link,
+                  cor.link=cor.link, corstr=corstr, scale.fix=scale.fix)))
   ans
 }
 
@@ -203,4 +217,17 @@ geese.control <- function (epsilon = 1e-04, maxit = 25, trace = FALSE,
   list(trace = as.integer(trace),
        jack = as.integer(jack), j1s = as.integer(j1s), fij = as.integer(fij),
        maxit = as.integer(maxit), epsilon = epsilon)
+}
+
+
+## compare coefficients
+compCoef <- function(fit0, fit1) {
+  v0 <- names(fit0$beta)
+  v1 <- names(fit1$beta)
+  v0idx <- (1:length(v0))[v0 %in% v1]
+  v1idx <- (1:length(v1))[v1 %in% v0]
+  delta <- fit0$beta[v0idx] - fit1$beta[v1idx]
+  infls <- fit0$infls[v0idx,] - fit1$infls[v1idx,]
+  robvar <- infls %*% t(infls)
+  list(delta = delta, variance = robvar)  
 }

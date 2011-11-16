@@ -29,7 +29,7 @@ genZcor(clusz, waves, corstrv)
   \item{}{the design matrix for the correlation structure}  
 }
 %\references{ a }
-\author{Jun Yan,  jyan@stat.uiowa.edu}
+\author{Jun Yan \email{jyan.stat@gmail.com}}
 % \note{  }
 
 

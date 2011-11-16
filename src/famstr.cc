@@ -151,7 +151,7 @@ double mu_eta_lwylog(double eta) {
 //variance functions
 double variance_binomial(double mu) {return mu * (1 - mu);}
 double v_mu_binomial(double mu) {return 1 - 2 * mu;}
-double validmu_binomial(double mu) {return mu > 0 && mu < 1;}
+bool validmu_binomial(double mu) {return mu > 0 && mu < 1;}
 
 double variance_gaussian(double mu) {return 1.0;}
 double v_mu_gaussian(double mu) {return .0;}
@@ -297,84 +297,94 @@ Variance::Variance(int var) {
 //Variance::Variance(int var) {
     switch(var) {
     case GAUSSIAN:
-      init(variance_gaussian, v_mu_gaussian); break;
+      init(variance_gaussian, v_mu_gaussian, validmu_gaussian); break;
     case BINOMIAL:
-      init(variance_binomial, v_mu_binomial); break;
+      init(variance_binomial, v_mu_binomial, validmu_binomial); break;
     case POISSON:
-      init(variance_poisson, v_mu_poisson); break;
+      init(variance_poisson, v_mu_poisson, validmu_poisson); break;
     case GAMMA:
-      init(variance_Gamma, v_mu_Gamma); break;
+      init(variance_Gamma, v_mu_Gamma, validmu_Gamma); break;
     }
 }
 
 //class GeeStr
 GeeStr::GeeStr(int n, Vector<int> meanlink, Vector<int> v,
-	 Vector<int> scalelink, int corrlink, int scalefix) :    
-    CorrLink(corrlink), ScaleFix_(scalefix) {
-    //int n = meanlink.size();
-    //MeanLink.newsize(n); V.newsize(n); ScaleLink.newsize(n);
-    Vector<Link> ML(n), SL(n); Vector<Variance> VS(n);
-    for (int i = 1; i <= n; i++) {
-      Link ml(meanlink(i)), sl(scalelink(i)); Variance vi(v(i));
-      ML(i) = ml; //MeanLink(i) = LINK[meanlink(i) - 1];
-      VS(i) = vi; //V(i) = VARIANCE[v(i) - 1]; 
-      SL(i) = sl; //ScaleLink(i) = LINK[scalelink(i) - 1];
-    }
-    MeanLink = ML; V = VS; ScaleLink = SL;
+	       Vector<int> scalelink, int corrlink, int scalefix) :    
+  CorrLink(corrlink), ScaleFix_(scalefix) {
+  //int n = meanlink.size();
+  //MeanLink.newsize(n); V.newsize(n); ScaleLink.newsize(n);
+  Vector<Link> ML(n), SL(n); Vector<Variance> VS(n);
+  for (int i = 1; i <= n; i++) {
+    Link ml(meanlink(i)), sl(scalelink(i)); Variance vi(v(i));
+    ML(i) = ml; //MeanLink(i) = LINK[meanlink(i) - 1];
+    VS(i) = vi; //V(i) = VARIANCE[v(i) - 1]; 
+    SL(i) = sl; //ScaleLink(i) = LINK[scalelink(i) - 1];
+  }
+  MeanLink = ML; V = VS; ScaleLink = SL;
 }
 DVector GeeStr::MeanLinkfun(const DVector &Mu, const IVector &Wave) {
-    int size = Mu.size(); DVector ans(size);
-    for (int i = 1; i <= size; i++) ans(i) = MeanLink(Wave(i)).linkfun(Mu(i));
-    return ans;
+  int size = Mu.size(); DVector ans(size);
+  for (int i = 1; i <= size; i++) ans(i) = MeanLink(Wave(i)).linkfun(Mu(i));
+  return ans;
 }
 DVector GeeStr::MeanLinkinv(const DVector &Eta, const IVector &Wave) {
-    int size = Eta.size(); DVector ans(size);
-    for (int i = 1; i <= size; i++) ans(i) = MeanLink(Wave(i)).linkinv(Eta(i));
-    return ans;
+  int size = Eta.size(); DVector ans(size);
+  for (int i = 1; i <= size; i++) ans(i) = MeanLink(Wave(i)).linkinv(Eta(i));
+  return ans;
 }
 DVector GeeStr::MeanMu_eta(const DVector &Eta, const IVector &Wave) {
-    int size = Eta.size(); DVector ans(size);
-    for (int i = 1; i <= size; i++) ans(i) = MeanLink(Wave(i)).mu_eta(Eta(i));
-    return ans;
+  int size = Eta.size(); DVector ans(size);
+  for (int i = 1; i <= size; i++) ans(i) = MeanLink(Wave(i)).mu_eta(Eta(i));
+  return ans;
 }
 DVector GeeStr::ScaleLinkfun(const DVector &Mu, const IVector &Wave) {
-    int size = Mu.size(); DVector ans(size);
-    for (int i = 1; i <= size; i++) ans(i) = ScaleLink(Wave(i)).linkfun(Mu(i));
-    return ans;
+  int size = Mu.size(); DVector ans(size);
+  for (int i = 1; i <= size; i++) ans(i) = ScaleLink(Wave(i)).linkfun(Mu(i));
+  return ans;
 }
 DVector GeeStr::ScaleLinkinv(const DVector &Eta, const IVector &Wave) {
-    int size = Eta.size(); DVector ans(size);
-    for (int i = 1; i <= size; i++) ans(i) = ScaleLink(Wave(i)).linkinv(Eta(i));
-    return ans;
+  int size = Eta.size(); DVector ans(size);
+  for (int i = 1; i <= size; i++) ans(i) = ScaleLink(Wave(i)).linkinv(Eta(i));
+  return ans;
 }
 DVector GeeStr::ScaleMu_eta(const DVector &Eta, const IVector &Wave) {
-    int size = Eta.size(); DVector ans(size);
-    for (int i = 1; i <= size; i++) ans(i) = ScaleLink(Wave(i)).mu_eta(Eta(i));
-    return ans;
+  int size = Eta.size(); DVector ans(size);
+  for (int i = 1; i <= size; i++) ans(i) = ScaleLink(Wave(i)).mu_eta(Eta(i));
+  return ans;
 }
 DVector GeeStr::CorrLinkfun(const DVector &Mu) {
-    int size = Mu.size(); DVector ans(size);
-    for (int i = 1; i <= size; i++) ans(i) = CorrLink.linkfun(Mu(i));
-    return ans;
+  int size = Mu.size(); DVector ans(size);
+  for (int i = 1; i <= size; i++) ans(i) = CorrLink.linkfun(Mu(i));
+  return ans;
 }
 DVector GeeStr::CorrLinkinv(const DVector &Eta) {
-    int size = Eta.size(); DVector ans(size);
-    for (int i = 1; i <= size; i++) ans(i) = CorrLink.linkinv(Eta(i));
-    return ans;
+  int size = Eta.size(); DVector ans(size);
+  for (int i = 1; i <= size; i++) ans(i) = CorrLink.linkinv(Eta(i));
+  return ans;
 }
 DVector GeeStr::CorrMu_eta(const DVector &Eta) {
-    int size = Eta.size(); DVector ans(size);
-    for (int i = 1; i <= size; i++) ans(i) = CorrLink.mu_eta(Eta(i));
-    return ans;
+  int size = Eta.size(); DVector ans(size);
+  for (int i = 1; i <= size; i++) ans(i) = CorrLink.mu_eta(Eta(i));
+  return ans;
 }
 DVector GeeStr::v(const DVector &Mu, const IVector &Wave) {
-    int size = Mu.size(); DVector ans(size);
-    for (int i = 1; i <= size; i++) ans(i) = V(Wave(i)).v(Mu(i));
-    return ans;
+  int size = Mu.size(); DVector ans(size);
+  for (int i = 1; i <= size; i++) ans(i) = V(Wave(i)).v(Mu(i));
+  return ans;
 }
 DVector GeeStr::v_mu(const DVector &Mu, const IVector &Wave) {
-    int size = Mu.size(); DVector ans(size);
-    for (int i = 1; i <= size; i++) ans(i) = V(Wave(i)).v_mu(Mu(i));
-    return ans;
+  int size = Mu.size(); DVector ans(size);
+  for (int i = 1; i <= size; i++) ans(i) = V(Wave(i)).v_mu(Mu(i));
+  return ans;
 }
-
+bool GeeStr::validMu(const DVector &Mu, const IVector &Wave) {
+  int size = Mu.size(); 
+  bool ans = true;
+  for (int i = 1; i <= size; i++) {
+    if ( !( V(Wave(i)).validmu(Mu(i)) ) ) {
+      ans = false;
+      break;
+    }
+  }
+  return ans;
+}

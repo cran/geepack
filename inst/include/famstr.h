@@ -5,6 +5,7 @@
 #include "geese.h"
 
 typedef double fun1(double);
+typedef bool fun2(double);
 
 enum links {L_0, IDENT, LOGIT, PROBIT, CLOGLOG, LOG, INVERSE, FISHERZ,
 	    LWYBC2, LWYLOG};
@@ -76,12 +77,13 @@ public:
 class Variance{
 protected:
   fun1 *_v, *_v_mu;
-  void init(fun1* v, fun1* v_mu) {
-    _v = v; _v_mu = v_mu;
+  fun2 *_validmu;
+  void init(fun1* v, fun1* v_mu, fun2 validmu) {
+    _v = v; _v_mu = v_mu; _validmu = validmu;
   }
 public:
-  Variance(fun1* v, fun1* v_mu) {
-    init(v, v_mu);
+  Variance(fun1* v, fun1* v_mu, fun2* validmu) {
+    init(v, v_mu, validmu);
   }
   //Variance(int var);
   //Variance() {int var = GAUSSIAN; Variance(var);} 
@@ -89,6 +91,7 @@ public:
   ~Variance() {}
   double v(double mu) {return _v(mu);}
   double v_mu(double mu) {return _v_mu(mu);}
+  bool validmu(double mu) {return _validmu(mu);}
 };
 
 /*
@@ -131,6 +134,7 @@ public:
   DVector CorrMu_eta(const DVector &Eta);
   DVector v(const DVector &Mu, const IVector &Wave);
   DVector v_mu(const DVector &Mu, const IVector &Wave);
+  bool validMu(const DVector &Mu, const IVector &Wave);
 };
 
 

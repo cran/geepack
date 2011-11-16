@@ -157,7 +157,7 @@ geese.fit(x, y, id, offset = rep(0, N), soffset = rep(0, N),
   \emph{Statistics in Medicine}, \bold{23}, 859--880. 
   
 }
-\author{Jun Yan \email{jyan@stat.uiowa.edu}}
+\author{Jun Yan \email{jyan.stat@gmail.com}}
 \seealso{
   \code{\link{glm}}, \code{\link{lm}}, \code{\link{ordgee}}.
 }
