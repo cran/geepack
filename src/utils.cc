@@ -34,8 +34,8 @@ Fortran_Matrix<double> rho2mat(const Vector<double> &rho) {
 
 //solve(a, b = ident(n))
 DMatrix solve(const DMatrix &a, const DMatrix &b) {
-  Subscript m = a.dim(1); assert(m == a.dim(2));
-  Subscript n = b.dim(1); assert(m == n);
+  Subscript m = a.dim(1); // assert(m == a.dim(2));
+  Subscript n = b.dim(1); // assert(m == n);
   Subscript l = b.dim(2);
   Vector<Subscript> index(m);
   DMatrix T(a), B(b);
@@ -158,7 +158,7 @@ Vector<int> clussize(DVector &ID) {
 }
 
 DVector SMult(const DVector &v1, const DVector &v2) {
-  assert (v1.dim() == v2.dim());
+  // assert (v1.dim() == v2.dim());
   DVector ans = v1;
   for (int i = 1; i <= v1.dim(); i++)
     ans(i) = v1(i) * v2(i);
@@ -166,7 +166,7 @@ DVector SMult(const DVector &v1, const DVector &v2) {
 }
 
 DMatrix SMult(const DVector &v, const DMatrix &m) {
-  assert (v.dim() == m.dim(1));
+  // assert (v.dim() == m.dim(1));
   DMatrix tmp = m;
   for (int i = 1; i <= m.dim(1); i++)
     for (int j = 1; j <= m.dim(2); j++)

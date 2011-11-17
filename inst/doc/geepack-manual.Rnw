@@ -85,9 +85,10 @@ wrong result:
 @ 
 <<>>=
 set.seed(123)
-library(doBy)
+## library(doBy)
 simdatPerm <- simdat[sample(nrow(simdat)),]
-simdatPerm <- orderBy(~idvar, simdatPerm)
+## simdatPerm <- orderBy(~idvar, simdatPerm)
+simdatPerm <- simdatPerm[order(simdatPerm$idvar),]
 head(simdatPerm)
 @ %def 
 
@@ -108,7 +109,8 @@ wrong result (the clusters are not recognized):
 
 @ 
 <<>>=
-simdatPerm2 <- orderBy(~timeorder, data=simdat)
+## simdatPerm2 <- orderBy(~timeorder, data=simdat)
+simdatPerm2 <- simdat[order(simdat$timeorder),]
 geeglm(yvar~tvar, id=idvar, data=simdatPerm2, corstr="ar1")
 @ %def 
 

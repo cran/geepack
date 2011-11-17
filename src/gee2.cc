@@ -23,6 +23,74 @@ IVector comp_lev(GeeStr &geestr, Corr &cor) {
   return level;
 }
 
+DMatrix gee_infls(DVector &Y, DMatrix &X, 
+		  DVector &Offset, DVector &Doffset, DVector &W,
+		  IVector &LinkWave, 
+		  DMatrix &Zsca, DMatrix &Zcor, DVector &CorP, 
+		  IVector &Clusz,  
+		  GeeStr &geestr, Corr &cor, GeeParam &par, Control &con) {
+  Hess Hi(par), H(par); Grad Gi(par);
+
+  int n = Clusz.size();
+  IVector ZcorSize(n);
+  //if (cor.nparam() > 1) 
+  if (cor.corst() > AR1) // == UNSTRUCTRUED || USERDEFINED || FIXED
+    for (int i = 1; i <= n; i++) 
+      ZcorSize(i) = Clusz(i) * (Clusz(i) - 1) / 2;
+  else ZcorSize = 1;
+
+  IVector level(2); level = 0;
+  if (geestr.ScaleFix() != 1) level(1) = 1;
+  if (cor.nparam() > 0) level(2) = 1;
+  
+  int p = par.p(), q = par.q(), r = par.r();
+  DMatrix L11(p,p), L12(p,r), L13(p,q), L22(r,r), L23(r,q), L33(q,q); 
+  int l = p + q + r;
+  DMatrix infls(l, n), HH(l, l);
+
+  Index1D I(0,0), J(0,0);
+  Index1D I1(0, 0), JJ(0, 0), I2(0, 0), I3(0, 0);
+  I1 = Index1D(1, p);
+  I2 = Index1D(p + 1, p + r);
+  I3 = Index1D(p + r + 1, p + r + q);
+  for (int i = 1; i <= n; i++) {
+    int s1 = Clusz(i), s2 = ZcorSize(i), crs = s1 * (s1 - 1) / 2;;
+    I = Index1D(1, s1) + I.ubound();
+    if (s2 > 0) J = Index1D(1, s2) + J.ubound();
+    DVector PRi(s1), Vi(s1), V_Mui(s1); DMatrix Di(s1,p);
+    gee_prep(Y, X, Offset, I, LinkWave, par, geestr, PRi, Di, Vi, V_Mui);
+    DVector Phii(s1); DMatrix D2i(s1, r);
+    PhiandD2(I, LinkWave, Doffset, Zsca, par, geestr, Phii, D2i);
+    DMatrix R(s1, s1), E(crs, q);
+    RandE(Zcor, I, J, CorP, par, geestr, cor, R, E);
+    //cout << "i = " << i;
+    DVector Wi = asVec(VecSubs(W, I));
+    HiandGi(PRi, Phii, Di, R, Vi, V_Mui, D2i, E, Wi, level, Hi, Gi);
+    //cout << "Hi = " << Hi; cout << "H = " << H;
+    //cout << "Gi = " << Gi;
+    H.inc(Hi); 
+    JJ = Index1D(i, i);
+    infls(I1, JJ) = asColMat(Gi.U1());
+    if (level(1) == 1)  infls(I2, JJ) = asColMat(Gi.U2());
+    if (level(2) == 1)  infls(I3, JJ) = asColMat(Gi.U3());
+  }
+  Hess Hinv = inv(H, level);
+  I1 = Index1D(1, p);
+  HH(I1, I1) = Hinv.A();
+  if (level(1) == 1) {
+    HH(I2, I1) = Hinv.B();
+    HH(I2, I2) = Hinv.C();
+  }
+  if (level(2) == 1) {
+    HH(I3, I1) = Hinv.D();
+    HH(I3, I3) = Hinv.F();
+    if (level(1) == 1) HH(I3, I2) = Hinv.E();
+  }
+  infls = HH * infls;
+  return infls;
+}
+
+
 void gee_var(DVector &Y, DMatrix &X, 
 	     DVector &Offset, DVector &Doffset, DVector &W,
 	     IVector &LinkWave, 
@@ -39,7 +107,7 @@ void gee_var(DVector &Y, DMatrix &X,
   DMatrix L11(p,p), L12(p,r), L13(p,q), L22(r,r), L23(r,q), L33(q,q); 
 
   Index1D I(0,0), J(0,0);
-  for (int i = 1; i < Clusz.size(); i++) {
+  for (int i = 1; i <= Clusz.size(); i++) {
     int s1 = Clusz(i), s2 = ZcorSize(i), crs = s1 * (s1 - 1) / 2;;
     I = Index1D(1, s1) + I.ubound();
     if (s2 > 0) J = Index1D(1, s2) + J.ubound();
@@ -92,7 +160,8 @@ void gee_var(DVector &Y, DMatrix &X,
 }
 
 
-double update_beta(DVector &Y, DMatrix &X, DVector &Offset, DVector &W,
+double update_beta(DVector &Y, DMatrix &X, DVector &Offset, 
+		   DVector &W, DVector &Phi,
 		   IVector &LinkWave, DVector &CorP,
 		   DMatrix &Zcor,  IVector &Clusz,
 		   IVector &ZcorSize, IVector &Jack, 
@@ -110,16 +179,25 @@ double update_beta(DVector &Y, DMatrix &X, DVector &Offset, DVector &W,
     if (Jack(i) == 1) continue;
     DVector PRi(s1); DMatrix Di(s1,p);
     PRandD(Y, X, Offset, I, LinkWave, par, geestr, PRi, Di);
-
-    DMatrix R = getR(Zcor, I, J, CorP, par, geestr, cor);
+    DVector rootInvPhii = sqrt(recip(asVec(VecSubs(Phi, I))));
     DVector rootWi = sqrt(asVec(VecSubs(W, I)));
-    //DMatrix WiR = rootWi * R * rootWi;
     Di = SMult(rootWi, Di); PRi = SMult(rootWi, PRi);
+    Di = SMult(rootInvPhii, Di); PRi = SMult(rootInvPhii, PRi);
+    DMatrix R = getR(Zcor, I, J, CorP, par, geestr, cor);
     H = H + AtBiC(Di, R, Di);
     G = G + AtBiC(Di, R, PRi);
   }
   DVector Del = solve(H, G);
-  par.set_beta(par.beta() + Del);
+  DVector Bnew = par.beta() + Del;
+  while (1) {
+    //    cerr << "in updating beta: " << "Del = " << Del << endl;
+    DVector Eta = X * Bnew + Offset;
+    DVector Mu = geestr.MeanLinkinv(Eta, LinkWave);
+    if (geestr.validMu(Mu, LinkWave)) break;
+    Del = 0.5 * Del;
+    Bnew = par.beta() + Del;
+  }
+  par.set_beta(Bnew);
   del = fmax(fabs(Del));
   return del;
 }
@@ -233,7 +311,8 @@ void gee_est(DVector &Y, DMatrix &X,
       cerr << "beta = " << par.beta() << "gamma = " << par.gamma() << "alpha = " << par.alpha();
     }
     //updating beta;
-    Del(1) = update_beta(Y, X, Offset, W, LinkWave, CorP, Zcor, Clusz, ZcorSize, Jack, par, geestr, cor);
+    Phi = getPhi(Doffset, Zsca, LinkWave, par, geestr);
+    Del(1) = update_beta(Y, X, Offset, W, Phi, LinkWave, CorP, Zcor, Clusz, ZcorSize, Jack, par, geestr, cor);
 
     //updating gamma;
     PR = getPR(Y, X, Offset, LinkWave, par, geestr);
@@ -243,7 +322,6 @@ void gee_est(DVector &Y, DMatrix &X,
 
     //updating alpha;
     Phi = getPhi(Doffset, Zsca, LinkWave, par, geestr);
-
     Del(3) = update_alpha(PR, Phi, CorP, W, Clusz, ZcorSize, Jack, Zcor, par, geestr, cor);
 
     del = fmax(Del);
@@ -400,6 +478,25 @@ extern "C" {
 
     gee_top(Y, X, Offset, Doffset, W, LinkWave, Zsca, Zcor, CorP, Clusz, Geestr, Cor, Par, Con);
     SEXP ans = asSEXP(Par);
+    return ans;
+  }
+
+  /* return the influence functions for parameters */
+  SEXP infls_rap(SEXP y, SEXP x, SEXP offset, SEXP doffset, SEXP w,
+		 SEXP linkwave, SEXP zsca, SEXP zcor, SEXP corp,
+		 SEXP clusz, SEXP geestr, SEXP cor, SEXP par, SEXP con) {
+    DVector Y = asDVector(y), Offset = asDVector(offset), Doffset = asDVector(doffset), W = asDVector(w);
+    IVector LinkWave = asIVector(linkwave); 
+    DVector CorP = asDVector(corp); 
+    DMatrix X = asDMatrix(x), Zsca = asDMatrix(zsca), Zcor = asDMatrix(zcor);
+    IVector Clusz = asIVector(clusz); // ZcorSize = asIVector(zcorsize);
+    Control Con = asControl(con);   
+    GeeParam Par = asGeeParam(par);   
+    GeeStr Geestr = asGeeStr(geestr);   
+    Corr Cor = asCorr(cor);   
+
+    DMatrix infls = gee_infls(Y, X, Offset, Doffset, W, LinkWave, Zsca, Zcor, CorP, Clusz, Geestr, Cor, Par, Con);
+    SEXP ans = asSEXP(infls);
     return ans;
   }
 }

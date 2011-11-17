@@ -1,4 +1,6 @@
-//workaround since it does not compile otherwise
+// workaround since it does not compile otherwise --- Thank B. Ripley
+// I spent hours but could not figure out why it would not work 
+// without this undef. Should be keep it in mind. 
 #undef NDEBUG
 
 using namespace std;

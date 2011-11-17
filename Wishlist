@@ -1,3 +1,2 @@
 
-Create proper handling of fixed correlation structures when cluster sizes are unequal - either on the C-side or on the R-side.
-
+Create proper handling of fixed correlation structures when cluster sizes are unequal - either on the C-side or on the R-side. --- This was solved by Soren's function fixed2Zcor.

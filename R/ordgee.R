@@ -21,18 +21,18 @@ ordgee <- function(formula = formula(data), ooffset = NULL,
   mcall[[1]] <- as.name("model.frame")
   m <- eval(mcall, parent.frame())
 
-  id <- model.extract(m, id)
+  id <- model.extract(m, "id")
 ##  N <- length(unique(id))
   clusz <- unlist(lapply(split(id, id), length))
   maxclsz <- max(clusz)
   if (is.null(waves)) waves <- unlist(sapply(clusz, function(x) 1:x))
-  else waves <- model.extract(m, waves)
+  else waves <- model.extract(m, "waves")
 #   if (is.na(b)){
 #    foo <- polr(formula, data, ...)
 #    b <- c(foo$zeta, foo$coef)
 #   }
 
-  y <- model.extract(m, response)
+  y <- model.extract(m, "response")
   if (length(y) != length(id)) stop("response and id are not of the same length.")
 
   if (class(y)[1] != 'ordered') stop("response is not an ordered factor.")
@@ -84,11 +84,11 @@ ordgee <- function(formula = formula(data), ooffset = NULL,
   xmat <- cbind(xc, x) # note the negate sign!!!
   p <- ncol(xmat)
 
-  offset <- model.extract(m, offset)
+  offset <- model.extract(m, "offset")
   if (is.null(offset)) offset <- rep(0, length(id))
   offset <- - rep(offset, rep(ncat, sum(clusz)))
 
-  w <- model.extract(m, weights)
+  w <- model.extract(m, "weights")
   if (is.null(w)) w <- rep(1, length(id))
   w <- rep(w, rep(ncat, sum(clusz)))
 

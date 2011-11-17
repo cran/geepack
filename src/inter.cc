@@ -104,34 +104,6 @@ SEXP asSEXP(const IVector &a) {
   return val;
 }
 
-SEXP asSEXP(const Vector<DVector> &a) { 
-  // convert a VDVector to a matrix
-  int nrow = a.size(), ncol = a(1).size();
-  int size = nrow * ncol;
-
-  SEXP val;
-  PROTECT(val = NEW_NUMERIC(size));
-  double *p = NUMERIC_POINTER(val);
-
-  int k = 0;
-  for (int i = 1; i <= a.size(); i++) {
-    for (int j = 1; j <= a(i).size(); j++) {
-      p[k++] = a(i)(j);
-    }
-  }
-
-  //  SET_CLASS(val, ScalarString(mkChar("matrix")));
-
-  SEXP dim;
-  PROTECT(dim = NEW_INTEGER(2));
-  INTEGER(dim)[0] = ncol; INTEGER(dim)[1] = nrow;
-  SET_DIM(val, dim);
-
-  UNPROTECT(2);
-  return val;
-}
-
-
 
 Control asControl(SEXP con) {
   //con is a list of trace, jack, j1s, fij, maxiter, epsilon
