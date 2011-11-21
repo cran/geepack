@@ -1,4 +1,13 @@
+2011-11-21  Jun Yan  <jun.yan@uconn.edu>
+
+	* Added an example to function compCoef.
+
+	* Changed the JSS paper year from 2005 to 2006 in CITATION.
+
 2011-11-16  Jun Yan  <jun.yan@uconn.edu>
+
+	* Added function relRisk for relative risk regression
+	--- regression for binary response with log link.
 
 	* Added function relRisk for relative risk regression
 	--- regression for binary response with log link.

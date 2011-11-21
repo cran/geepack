@@ -1,6 +1,6 @@
 Package: geepack
-Version: 1.1-2
-Date: 2011-11-16
+Version: 1.1-3
+Date: 2011-11-21
 Title: Generalized Estimating Equation Package
 Author: Jun Yan <jun.yan@uconn.edu>, Søren Højsgaard
         <sorenh@agrsci.dk>, Ulrich Halekoh <Ulrich.Halekoh@agrsci.dk>
@@ -12,6 +12,6 @@ Description: Generalized estimating equations solver for parameters in
 BuildVignettes: FALSE
 Encoding: latin1
 License: GPL (>= 3)
-Packaged: 2011-11-16 18:14:50 UTC; jyan
+Packaged: 2011-11-21 12:13:23 UTC; jyan
 Repository: CRAN
-Date/Publication: 2011-11-17 11:25:50
+Date/Publication: 2011-11-21 16:02:13
