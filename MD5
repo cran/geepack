@@ -1,5 +1,5 @@
-ac5d7555a8e9c62ece8701e08bf4af09 *ChangeLog
-3490eb7466666169f0e8ae37ad44ee97 *DESCRIPTION
+1e3f2ab7b45c56acda1da280d8de3d91 *ChangeLog
+c6ab3347c91b6afb6eff808872051e09 *DESCRIPTION
 419277c04635cf139654cefe064406fc *NAMESPACE
 96a6f5b5b46df0f9d3ac6bbc3327eada *R/fixed2Zcor.R
 59e982dac0a9e5004b8290399c2a5e6d *R/geeglm-anova.R
@@ -71,7 +71,7 @@ fc96c21e1b768ed26b82a12b1a80b10a *man/geese-internal.Rd
 7d7f5ba24d1c68f055eac8ae028b02ee *man/geese.control.Rd
 382e1e89608e8f86a90186c62306d6d0 *man/genZcor.Rd
 25ef8f9ca91a04270a892c3006c40a42 *man/ordgee.Rd
-b2fabd5e5d4c6aa315ce4942d97f8537 *man/relRisk.Rd
+54b06bbedd91bf0aa774ee7e05a435fc *man/relRisk.Rd
 8bb53f14cf0f67b02bdd966aadb484a2 *src/Makevars
 a67713e7bd2af24366a6de5161d60e16 *src/famstr.cc
 e8ed446af0288319ccb7dbf5a2f65a09 *src/gee2.cc

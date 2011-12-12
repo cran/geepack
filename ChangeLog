@@ -1,5 +1,9 @@
 2011-11-21  Jun Yan  <jun.yan@uconn.edu>
 
+	* Added an example to function relRisk.
+
+2011-11-21  Jun Yan  <jun.yan@uconn.edu>
+
 	* Added an example to function compCoef.
 
 	* Changed the JSS paper year from 2005 to 2006 in CITATION.
