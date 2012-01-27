@@ -1,7 +1,7 @@
 #ifndef ORDGEE_H
 #define ORDGEE_H
 
-#include "tnt/region1d.h"
+//#include "tnt/region1d.h"
 #include "tntsupp.h"
 #include "geese.h"
 

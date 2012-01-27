@@ -195,12 +195,41 @@ void AandCis(Vector<Lgtdl> &Yall, DMatrix &X,
 	     DMatrix &A, Vector<DVector> &Cis);
 */
 
+
+/* 
+This fix was suggested by 
+Jeffrey Horner <jeffrey.horner@vanderbilt.edu>
+and Cole Beck <cole.beck@vanderbilt.edu>.
+Cole Beck's email on Jan. 4, 2012 explains why:
+
+I believe the function definition for the template function "Valid" (see geesubs.cc) should actually be in the header file.  Taken from http://www.cplusplus.com/doc/tutorial/templates/:
+
+Because templates are compiled when required, this forces a restriction for multi-file projects: the implementation (definition) of a template class or function must be in the same file as its declaration. That means that we cannot separate the interface in a separate header file, and that we must include both interface and implementation in any file that uses the templates.
+*/
+
 //get the valid components in X by valid indicator VI
 template<class T>
-Vector<T> Valid(Vector<T> &X, IVector &VI);
+Vector<T> Valid(Vector<T> &X, IVector &VI) {
+ int l = sum(VI), k = 1;
+ Vector<T> ans(l);
+ for (int i = 1; i <= VI.dim(); i++) {
+   if (VI(i) == 1) ans(k++) = X(i);
+ }
+ return ans;
+}
 
 template<class T>
-Fortran_Matrix<T> Valid(Fortran_Matrix<T> &X, IVector &VI);
+Fortran_Matrix<T> Valid(Fortran_Matrix<T> &X, IVector &VI) {
+ int l = sum(VI), k = 1, nc = X.num_cols();
+ Fortran_Matrix<T> ans(l, nc);
+ for (int i = 1; i <= VI.dim(); i++) {
+   if (VI(i) == 1) {
+     for (int j = 1; j <= nc; j++) ans(k, j) = X(i, j);
+     k++;
+   }
+ }
+ return ans;
+}
 
 IVector genVI(IVector &Si, int c = 1);
 
