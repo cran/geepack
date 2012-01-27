@@ -1,4 +1,4 @@
-using namespace std;
+// using namespace std;
 
 //  #include "tntsupp.h"
 //  #include "geese.h"
@@ -307,8 +307,12 @@ void gee_est(DVector &Y, DMatrix &X,
   int iter; double del;
   for (iter = 0; iter < con.maxiter(); iter++) {
     if (con.trace() == 1) {
-      cerr << "iter " << iter << endl;
-      cerr << "beta = " << par.beta() << "gamma = " << par.gamma() << "alpha = " << par.alpha();
+      //cerr << "iter " << iter << endl;
+      //cerr << "beta = " << par.beta() << "gamma = " << par.gamma() << "alpha = " << par.alpha();
+      Rprintf("iter = %d\n", iter);
+      Rprintf("beta = "); VecPrint(par.beta()); 
+      Rprintf("gamma = "); VecPrint(par.gamma());
+      Rprintf("alpha = "); VecPrint(par.alpha());
     }
     //updating beta;
     Phi = getPhi(Doffset, Zsca, LinkWave, par, geestr);

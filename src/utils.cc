@@ -1,9 +1,18 @@
-using namespace std;
+// using namespace std;
+
+extern "C"{
+#include <R.h>
+}
 
 #include <math.h>
 
 #include "tntsupp.h"
 #include "geese.h"
+
+void VecPrint(const DVector &v) {
+  for (int i = 0; i < v.dim(); i++) Rprintf("%f ", v[i]);
+  Rprintf("\n");
+}
 
 Fortran_Matrix<double> ident (int n) {
   Fortran_Matrix<double> ans(n,n);

@@ -1,4 +1,4 @@
-using namespace std;
+// using namespace std;
 
 //  #include "tnt/region1d.h"
 //  #include "tntsupp.h"
@@ -457,8 +457,12 @@ void ordgee_est(DVector &Y, DMatrix &X,
   int iter; double del;
   for (iter = 0; iter < con.maxiter(); iter++) {
     if (con.trace() == 1) {
-      cerr << "iter " << iter << endl;
-      cerr << "beta = " << par.beta() << "gamma = " << par.gamma() << "alpha = " << par.alpha();
+      //cerr << "iter " << iter << endl;
+      //cerr << "beta = " << par.beta() << "gamma = " << par.gamma() << "alpha = " << par.alpha();
+      Rprintf("iter = %d\n", iter);
+      Rprintf("beta = "); VecPrint(par.beta()); 
+      Rprintf("gamma = "); VecPrint(par.gamma());
+      Rprintf("alpha = "); VecPrint(par.alpha());
     }
     //updating beta;
     Del(1) = update_beta(Y, X, Offset, Ooffset, W, LinkWave, 

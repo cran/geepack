@@ -1,7 +1,11 @@
+// Sep. 17, 2012: 
 // workaround since it does not compile otherwise --- Thank B. Ripley
 // I spent hours but could not figure out why it would not work 
-// without this undef. Should be keep it in mind. 
-#undef NDEBUG
+// without this undef. Should keep it in mind. 
+// Jan. 26, 2012: 
+// This line is commented out to remove NOTE of assert
+// from R CMD check, as suggested by K. Hornik and B. Ripley.
+// #undef NDEBUG
 
 using namespace std;
 
@@ -514,31 +518,6 @@ void HisandGis(DVector &Y, DMatrix &X,
     HiandGi(PRi, Phii, Di, R, Vi, V_Mui, D2i, E, Wi, level, Hi, Gi);
     His(i) = Hi; Gis(i) = Gi;
   }
-}
-
-
-//get the valid components in X by valid indicator VI
-template<class T>
-Vector<T> Valid(Vector<T> &X, IVector &VI) {
-  int l = sum(VI), k = 1;
-  Vector<T> ans(l); 
-  for (int i = 1; i <= VI.dim(); i++) {
-    if (VI(i) == 1) ans(k++) = X(i);
-  }
-  return ans;
-}
-
-template<class T>
-Fortran_Matrix<T> Valid(Fortran_Matrix<T> &X, IVector &VI) {
-  int l = sum(VI), k = 1, nc = X.num_cols();
-  Fortran_Matrix<T> ans(l, nc);
-  for (int i = 1; i <= VI.dim(); i++) {
-    if (VI(i) == 1) {
-      for (int j = 1; j <= nc; j++) ans(k, j) = X(i, j);
-      k++;
-    }
-  }
-  return ans;
 }
 
 IVector genVI(IVector &Si, int c) {

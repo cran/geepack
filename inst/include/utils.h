@@ -4,6 +4,8 @@
 #include "tntsupp.h"
 #include "geese.h"
 
+void VecPrint(const DVector &v);
+
 Fortran_Matrix<double> ident (int n);
 
 Fortran_Matrix<double> MatRowCol(const Fortran_Matrix<double> &mat, const Vector<double> &r, const Vector<double> &c);

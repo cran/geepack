@@ -1,3 +1,19 @@
+2012-01-27  Jun Yan  <jun.yan@uconn.edu>
+
+	* Commented out #undef NDEBUG in geesubs.cc.
+	* Added a VecPrint function in utils.cc to print DVector;
+	this replaces usage of cerr.
+
+2012-01-09  Jun Yan  <jun.yan@uconn.edu>
+
+	* Thank Jeffrey Horner <jeffrey.horner@vanderbilt.edu>
+	and Cole Beck <cole.beck@vanderbilt.edu> for fixing the
+	undefined symbol error (see 2011-11-14 entry:
+	_Z5ValidIiEN3TNT6VectorIT_EERS3_RNS1_IiEE).
+	The template function "Valid" (in original geesubs.cc)
+	should actually be in the header file.
+	This may fix the compilation error on ubuntu 11.10 too.
+
 2011-11-21  Jun Yan  <jun.yan@uconn.edu>
 
 	* Added an example to function relRisk.
