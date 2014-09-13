@@ -1,3 +1,11 @@
+2014-09-13  Søren Højsgaard <sorenh@math.aau.dk>
+
+	* Maintainer of geepack is now Søren Højsgaard
+
+	* Location of vignette fixed
+
+	* Version 1.2-0 uploaded
+
 2012-01-27  Jun Yan  <jun.yan@uconn.edu>
 
 	* Commented out #undef NDEBUG in geesubs.cc.
@@ -30,7 +38,7 @@
 	--- regression for binary response with log link.
 
 	* Added function relRisk for relative risk regression
-	--- regression for binary response with log link.
+ 	--- regression for binary response with log link.
 
 	* Added function compCoef for comparing coefficients
 	of the same sets of covariates between nested models.
