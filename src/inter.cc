@@ -3,11 +3,9 @@ using namespace std;
 #include "tntsupp.h"
 #include "geese.h"
 
-extern "C"{
 #include <R.h>
 #include <Rmath.h>
 #include <Rdefines.h>
-}
 
 #include "famstr.h"
 #include "param.h"

@@ -4,11 +4,10 @@ using namespace std;
 #include "geese.h"
 #include "utils.h"
 #include "famstr.h"
-#include "float.h"
+#include <cfloat>
 
-extern "C" {
 #include <Rmath.h>
-}
+
 /*
 typedef double fun1(double);
 typedef double fun2(double, int);

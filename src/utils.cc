@@ -1,10 +1,7 @@
 // using namespace std;
 
-extern "C"{
+#include <cmath>
 #include <R.h>
-}
-
-#include <math.h>
 
 #include "tntsupp.h"
 #include "geese.h"

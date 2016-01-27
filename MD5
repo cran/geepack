@@ -1,5 +1,5 @@
 706152b8be6d8b2ca3a5ebdc9fcd8c1e *ChangeLog
-639690685bcc0878aaf422c56f09301b *DESCRIPTION
+b930f1472f99e534c26b2ab53e993e0e *DESCRIPTION
 419277c04635cf139654cefe064406fc *NAMESPACE
 96a6f5b5b46df0f9d3ac6bbc3327eada *R/fixed2Zcor.R
 59e982dac0a9e5004b8290399c2a5e6d *R/geeglm-anova.R
@@ -74,11 +74,11 @@ fc96c21e1b768ed26b82a12b1a80b10a *man/geese-internal.Rd
 25ef8f9ca91a04270a892c3006c40a42 *man/ordgee.Rd
 54b06bbedd91bf0aa774ee7e05a435fc *man/relRisk.Rd
 8bb53f14cf0f67b02bdd966aadb484a2 *src/Makevars
-a67713e7bd2af24366a6de5161d60e16 *src/famstr.cc
+cdc0cc143af33cd5665ac112d92afdc9 *src/famstr.cc
 96ddcb6778b6c316ddf5b9e27d4fcab4 *src/gee2.cc
 a03f71117e827c1b67df1c8d0b2ebc50 *src/geesubs.cc
-e592864c942de117c0afb78b01d28019 *src/inter.cc
+6d10b391c5764570271035f55323a6d9 *src/inter.cc
 a00d55d44890eb2796f6e01d2c778516 *src/ordgee.cc
 cc4f054a5e831b0dccda7ffe2398143b *src/param.cc
-5f2f46506fe7fdeb7dc87ae35c53e4a2 *src/utils.cc
+aa7d692722f3b034aa4ff9dbe6851947 *src/utils.cc
 3be52b7e7574dc6e40ca55938a8b3069 *vignettes/geepack-manual.Rnw
