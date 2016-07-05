@@ -1,5 +1,13 @@
 useDynLib(geepack)
 
+importFrom("graphics", "abline", "lines", "plot")
+importFrom("stats", "binomial", "coef", "fitted", "formula",
+           "gaussian", "glm.fit", "is.empty.model", "lm.fit", "lowess",
+           "model.extract", "model.matrix", "model.offset",
+           "model.response", "model.weights", "na.omit", "naresid",
+           "pchisq", "printCoefmat", "quasi", "residuals",
+           "summary.glm", "var")
+importFrom("utils", "head")
 
 # maintained by Soren
 export(geeglm, fixed2Zcor, anovageePrim2)
@@ -18,3 +26,4 @@ export(compCoef)
 S3method(print, geese)
 S3method(summary, geese)
 S3method(print, summary.geese)
+
