@@ -10,7 +10,7 @@ anovageePrim2 <- function(m1, m2,...){
 
   m2inm1 <- all(apply(e2,2,var) < 1e-10)
   m1inm2 <- all(apply(e1,2,var) < 1e-10)
-  
+
   if (!any(c(m2inm1,m1inm2)))
     cat("Models not nested\n")
   else 
@@ -52,8 +52,10 @@ anovageePrim2 <- function(m1, m2,...){
       m1call$weights <- m1$weights
       m1call$formula <- formula1
       m1call$data <- nymm1
+
       m1ny <- eval(m1call)
 
+      
       ## Calculate wald statistic
       beta <- coef(m1ny)
       vbeta <- summary(m1ny)$cov.unscaled
@@ -88,7 +90,7 @@ anova.geeglmlist <-
     warning("Models with response ", deparse(responses[!sameresp]), 
             " removed because response differs from ", "model 1")
   }
-  
+
   ns <- sapply(object, function(x) length(x$residuals))
   if (any(ns != ns[1])) 
     stop("models were not all fitted to the same size of dataset")
@@ -99,7 +101,7 @@ anova.geeglmlist <-
     m2 <- objects[[1]][[2]]
   else 
     m2 <- NULL
-  
+
   value <- anovageePrim2(m1,m2)
   return(value)
 }
@@ -107,7 +109,8 @@ anova.geeglmlist <-
 
 anova.geeglm<-function (object, ..., dispersion = NULL, test = NULL) 
 {
-  dotargs <- list(...)
+
+    dotargs <- list(...)
   named <- if (is.null(names(dotargs))) 
     rep(FALSE, length(dotargs))
   else (names(dotargs) != "")
@@ -117,10 +120,11 @@ anova.geeglm<-function (object, ..., dispersion = NULL, test = NULL)
   dotargs <- dotargs[!named]
   is.glm <- unlist(lapply(dotargs, function(x) inherits(x, "glm")))
   dotargs <- dotargs[is.glm]
-  if (length(dotargs) > 0) 
+
+    if (length(dotargs) > 0) 
     return(anova.geeglmlist(c(list(object), dotargs), dispersion = dispersion, 
                             test = test))
-  
+
   varlist <- attr(object$terms, "variables")
   ##print(varlist)
   x <- if (n <- match("x", names(object), 0)) 
@@ -128,7 +132,8 @@ anova.geeglm<-function (object, ..., dispersion = NULL, test = NULL)
   else model.matrix(object)
   
   varseq <- attr(x, "assign")
-  
+
+
   nvars <- max(0, varseq)
   betaList <- vbetaList <- NULL
   

@@ -175,7 +175,7 @@ geeglm<- function (formula, family = gaussian, data = parent.frame(),
   value$cor.link <- ans$model$cor.link
   value$control <- ans$control
   value$std.err <- std.err
-  class(value) <- c("geeglm", "gee", "glm")
+  class(value) <- c("geeglm", "gee", "glm", "lm")
   return(value)
 }
     

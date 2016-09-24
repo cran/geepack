@@ -1,5 +1,12 @@
 2014-09-13  Søren Højsgaard <sorenh@math.aau.dk>
 
+	* geeglm objects now inherits from lm also (to prevent warning
+	when calling predict). 
+
+	* Version 1.2-1 uploaded
+
+2014-09-13  Søren Højsgaard <sorenh@math.aau.dk>
+
 	* Maintainer of geepack is now Søren Højsgaard
 
 	* Location of vignette fixed
