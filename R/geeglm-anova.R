@@ -57,23 +57,33 @@ anovageePrim2 <- function(m1, m2,...){
 
       
       ## Calculate wald statistic
-      beta <- coef(m1ny)
+      beta  <- coef(m1ny)
       vbeta <- summary(m1ny)$cov.unscaled
-      df<- dim(mm1)[2]-dim(mm2)[2]
-      rbeta<-rep(1,length(beta))
-      rbeta[1:df]<-0
-      beta0<-rev(rbeta)
-      zeroidx <- beta0==0
-      X2<-t(beta[zeroidx])%*% solve(vbeta[zeroidx,zeroidx,drop=FALSE])%*%beta[zeroidx]
-      
+      df    <- dim(mm1)[2] - dim(mm2)[2]
+      rbeta <- rep(1, length(beta))
+      rbeta[1:df] <- 0
+      beta0   <- rev(rbeta)
+      zeroidx <- beta0 == 0
+      ##X2 <- t(beta[zeroidx]) %*% solve(vbeta[zeroidx, zeroidx, drop=FALSE]) %*% beta[zeroidx]
+      ##X2 <- t(beta[zeroidx]) %*% solve(vbeta[zeroidx, zeroidx, drop=FALSE], beta[zeroidx])
 
+      ## FIX; February 2017: Use generalized inverse instead:
+      ## FIXME: Somehow the formal dof's should also be written
+      V0 <- vbeta[zeroidx, zeroidx, drop=FALSE]
+      b0 <- beta[zeroidx]
+      ##bv <<- list(b0=b0, V0=V0)
+      ##X2 <- t(b0) %*% solve(V0, b0)
+      X2 <- as.numeric( t(b0) %*% ginv(V0) %*% b0)
+      ev <- eigen(V0, only.values=TRUE)$values
+      df.real <- sum(ev > 1e-12)
+            
       ## Make table with results
       topnote <- paste("Model 1", mf1,"\nModel 2", mf2)
-      title <- "Analysis of 'Wald statistic' Table\n"      
-      table <- data.frame(Df=df, X2=X2,p=1-pchisq(X2,df))
+      title  <- "Analysis of 'Wald statistic' Table\n"      
+      table  <- data.frame(Df=df.real, X2=X2, p=1 - pchisq(X2, df.real))
       dimnames(table) <- list("1", c("Df", "X2", "P(>|Chi|)"))      
-      val <- structure(table, heading = c(title,topnote), class = c("anova", 
-                                                      "data.frame"))
+      val <- structure(table, heading = c(title, topnote),
+                       class = c("anova", "data.frame"))
       return(val)
     }
 }

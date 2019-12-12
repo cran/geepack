@@ -1,3 +1,87 @@
+#' GEE for Clustered Ordinal Responses
+#' 
+#' Produces an object of class `geese' which is a Generalized Estimating
+#' Equation fit of the clustered ordinal data.
+#' 
+#' 
+#' @param formula a formula expression as for \code{glm}, of the form
+#' \code{response ~ predictors}. See the documentation of lm and formula for
+#' details. As for glm, this specifies the linear predictor for modelling the
+#' mean. A term of the form \code{offset(expression)} is allowed.
+#' @param ooffset vector of offset for the odds ratio model.
+#' @param id a vector which identifies the clusters.  The length of `id' should
+#' be the same as the number of observations.  Data are assumed to be sorted so
+#' that observations on a cluster are contiguous rows for all entities in the
+#' formula.
+#' @param waves an integer vector which identifies components in clusters. The
+#' length of \code{waves} should be the same as the number of observation.
+#' components with the same \code{waves} value will have the same link
+#' functions.
+#' @param data an optional data frame in which to interpret the variables
+#' occurring in the \code{formula}, along with the \code{id} and \code{n}
+#' variables.
+#' @param subset expression saying which subset of the rows of the data should
+#' be used in the fit.  This can be a logical vector (which is replicated to
+#' have length equal to the number of observations), or a numeric vector
+#' indicating which observation numbers are to be included, or a character
+#' vector of the row names to be included.  All observations are included by
+#' default.
+#' @param na.action a function to filter missing data.  For \code{gee} only
+#' \code{na.omit} should be used here.
+#' @param contrasts a list giving contrasts for some or all of the factors
+#' appearing in the model formula.  The elements of the list should have the
+#' same name as the variable and should be either a contrast matrix
+#' (specifically, any full-rank matrix with as many rows as there are levels in
+#' the factor), or else a function to compute such a matrix given the number of
+#' levels.
+#' @param weights an optional vector of weights to be used in the fitting
+#' process. The length of \code{weights} should be the same as the number of
+#' observations.
+#' @param z a design matrix for the odds ratio model. The number of rows of z
+#' is \deqn{c^2 \sum n_i(n_i - 1)/2,} where \eqn{n_i} is the cluster size, and
+#' \eqn{c} is the number of categories minus 1.
+#' @param mean.link a character string specifying the link function for the
+#' means. The following are allowed: \code{"logit"}, \code{"probit"}, and
+#' \code{"cloglog"}.
+#' @param corstr a character string specifying the log odds. The following are
+#' allowed: \code{"independence"}, \code{"exchangeable"},
+#' \code{"unstructured"}, and \code{"userdefined"}.
+#' @param control a list of iteration and algorithmic constants. See
+#' \code{\link{geese.control}} for their names and default values. These can
+#' also be set as arguments to \code{geese} itself.
+#' @param b an initial estimate for the mean parameters.
+#' @param alpha an initial estimate for the odds ratio parameters.
+#' @param scale.fix a logical variable indicating if scale is fixed; it is set
+#' at TRUE currently (it can not be FALSE yet!).
+#' @param scale.val this argument is ignored currently.
+#' @param int.const a logical variable; if true, the intercepts are constant,
+#' and if false, the intercepts are different for different components in the
+#' response.
+#' @param rev a logical variable. For example, for a three level ordered
+#' response Y = 2, the accumulated indicator is coded as (1, 0, 0) if true and
+#' (0, 1, 1) if false.
+#' @param \dots further arguments passed to or from other methods.
+#' @return An object of class \code{"geese"} representing the fit.
+#' @author Jun Yan \email{jyan.stat@@gmail.com}
+#' @seealso \code{\link{glm}}, \code{\link{lm}}, \code{\link{geese}}.
+#' @references Heagerty, P.J. and Zeger, S.L. (1996) Marginal regression models
+#' for clustered ordinal measurements.  \emph{JASA}, \bold{91} 1024--1036.
+#' @keywords nonlinear models
+#' @examples
+#' 
+#' data(respdis)
+#' resp.l <- reshape(respdis, varying =list(c("y1", "y2", "y3", "y4")),
+#'                   v.names = "resp", direction = "long")
+#' resp.l <- resp.l[order(resp.l$id, resp.l$time),]
+#' fit <- ordgee(ordered(resp) ~ trt, id=id, data=resp.l, int.const=FALSE)
+#' summary(fit)
+#' 
+#' data(ohio)
+#' ohio$resp <- ordered(as.factor(ohio$resp))
+#' fit <- ordgee(resp ~ age + smoke + age:smoke, id = id, data=ohio)
+#' summary(fit)
+#' 
+#' @export ordgee
 ordgee <- function(formula = formula(data), ooffset = NULL,
                    id, waves = NULL,
                    data=parent.frame, subset=NULL, na.action=na.omit,

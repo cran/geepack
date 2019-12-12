@@ -476,8 +476,14 @@ extern "C" {
     DMatrix X = asDMatrix(x), Zsca = asDMatrix(zsca), Zcor = asDMatrix(zcor);
     IVector Clusz = asIVector(clusz); // ZcorSize = asIVector(zcorsize);
     Control Con = asControl(con);   
-    GeeParam Par = asGeeParam(par);   
-    GeeStr Geestr = asGeeStr(geestr);   
+    GeeParam Par = asGeeParam(par);
+
+    SEXP geestr_protect;
+    PROTECT(geestr_protect = geestr);
+    GeeStr Geestr = asGeeStr(geestr_protect);
+    UNPROTECT(1);
+    
+    //GeeStr Geestr = asGeeStr(geestr);   
     Corr Cor = asCorr(cor);   
 
     gee_top(Y, X, Offset, Doffset, W, LinkWave, Zsca, Zcor, CorP, Clusz, Geestr, Cor, Par, Con);
@@ -495,8 +501,13 @@ extern "C" {
     DMatrix X = asDMatrix(x), Zsca = asDMatrix(zsca), Zcor = asDMatrix(zcor);
     IVector Clusz = asIVector(clusz); // ZcorSize = asIVector(zcorsize);
     Control Con = asControl(con);   
-    GeeParam Par = asGeeParam(par);   
-    GeeStr Geestr = asGeeStr(geestr);   
+    GeeParam Par = asGeeParam(par);
+
+    SEXP geestr_protect;
+    PROTECT(geestr_protect = geestr);
+    GeeStr Geestr = asGeeStr(geestr_protect);
+    
+      //GeeStr Geestr = asGeeStr(geestr);   
     Corr Cor = asCorr(cor);   
 
     DMatrix infls = gee_infls(Y, X, Offset, Doffset, W, LinkWave, Zsca, Zcor, CorP, Clusz, Geestr, Cor, Par, Con);

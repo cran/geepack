@@ -161,6 +161,7 @@ geese.fit(x, y, id, offset = rep(0, N), soffset = rep(0, N),
 \seealso{
   \code{\link{glm}}, \code{\link{lm}}, \code{\link{ordgee}}.
 }
+
 \examples{
 data(seizure)
 ## Diggle, Liang, and Zeger (1994) pp166-168, compare Table 8.10

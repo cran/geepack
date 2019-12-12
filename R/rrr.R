@@ -1,5 +1,54 @@
 ## This is a wrapper function for relative risk regression
 ## for binary data with log link using the copy method
+
+
+#' Fit a Relative Risk Model for Binary data with Log Link
+#' 
+#' Fit a Relative Risk Model for Binary data with Log Link using the COPY
+#' method.
+#' 
+#' 
+#' @param formula same as in \code{geese}
+#' @param id same as in \code{geese}
+#' @param waves same as in \code{geese}
+#' @param data same as in \code{geese}
+#' @param subset same as in \code{geese}
+#' @param contrasts same as in \code{geese}
+#' @param na.action same as in \code{geese}
+#' @param corstr same as in \code{geese}
+#' @param ncopy the number of copies of the original data in constructing
+#' weight.
+#' @param control same as in \code{geese}
+#' @param b initial values for regression coefficients as in \code{geese} but
+#' more difficult to obtain due to the log link.
+#' @param alpha same as in \code{geese}
+#' @return An object of class \code{"geese"} representing the fit.
+#' @author Jun Yan \email{jyan.stat@@gmail.com}
+#' @references Lumley, T., Kornmal, R. and Ma, S. (2006). Relative risk
+#' regression in medical research: models, contrasts, estimators, and
+#' algorithms. UW Biostatistics Working Paper Series 293, University of
+#' Washington.
+#' @keywords models
+#' @examples
+#' 
+#' ## this example was used in Yu and Yan (2010, techreport)
+#' data(respiratory)
+#' respiratory$treat <- relevel(respiratory$treat, ref = "P")
+#' respiratory$sex <- relevel(respiratory$sex, ref = "M")
+#' respiratory$center <- as.factor(respiratory$center)
+#' ## 1 will be the reference level
+#' 
+#' fit <- relRisk(outcome ~ treat + center + sex + age + baseline + visit,
+#'                id = id, corstr = "ar1", data = respiratory, ncopy=10000)
+#' summary(fit)
+#' ## fit <- relRisk(outcome ~ treat + center + sex + age + baseline + visit,
+#' ##               id = id, corstr = "ex", data = respiratory)
+#' ## summary(fit)
+#' ## fit <- relRisk(outcome ~ treat + center + sex + age + baseline + visit,
+#' ##                id = id, corstr = "indep", data = respiratory)
+#' ## summary(fit)
+#' 
+#' @export relRisk
 relRisk<- function(formula, id, waves = NULL,
                    data = parent.frame(), subset = NULL,
                    contrasts = NULL, na.action = na.omit,

@@ -666,8 +666,13 @@ extern "C" {
     int C = INTEGER(AS_INTEGER(ncat))[0];
     bool Rev = LOGICAL(AS_LOGICAL(rev))[0];
     Control Con = asControl(con);   
-    GeeParam Par = asGeeParam(par);   
-    GeeStr Geestr = asGeeStr(geestr);   
+    GeeParam Par = asGeeParam(par);
+
+    SEXP geestr_protect;
+    PROTECT(geestr_protect = geestr);
+    GeeStr Geestr = asGeeStr(geestr_protect);   
+
+    //GeeStr Geestr = asGeeStr(geestr);   
     Corr Cor = asCorr(cor);   
     ordgee_top(Y, X, Offset, Doffset, W, LinkWave, Z, Clusz, C, Rev, Geestr, Cor, Par, Con);
     SEXP ans = asSEXP(Par);

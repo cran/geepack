@@ -2,8 +2,8 @@ citHeader("To cite geepack in publications use:")
  
 citEntry(entry="Article",
          title = "The R Package geepack for Generalized Estimating Equations",
-         author = personList(as.person("Søren Højsgaard"), 
-                             as.person("Ulrich Halekoh"),
+         author = personList(as.person("Ulrich Halekoh"),
+                             as.person("Søren Højsgaard"), 
                              as.person("Jun Yan")),
          year = 2006,
          journal = "Journal of Statistical Software",

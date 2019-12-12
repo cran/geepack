@@ -129,14 +129,30 @@ GeeParam asGeeParam(SEXP par) {
 GeeStr asGeeStr(SEXP geestr) {
   //geestr is a list of maxwave, meanlink, v, scalelink, corrlink, scale.fix;
   int maxwave = INTEGER(AS_INTEGER(VECTOR_ELT(geestr, 0)))[0];
-  IVector MeanLink = asIVector(AS_INTEGER(VECTOR_ELT(geestr, 1)));
-  IVector V = asIVector(AS_INTEGER(VECTOR_ELT(geestr, 2)));
-  IVector ScaleLink = asIVector(AS_INTEGER(VECTOR_ELT(geestr, 3)));
+  IVector MeanLink, V, ScaleLink;
+  MeanLink = asIVector(AS_INTEGER(VECTOR_ELT(geestr, 1)));
+  V = asIVector(AS_INTEGER(VECTOR_ELT(geestr, 2)));
+  ScaleLink = asIVector(AS_INTEGER(VECTOR_ELT(geestr, 3)));
   int corrlink = INTEGER(AS_INTEGER(VECTOR_ELT(geestr, 4)))[0];
   int scalefix = INTEGER(AS_INTEGER(VECTOR_ELT(geestr, 5)))[0];
   GeeStr G(maxwave, MeanLink, V, ScaleLink, corrlink, scalefix);
   return G;
 }
+
+
+
+
+// GeeStr asGeeStr(SEXP geestr) {
+//   //geestr is a list of maxwave, meanlink, v, scalelink, corrlink, scale.fix;
+//   int maxwave = INTEGER(AS_INTEGER(VECTOR_ELT(geestr, 0)))[0];
+//   IVector MeanLink = asIVector(AS_INTEGER(VECTOR_ELT(geestr, 1)));
+//   IVector V = asIVector(AS_INTEGER(VECTOR_ELT(geestr, 2)));
+//   IVector ScaleLink = asIVector(AS_INTEGER(VECTOR_ELT(geestr, 3)));
+//   int corrlink = INTEGER(AS_INTEGER(VECTOR_ELT(geestr, 4)))[0];
+//   int scalefix = INTEGER(AS_INTEGER(VECTOR_ELT(geestr, 5)))[0];
+//   GeeStr G(maxwave, MeanLink, V, ScaleLink, corrlink, scalefix);
+//   return G;
+// }
 
 Corr asCorr(SEXP cor) {
   //cor is a list of corst, maxwave
