@@ -1,4 +1,9 @@
 2019-12-10  Søren Højsgaard <sorenh@math.aau.dk>
+	
+	* PROTECT / UNPROTECT imbalance fixed
+	* Version 1.3-1 uploaded
+	
+2019-12-10  Søren Højsgaard <sorenh@math.aau.dk>
 
 	* Migrated to use roxygen
 

@@ -671,7 +671,8 @@ extern "C" {
     SEXP geestr_protect;
     PROTECT(geestr_protect = geestr);
     GeeStr Geestr = asGeeStr(geestr_protect);   
-
+    UNPROTECT(1);
+    
     //GeeStr Geestr = asGeeStr(geestr);   
     Corr Cor = asCorr(cor);   
     ordgee_top(Y, X, Offset, Doffset, W, LinkWave, Z, Clusz, C, Rev, Geestr, Cor, Par, Con);
