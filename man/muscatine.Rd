@@ -4,7 +4,8 @@
 \name{muscatine}
 \alias{muscatine}
 \title{Data on Obesity from the Muscatine Coronary Risk Factor Study.}
-\format{A dataframe with 14568 rows and 7 variables:
+\format{
+A dataframe with 14568 rows and 7 variables:
 \describe{
   \item{id}{identifier of child.}
 
@@ -21,7 +22,8 @@
   \item{numobese}{obese in numerical form: 1 corresponds to 'yes'
 and 0 corresponds to 'no'.}
 
-}}
+}
+}
 \source{
 \url{https://content.sph.harvard.edu/fitzmaur/ala2e/muscatine.txt}
 
@@ -45,8 +47,6 @@ to age-gender specific norms, children were classified as obese or
 not obese.
 }
 \examples{
-
-                                                                        
 muscatine$cage <- muscatine$age - 12                                         
 muscatine$cage2 <- muscatine$cage^2                                          
                                                                         

@@ -2,11 +2,10 @@
 ## for binary data with log link using the copy method
 
 
-#' Fit a Relative Risk Model for Binary data with Log Link
+#' @title Fit a Relative Risk Model for Binary data with Log Link
 #' 
-#' Fit a Relative Risk Model for Binary data with Log Link using the COPY
-#' method.
-#' 
+#' @description Fit a Relative Risk Model for Binary data with Log
+#'     Link using the COPY method.
 #' 
 #' @param formula same as in \code{geese}
 #' @param id same as in \code{geese}
@@ -16,18 +15,19 @@
 #' @param contrasts same as in \code{geese}
 #' @param na.action same as in \code{geese}
 #' @param corstr same as in \code{geese}
-#' @param ncopy the number of copies of the original data in constructing
-#' weight.
+#' @param ncopy the number of copies of the original data in
+#'     constructing weight.
 #' @param control same as in \code{geese}
-#' @param b initial values for regression coefficients as in \code{geese} but
-#' more difficult to obtain due to the log link.
+#' @param b initial values for regression coefficients as in
+#'     \code{geese} but more difficult to obtain due to the log link.
 #' @param alpha same as in \code{geese}
 #' @return An object of class \code{"geese"} representing the fit.
 #' @author Jun Yan \email{jyan.stat@@gmail.com}
-#' @references Lumley, T., Kornmal, R. and Ma, S. (2006). Relative risk
-#' regression in medical research: models, contrasts, estimators, and
-#' algorithms. UW Biostatistics Working Paper Series 293, University of
-#' Washington.
+#'
+#' @references Lumley, T., Kornmal, R. and Ma, S. (2006). Relative
+#'     risk regression in medical research: models, contrasts,
+#'     estimators, and algorithms. UW Biostatistics Working Paper
+#'     Series 293, University of Washington.
 #' @keywords models
 #' @examples
 #' 

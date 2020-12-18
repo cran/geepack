@@ -1,17 +1,3 @@
-crossutri <- function(wave) {
-  n <- length(wave)
-  if (n == 1) return(NULL)
-  ans <- rep(0, n*(n-1)/2)
-  k <- 1
-  for (i in 1:(n-1))
-    for (j in (i+1):n) {
-      ans[k] <- paste(wave[i], wave[j], sep=":")
-      k <- k + 1
-    }
-  ans
-}
-
-
 
 #' genZcor
 #' 
@@ -23,12 +9,13 @@ crossutri <- function(wave) {
 #' 
 #' 
 #' @aliases genZcor humbelbee
-#' @param clusz integer vector giving the number of observations in each
-#' cluster
-#' @param waves integer vector, obervations in the same cluster with values of
-#' wave i and j have the correlation \eqn{latex}{sigma_ij}
-#' @param corstrv correlation structures: 1=independence,2=exchangeable,3=ar1,
-#' 4=unstructured
+#' @param clusz integer vector giving the number of observations in
+#'     each cluster
+#' @param waves integer vector, obervations in the same cluster with
+#'     values of wave i and j have the correlation
+#'     \eqn{latex}{sigma_ij}
+#' @param corstrv correlation structures:
+#'     1=independence,2=exchangeable,3=ar1, 4=unstructured
 #' @return \item{}{the design matrix for the correlation structure}
 #' @author Jun Yan \email{jyan.stat@@gmail.com}
 #' @seealso \code{\link{fixed2Zcor}}
@@ -108,3 +95,20 @@ genZodds <- function(clusz, waves, corstrv, ncat) {
   }
   ans
 }
+
+
+
+crossutri <- function(wave) {
+  n <- length(wave)
+  if (n == 1) return(NULL)
+  ans <- rep(0, n*(n-1)/2)
+  k <- 1
+  for (i in 1:(n-1))
+    for (j in (i+1):n) {
+      ans[k] <- paste(wave[i], wave[j], sep=":")
+      k <- k + 1
+    }
+  ans
+}
+
+

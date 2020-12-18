@@ -48,8 +48,6 @@ zcor
 mod4 <- geeglm(yvar~tvar, id=idvar, data=simdatPerm, corstr="fixed", zcor=zcor)
 mod4
 
-
-
 }
 \seealso{
 \code{\link{genZcor}}, \code{\link{geeglm}}

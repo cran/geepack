@@ -1,44 +1,47 @@
-2019-12-18  Søren Højsgaard <sorenh@math.aau.dk>
+geepack v1.3.2 (Release date: 2020-12-18)
+=========================================
 
-	* Improved doc of dietox.
+* NAMESPACE and all .Rd files are now auto generated.
+* PROTECT / UNPROTECT issue fixed (in file inter.cc)
+* Improved documentation of dietox.
 
-	
 
-2019-12-10  Søren Højsgaard <sorenh@math.aau.dk>
-	
-	* PROTECT / UNPROTECT imbalance fixed
-	* Version 1.3-1 uploaded
-	
-2019-12-10  Søren Højsgaard <sorenh@math.aau.dk>
+geepack v1.3.1 (Release date: 2019-12-13)
+=========================================
 
-	* Migrated to use roxygen
+* PROTECT / UNPROTECT imbalance fixed
+* Version 1.3-1 uploaded
 
-	* Improved documentation of geeglm
+geepack v1.3.0 (Release date: 2019-12-10)
+=========================================
 
-	* Check for data being sorted by 'id' i geeglm; a warning is issued if not.
+* Migrated to use roxygen
+* Improved documentation of geeglm
+* Check for data being sorted by 'id' i geeglm; a warning is issued if not.
+* QIC added; thanks to Claus Ekstrøm who is now a contributor.
+* tidy function from broom package is imported.
+* muscatine data added
+* Version 1.3-0 uploaded
 
-	* QIC added; thanks to Claus Ekstrøm who is now a contributor.
+geepack v1.2.1 (Release date: 2014-09-13)
+=========================================
 
-	* tidy function from broom package is imported.
+* geeglm objects now inherits from lm also (to prevent warning when
+  calling predict).
 
-	* muscatine data added
-	
-	* Version 1.3-0 uploaded
+geepack v1.2.0 (Release date: 2014-09-13)
+=========================================
 
-2014-09-13  Søren Højsgaard <sorenh@math.aau.dk>
+* Maintainer of geepack is now Søren Højsgaard
+* Location of vignette fixed
+* Version 1.2-0 uploaded
 
-	* geeglm objects now inherits from lm also (to prevent warning
-	when calling predict).
 
-	* Version 1.2-1 uploaded
 
-2014-09-13  Søren Højsgaard <sorenh@math.aau.dk>
 
-	* Maintainer of geepack is now Søren Højsgaard
 
-	* Location of vignette fixed
-
-	* Version 1.2-0 uploaded
+Legacy from when Jun Yan was maintainer:
+========================================
 
 2012-01-27  Jun Yan  <jun.yan@uconn.edu>
 

@@ -4,7 +4,8 @@
 \name{spruce}
 \alias{spruce}
 \title{Log-size of 79 Sitka spruce trees}
-\format{This data frame contains the following columns:
+\format{
+This data frame contains the following columns:
 
 \describe{
 
@@ -20,7 +21,8 @@
 \item{wave}{a numeric vector of the measurement number} \item{logsize}{a
     numeric vector of the log-size}
 
-}}
+}
+}
 \source{
 Diggle, P.J., Liang, K.Y., and Zeger, S.L. (1994) Analysis of
     Longitudinal Data, Clarendon Press.

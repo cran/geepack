@@ -4,13 +4,15 @@
 \name{koch}
 \alias{koch}
 \title{Ordinal Data from Koch}
-\format{This data frame contains the following columns:
+\format{
+This data frame contains the following columns:
 \describe{
     \item{trt}{a numeric vector}
     \item{day}{a numeric vector}
     \item{y}{an ordered factor with levels: \code{1} < \code{2} < \code{3}}
     \item{id}{a numeric vector}
-}}
+}
+}
 \usage{
 koch
 }

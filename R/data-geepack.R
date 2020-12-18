@@ -13,14 +13,14 @@
 #' @format This data frame contains the following columns:
 #' 
 #' \describe{
-#' \item{Weight}{Weight}
-#' \item{Feed}{Cumulated feed intake}
+#' \item{Weight}{Weight in Kg}
+#' \item{Feed}{Cumulated feed intake in Kg}
 #' \item{Time}{Time (in weeks) in the experiment}
-#' \item{Pig}{Id of each pig}
-#' \item{Evit}{Vitamin E dose}
-#' \item{Cu}{Copper dose}
+#' \item{Pig}{Factor; id of each pig}
+#' \item{Evit}{Factor; vitamin E dose; see 'details'.}
+#' \item{Cu}{Factor, copper dose; see 'details'}
 #' \item{Start}{Start weight in experiment, i.e. weight at week 1.}
-#' \item{Litter}{Id of litter of each pig}
+#' \item{Litter}{Factor, id of litter of each pig}
 #' }
 #' 
 #' @source Lauridsen, C., Højsgaard, S.,Sørensen, M.T. C. (1999) Influence of
@@ -30,11 +30,18 @@
 #' @examples
 #' 
 #' data(dietox)
-#' str(dietox) ;
-#' plot(dietox)
-#' 
-#' 
+#' head(dietox)
+#' \dontrun{
+#' if (require(ggplot2)){
+#'   qplot(Time, Weight, data=dietox, col=Pig) + geom_line() +
+#'         theme(legend.position = "none") + facet_grid(Evit~Cu)
+#' } else {
+#'   coplot(Weight ~ Time | Evit * Cu, data=dietox)
+#' }
+#' }
 "dietox"
+
+
 
 #' Ordinal Data from Koch
 #' 
@@ -99,8 +106,6 @@
 #' Series A, 147, 87-99.
 #'
 #' @examples
-#'
-#'                                                                         
 #' muscatine$cage <- muscatine$age - 12                                         
 #' muscatine$cage2 <- muscatine$cage^2                                          
 #'                                                                         

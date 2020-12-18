@@ -130,12 +130,28 @@ GeeStr asGeeStr(SEXP geestr) {
   //geestr is a list of maxwave, meanlink, v, scalelink, corrlink, scale.fix;
   int maxwave = INTEGER(AS_INTEGER(VECTOR_ELT(geestr, 0)))[0];
   IVector MeanLink, V, ScaleLink;
-  MeanLink = asIVector(AS_INTEGER(VECTOR_ELT(geestr, 1)));
-  V = asIVector(AS_INTEGER(VECTOR_ELT(geestr, 2)));
-  ScaleLink = asIVector(AS_INTEGER(VECTOR_ELT(geestr, 3)));
+
+  // FIXME: rchk gives warning here ...
+  //MeanLink   = asIVector(AS_INTEGER(VECTOR_ELT(geestr, 1)));
+  //V          = asIVector(AS_INTEGER(VECTOR_ELT(geestr, 2)));
+  //ScaleLink  = asIVector(AS_INTEGER(VECTOR_ELT(geestr, 3)));
+  // and to here
+
+  // Attempted fix
+  SEXP ML, VV, SL;
+  PROTECT(ML = AS_INTEGER(VECTOR_ELT(geestr, 1)));
+  PROTECT(VV = AS_INTEGER(VECTOR_ELT(geestr, 2)));
+  PROTECT(SL = AS_INTEGER(VECTOR_ELT(geestr, 3)));
+  MeanLink  = asIVector(ML);
+  V         = asIVector(VV);
+  ScaleLink = asIVector(SL);
+  // to here
+  
   int corrlink = INTEGER(AS_INTEGER(VECTOR_ELT(geestr, 4)))[0];
   int scalefix = INTEGER(AS_INTEGER(VECTOR_ELT(geestr, 5)))[0];
   GeeStr G(maxwave, MeanLink, V, ScaleLink, corrlink, scalefix);
+  UNPROTECT(3);
+  
   return G;
 }
 

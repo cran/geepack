@@ -116,7 +116,7 @@ anova.geeglmlist <-
   return(value)
 }
 
-
+#' @export
 anova.geeglm<-function (object, ..., dispersion = NULL, test = NULL) 
 {
 

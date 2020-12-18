@@ -4,7 +4,8 @@
 \name{respdis}
 \alias{respdis}
 \title{Clustered Ordinal Respiratory Disorder}
-\format{This data frame contains the following columns:
+\format{
+This data frame contains the following columns:
 \describe{
 
    \item{y1, y2, y3, y4}{ordered factor measured at 4 visits for the response with
@@ -14,7 +15,8 @@
 \item{trt}{a factor for treatment with levels, 1 = active, 0 =
     placebo.}
 
-}}
+}
+}
 \usage{
 respdis
 }

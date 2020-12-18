@@ -47,22 +47,19 @@
 #' mod4 <- geeglm(yvar~tvar, id=idvar, data=simdatPerm, corstr="fixed", zcor=zcor)
 #' mod4
 #' 
-#' 
-#' 
 #' @export fixed2Zcor
 fixed2Zcor <- function(cor.fixed, id, waves){
-  zcor<-NULL
-  cnt <- 1
+  zcor <- NULL
+  cnt  <- 1
   uniq.id <- unique(id)
   for (ii in uniq.id){
     cwaves <- waves[id==ii]
-    if (length(cwaves)>1) {
-      for (kk in 1: (length(cwaves)-1)) {
-        for (mm in (kk+1) : length(cwaves))  {
-            vvv <- cor.fixed[cwaves[mm],cwaves[kk]]
-           zcor<-c(zcor,vvv)
-
-        }
+    if (length(cwaves) > 1) {
+      for (kk in 1:(length(cwaves) - 1)){
+          for (mm in (kk + 1):length(cwaves)){
+              vvv <- cor.fixed[cwaves[mm], cwaves[kk]]
+              zcor<-c(zcor, vvv)             
+          }
       }
     }
   }

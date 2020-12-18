@@ -4,14 +4,16 @@
 \name{seizure}
 \alias{seizure}
 \title{Epiliptic Seizures}
-\format{This data frame contains the following columns: \describe{
+\format{
+This data frame contains the following columns: \describe{
     \item{y1}{the number of epiliptic seizures in the 1st 2-week interval}
     \item{y2}{the number of epiliptic seizures in the 2nd 2-week interval}
     \item{y3}{the number of epiliptic seizures in the 3rd 2-week interval}
     \item{y4}{the number of epiliptic seizures in the 4th 2-week interval}
     \item{trt}{an indicator of treatment} \item{base}{the number of epilitic
     seizures in a baseline 8-week interval} \item{age}{a numeric vector of
-    subject age} }}
+    subject age} }
+}
 \source{
 Thall, P.F. and Vail S.C. (1990) Some covariance models for
     longitudinal count data with overdispersion. \emph{Biometrics} \bold{46}:

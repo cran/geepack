@@ -1,94 +1,107 @@
-#' Function to solve a Generalized Estimating Equation Model
+#' @title Function to fit a Generalized Estimating Equation Model
 #' 
-#' Produces an object of class `geese' which is a Generalized Estimating
+#' @description Produces an object of class `geese' which is a Generalized Estimating
 #' Equation fit of the data.
-#' 
+#'
+#' @details 
 #' when the correlation structure is \code{fixed}, the specification of
 #' \code{Zcor} should be a vector of length \code{sum(clusz * (clusz - 1)) /
 #' 2.}
 #' 
-#' @aliases geese geese.fit print.geese summary.geese print.summary.geese
+#' @aliases geese geese.fit print.geese summary.geese
+#'     print.summary.geese
+#' 
 #' @param formula a formula expression as for \code{glm}, of the form
-#' \code{response ~ predictors}. See the documentation of lm and formula for
-#' details. As for glm, this specifies the linear predictor for modeling the
-#' mean. A term of the form \code{offset(expression)} is allowed.
-#' @param sformula a formula expression of the form \code{ ~ predictor}, the
-#' response being ignored. This specifies the linear predictor for modeling the
-#' dispersion. A term of the form \code{offset(expression)} is allowed.
-#' @param id a vector which identifies the clusters.  The length of `id' should
-#' be the same as the number of observations.  Data are assumed to be sorted so
-#' that observations on a cluster are contiguous rows for all entities in the
-#' formula.
-#' @param waves an integer vector which identifies components in clusters. The
-#' length of \code{waves} should be the same as the number of observation.
-#' components with the same \code{waves} value will have the same link
-#' functions.
-#' @param data an optional data frame in which to interpret the variables
-#' occurring in the \code{formula}, along with the \code{id} and \code{n}
-#' variables.
-#' @param subset expression saying which subset of the rows of the data should
-#' be used in the fit.  This can be a logical vector (which is replicated to
-#' have length equal to the number of observations), or a numeric vector
-#' indicating which observation numbers are to be included, or a character
-#' vector of the row names to be included.  All observations are included by
-#' default.
-#' @param na.action a function to filter missing data.  For \code{gee} only
-#' \code{na.omit} should be used here.
-#' @param contrasts a list giving contrasts for some or all of the factors
-#' appearing in the model formula.  The elements of the list should have the
-#' same name as the variable and should be either a contrast matrix
-#' (specifically, any full-rank matrix with as many rows as there are levels in
-#' the factor), or else a function to compute such a matrix given the number of
-#' levels.
-#' @param weights an optional vector of weights to be used in the fitting
-#' process. The length of \code{weights} should be the same as the number of
-#' observations. This weights is not (yet) the weight as in sas proc genmod,
-#' and hence is not recommended to use.
+#'     \code{response ~ predictors}. See the documentation of lm and
+#'     formula for details. As for glm, this specifies the linear
+#'     predictor for modeling the mean. A term of the form
+#'     \code{offset(expression)} is allowed.
+#' @param sformula a formula expression of the form \code{ ~
+#'     predictor}, the response being ignored. This specifies the
+#'     linear predictor for modeling the dispersion. A term of the
+#'     form \code{offset(expression)} is allowed.
+#' @param id a vector which identifies the clusters.  The length of
+#'     `id' should be the same as the number of observations.  Data
+#'     are assumed to be sorted so that observations on a cluster are
+#'     contiguous rows for all entities in the formula.
+#' @param waves an integer vector which identifies components in
+#'     clusters. The length of \code{waves} should be the same as the
+#'     number of observation.  components with the same \code{waves}
+#'     value will have the same link functions.
+#' @param data an optional data frame in which to interpret the
+#'     variables occurring in the \code{formula}, along with the
+#'     \code{id} and \code{n} variables.
+#' @param subset expression saying which subset of the rows of the
+#'     data should be used in the fit.  This can be a logical vector
+#'     (which is replicated to have length equal to the number of
+#'     observations), or a numeric vector indicating which observation
+#'     numbers are to be included, or a character vector of the row
+#'     names to be included.  All observations are included by
+#'     default.
+#' @param na.action a function to filter missing data.  For \code{gee}
+#'     only \code{na.omit} should be used here.
+#' @param contrasts a list giving contrasts for some or all of the
+#'     factors appearing in the model formula.  The elements of the
+#'     list should have the same name as the variable and should be
+#'     either a contrast matrix (specifically, any full-rank matrix
+#'     with as many rows as there are levels in the factor), or else a
+#'     function to compute such a matrix given the number of levels.
+#' @param weights an optional vector of weights to be used in the
+#'     fitting process. The length of \code{weights} should be the
+#'     same as the number of observations. This weights is not (yet)
+#'     the weight as in sas proc genmod, and hence is not recommended
+#'     to use.
 #' @param zcor a design matrix for correlation parameters.
-#' @param corp known parameters such as coordinates used for correlation
-#' coefficients.
+#' @param corp known parameters such as coordinates used for
+#'     correlation coefficients.
 #' @param control a list of iteration and algorithmic constants. See
-#' \code{\link{geese.control}} for their names and default values. These can
-#' also be set as arguments to \code{geese} itself.
+#'     \code{\link{geese.control}} for their names and default
+#'     values. These can also be set as arguments to \code{geese}
+#'     itself.
 #' @param b an initial estimate for the mean parameters.
 #' @param alpha an initial estimate for the correlation parameters.
 #' @param gm an initial estimate for the scale parameters.
-#' @param family a description of the error distribution and link function to
-#' be used in the model, as for \code{\link{glm}}.
-#' @param mean.link a character string specifying the link function for the
-#' means. The following are allowed: \code{"identity"}, \code{"logit"},
-#' \code{"probit"}, \code{"cloglog"}, \code{"log"}, and \code{"inverse"}.  The
-#' default value is determined from family.
-#' @param variance a character string specifying the variance function in terms
-#' of the mean. The following are allowed: \code{"gaussian"},
-#' \code{"binomial"}, \code{"poisson"}, and \code{"gamma"}. The default value
-#' is determined from family.
-#' @param cor.link a character string specifying the link function for the
-#' correlation coefficients. The following are allowed: \code{"identity"}, and
-#' \code{"fisherz"}.
-#' @param sca.link a character string specifying the link function for the
-#' scales. The following are allowed: \code{"identity"}, and \code{"log"}.
-#' @param link.same a logical indicating if all the components in a cluster
-#' should use the same link.
-#' @param scale.fix a logical variable; if true, the scale parameter is fixed
-#' at the value of \code{scale.value}.
-#' @param scale.value numeric variable giving the value to which the scale
-#' parameter should be fixed; used only if \code{scale.fix == TRUE}.
-#' @param corstr a character string specifying the correlation structure.  The
-#' following are permitted: \code{"independence"}, \code{"exchangeable"},
-#' \code{"ar1"}, \code{"unstructured"}, \code{"userdefined"}, and
-#' \code{"fixed"}
-#' @param x,y \code{x} is a design matrix of dimension \code{n * p}, and
-#' \code{y} is a vector of observations of length \code{n}.
-#' @param offset,soffset vector of offset for the mean and for the scale,
-#' respectively.
-#' @param zsca a design matrix of dimension \code{n * r} for the scales.
+#' @param family a description of the error distribution and link
+#'     function to be used in the model, as for \code{\link{glm}}.
+#' @param mean.link a character string specifying the link function
+#'     for the means. The following are allowed: \code{"identity"},
+#'     \code{"logit"}, \code{"probit"}, \code{"cloglog"},
+#'     \code{"log"}, and \code{"inverse"}.  The default value is
+#'     determined from family.
+#' @param variance a character string specifying the variance function
+#'     in terms of the mean. The following are allowed:
+#'     \code{"gaussian"}, \code{"binomial"}, \code{"poisson"}, and
+#'     \code{"gamma"}. The default value is determined from family.
+#' @param cor.link a character string specifying the link function for
+#'     the correlation coefficients. The following are allowed:
+#'     \code{"identity"}, and \code{"fisherz"}.
+#' @param sca.link a character string specifying the link function for
+#'     the scales. The following are allowed: \code{"identity"}, and
+#'     \code{"log"}.
+#' @param link.same a logical indicating if all the components in a
+#'     cluster should use the same link.
+#' @param scale.fix a logical variable; if true, the scale parameter
+#'     is fixed at the value of \code{scale.value}.
+#' @param scale.value numeric variable giving the value to which the
+#'     scale parameter should be fixed; used only if \code{scale.fix
+#'     == TRUE}.
+#' @param corstr a character string specifying the correlation
+#'     structure.  The following are permitted: \code{"independence"},
+#'     \code{"exchangeable"}, \code{"ar1"}, \code{"unstructured"},
+#'     \code{"userdefined"}, and \code{"fixed"}
+## ' @param x,y \code{x} is a design matrix of dimension \code{n * p},
+## '     and \code{y} is a vector of observations of length \code{n}.
+## ' @param offset,soffset vector of offset for the mean and for the
+## '     scale, respectively.
+## ' @param zsca a design matrix of dimension \code{n * r} for the
+## '     scales.
 #' @param \dots further arguments passed to or from other methods.
 #' @return An object of class \code{"geese"} representing the fit.
 #' @author Jun Yan \email{jyan.stat@@gmail.com}
 #' @seealso \code{\link{glm}}, \code{\link{lm}}, \code{\link{ordgee}}.
 #' @references Yan, J. and J.P. Fine (2004) Estimating Equations for
-#' Association Structures.  \emph{Statistics in Medicine}, \bold{23}, 859--880.
+#'     Association Structures.  \emph{Statistics in Medicine},
+#'     \bold{23}, 859--880.
 #' @keywords nonlinear models
 #' @examples
 #' 
@@ -254,6 +267,7 @@ geese <- function(formula = formula(data),
   ans
 }
 
+#' @export
 geese.fit <- function(x, y, id,
                       offset=rep(0,N), soffset=rep(0,N), weights=rep(1,N),
                       waves = NULL, zsca = matrix(1,N,1),
@@ -392,31 +406,33 @@ geese.fit <- function(x, y, id,
 
 
 
-#' Auxiliary for Controlling GEE Fitting
+#' @title Auxiliary for Controlling GEE Fitting
 #' 
-#' Auxiliary function as user interface for `gee' fitting. Only used when
+#' @description Auxiliary function as user interface for `gee' fitting. Only used when
 #' calling `geese' or `geese.fit'.
 #' 
-#' When `trace' is true, output for each iteration is printed to the screen by
+#' @details When `trace' is true, output for each iteration is printed to the screen by
 #' the c++ code. Hence, `options(digits = *)' does not control the precision.
 #' 
-#' @param epsilon positive convergence tolerance epsilon; the iterations
-#' converge when the absolute value of the difference in parameter estimate is
-#' below \code{epsilon}.
-#' @param maxit integer giving the maximal number of Fisher Scoring iteration.
-#' @param trace logical indicating if output should be produced for each
-#' iteration.
+#' @param epsilon positive convergence tolerance epsilon; the
+#'     iterations converge when the absolute value of the difference
+#'     in parameter estimate is below \code{epsilon}.
+#' @param maxit integer giving the maximal number of Fisher Scoring
+#'     iteration.
+#' @param trace logical indicating if output should be produced for
+#'     each iteration.
 #' @param scale.fix logical indicating if the scale should be fixed.
-#' @param jack logical indicating if approximate jackknife variance estimate
-#' should be computed.
-#' @param j1s logical indicating if 1-step jackknife variance estimate should
-#' be computed.
-#' @param fij logical indicating if fully iterated jackknife variance estimate
-#' should be computed.
+#' @param jack logical indicating if approximate jackknife variance
+#'     estimate should be computed.
+#' @param j1s logical indicating if 1-step jackknife variance estimate
+#'     should be computed.
+#' @param fij logical indicating if fully iterated jackknife variance
+#'     estimate should be computed.
 #' @return A list with the arguments as components.
 #' @author Jun Yan \email{jyan.stat@@gmail.com}
 #' @seealso `geese.fit', the fitting procedure used by `geese'.
 #' @keywords optimize models
+#' 
 #' @export geese.control
 geese.control <- function (epsilon = 1e-04, maxit = 25, trace = FALSE,
                            scale.fix = FALSE, jack = FALSE,
@@ -433,22 +449,23 @@ geese.control <- function (epsilon = 1e-04, maxit = 25, trace = FALSE,
 
 ## compare coefficients
 
-
-#' Compare Regression Coefficiente between Nested Models
+#' @title Compare Regression Coefficiente between Nested Models
 #' 
-#' Comparing regression coefficients between models when one model is nested
+#' @description Comparing regression coefficients between models when one model is nested
 #' within another for clustered data.
-#' 
 #' 
 #' @param fit0 a fitted object of class \code{geese}
 #' @param fit1 another fitted object of class \code{geese}
-#' @return a list of two components: \item{delta}{estimated difference in the
-#' coefficients of common covariates from \code{fit0} and \code{fit1}}
-#' \item{variance}{estimated variance matrix of delta}
+#'
+#' @return a list of two components: \item{delta}{estimated difference
+#'     in the coefficients of common covariates from \code{fit0} and
+#'     \code{fit1}} \item{variance}{estimated variance matrix of
+#'     delta}
 #' @author Jun Yan \email{jyan.stat@@gmail.com}
-#' @references Allison, P. D. (1995). The impact of random predictors on
-#' comparisons of coefficients between models: Comment on Clogg, Petkova, and
-#' Haritou.  \emph{American Journal of Sociology}, \bold{100}(5), 1294--1305.
+#' @references Allison, P. D. (1995). The impact of random predictors
+#'     on comparisons of coefficients between models: Comment on
+#'     Clogg, Petkova, and Haritou.  \emph{American Journal of
+#'     Sociology}, \bold{100}(5), 1294--1305.
 #' 
 #' Clogg, C. C., Petkova, E., and Haritou, A. (1995). Statistical methods for
 #' comparing regression coefficients between models.  \emph{American Journal of
@@ -458,6 +475,7 @@ geese.control <- function (epsilon = 1e-04, maxit = 25, trace = FALSE,
 #' Coefficients Between Nested Linear Models for Clustered Data with
 #' Generalized Estimating Equations. \emph{Journal of Educational and
 #' Behaviorial Statistics}, Forthcoming.
+#' 
 #' @keywords models
 #' @examples
 #' 
@@ -487,6 +505,7 @@ geese.control <- function (epsilon = 1e-04, maxit = 25, trace = FALSE,
 #' compCoef(fit0, fit1)
 #' 
 #' @export compCoef
+#' 
 compCoef <- function(fit0, fit1) {
   v0 <- names(fit0$beta)
   v1 <- names(fit1$beta)

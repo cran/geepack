@@ -1,5 +1,4 @@
 ### R code from vignette source 'geepack-manual.Rnw'
-### Encoding: UTF-8
 
 ###################################################
 ### code chunk number 1: geepack-manual.Rnw:16-19

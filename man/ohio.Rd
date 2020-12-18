@@ -4,7 +4,8 @@
 \name{ohio}
 \alias{ohio}
 \title{Ohio Children Wheeze Status}
-\format{This data frame contains the following columns:
+\format{
+This data frame contains the following columns:
 
 \describe{
 
@@ -16,7 +17,8 @@
 
 \item{smoke}{an indicator of maternal smoking at the first
     year of the study}
-}}
+}
+}
 \usage{
 ohio
 }

@@ -6,7 +6,8 @@
 \alias{respiratoryWide}
 \title{Data from a clinical trial comparing two treatments for a respiratory
 illness}
-\format{A data frame with 444 observations on the following 8 variables.
+\format{
+A data frame with 444 observations on the following 8 variables.
 
 \describe{
 
@@ -19,7 +20,8 @@ illness}
 \item{visit}{id of each of four visits}
 \item{outcome}{respiratory status at each visit}
 
-}}
+}
+}
 \usage{
 respiratory
 }

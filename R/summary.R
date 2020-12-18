@@ -1,3 +1,4 @@
+#' @export
 summary.geese <- function(object, ...) {
   mean.sum <- data.frame(estimate = object$beta,
 #                         nai.se = sqrt(diag(object$vbeta.naiv)),
@@ -43,6 +44,7 @@ summary.geese <- function(object, ...) {
   ans
 }
 
+#' @export
 print.geese <- function(x, digits = NULL, quote = FALSE, prefix = "", ...) {
   if(is.null(digits)) digits <- options()$digits
   else options(digits = digits)
@@ -77,6 +79,7 @@ print.geese <- function(x, digits = NULL, quote = FALSE, prefix = "", ...) {
   invisible(x)
 }
 
+#' @export
 print.summary.geese <- function(x, digits = NULL,
                                 quote = FALSE, prefix = "", ... ) {
   if(is.null(digits)) digits <- options()$digits

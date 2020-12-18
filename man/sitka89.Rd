@@ -4,7 +4,8 @@
 \name{sitka89}
 \alias{sitka89}
 \title{Growth of Sitka Spruce Trees}
-\format{A dataframe
+\format{
+A dataframe
 
 \describe{
 \item{size:}{size of the tree measured in \eqn{log(height*diamter^2)}}
@@ -15,7 +16,8 @@
 
 \item{treat:}{ozone: grown under ozone environment, control: ozone free}
 
-}}
+}
+}
 \usage{
 sitka89
 }
