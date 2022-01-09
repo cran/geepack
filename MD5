@@ -1,12 +1,12 @@
 2c7ec897a3bb657e2353fc328fb40ab5 *ChangeLog
-ef6b0f23337b172f4db09933bd10c194 *DESCRIPTION
+c12ad485693c98f002c8dc40837def7a *DESCRIPTION
 883312468fef336ca79944040ab1a68b *NAMESPACE
-d427d66b05a8c2d9eea1593a22452d32 *NEWS
+27904c38a89b72c80ac21ede7f360f23 *NEWS.md
 0a48d3c82f8be0d26ed94eb3808b2c25 *R/NAMESPACE.R
 0eb1bec600f9f4b30342b62b0eb6d48c *R/data-geepack.R
 146562842fedadc277416dbbbdce1be1 *R/fixed2Zcor.R
 445c4293d9603e4818df48a352ec3c32 *R/geeglm-anova.R
-57d076bb993259cbbe974e25d77b7964 *R/geeglm.R
+e3329819985575a6f71d9cc1cbeee89f *R/geeglm.R
 f847934588f95a5754e8524f4015382c *R/geepack-package.R
 e06964d406046a745ffe88f2278a82e8 *R/geese.R
 d48fd13031191743c51f8b5fe3c5bfba *R/genZcor.R
@@ -16,7 +16,7 @@ eb39939c02f905d3d6de878a88555a97 *R/qic.R
 903668733f4bb12da2f0f83a65931116 *R/summary.R
 6505166c78c1a08e723f0ab1ab6c1608 *R/zzz.R
 09025c52708dd8f6d43340f2828e57d6 *README.md
-d2c097da889c843ee0eb771f69f03110 *build/vignette.rds
+4e6d5fac538fdb6aff2d1714d4ec7b4c *build/vignette.rds
 830f7fc69c5afa1a23e8991d77e0b101 *data/dietox.rda
 4db449d2d05821a059969ee34818c48a *data/koch.RData
 331c55a17b264d413792bc3503e6c7df *data/muscatine.rda
@@ -29,7 +29,7 @@ c573873a4bf48e2169119cfea4496143 *data/spruce.RData
 6143f183f04ed5831f485164d9e39c17 *inst/CITATION
 1c3565e2258a180cd9dc80a1b1c94c6a *inst/doc/geepack-manual.R
 ad435dfdb769fa1e9d406a5eadb0e308 *inst/doc/geepack-manual.Rnw
-d4e3047041b2a883180470e04147f337 *inst/doc/geepack-manual.pdf
+353b201341edb210169af52ea945b3c8 *inst/doc/geepack-manual.pdf
 9828f5a1fa7e645dee75d7651986c9d0 *inst/include/famstr.h
 17b2a8381b909ce542221d3cc6a2ca86 *inst/include/gee2.h
 7d1cfd53a00f4edb17e31b0ac3fadd26 *inst/include/geese.h

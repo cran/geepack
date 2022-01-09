@@ -1,47 +1,43 @@
-geepack v1.3.2 (Release date: 2020-12-18)
-=========================================
+* geepack v1.3.3 (2022-01-04) 
 
-* NAMESPACE and all .Rd files are now auto generated.
-* PROTECT / UNPROTECT issue fixed (in file inter.cc)
-* Improved documentation of dietox.
+	* Minor documentation updates
+	* Minor polishing of code
 
 
-geepack v1.3.1 (Release date: 2019-12-13)
-=========================================
+* geepack v1.3.2 (Release date: 2020-12-18)
 
-* PROTECT / UNPROTECT imbalance fixed
-* Version 1.3-1 uploaded
-
-geepack v1.3.0 (Release date: 2019-12-10)
-=========================================
-
-* Migrated to use roxygen
-* Improved documentation of geeglm
-* Check for data being sorted by 'id' i geeglm; a warning is issued if not.
-* QIC added; thanks to Claus Ekstrøm who is now a contributor.
-* tidy function from broom package is imported.
-* muscatine data added
-* Version 1.3-0 uploaded
-
-geepack v1.2.1 (Release date: 2014-09-13)
-=========================================
-
-* geeglm objects now inherits from lm also (to prevent warning when
-  calling predict).
-
-geepack v1.2.0 (Release date: 2014-09-13)
-=========================================
-
-* Maintainer of geepack is now Søren Højsgaard
-* Location of vignette fixed
-* Version 1.2-0 uploaded
+	* NAMESPACE and all .Rd files are now auto generated.
+	* PROTECT / UNPROTECT issue fixed (in file inter.cc)
+	* Improved documentation of dietox.
 
 
+* geepack v1.3.1 (Release date: 2019-12-13)
 
+	* PROTECT / UNPROTECT imbalance fixed
+	* Version 1.3-1 uploaded
 
+* geepack v1.3.0 (Release date: 2019-12-10)
 
-Legacy from when Jun Yan was maintainer:
-========================================
+	* Migrated to use roxygen
+   * Improved documentation of geeglm
+   * Check for data being sorted by 'id' i geeglm; a warning is issued if not.
+   * QIC added; thanks to Claus Ekstrøm who is now a contributor.
+   * tidy function from broom package is imported.
+   * muscatine data added
+   * Version 1.3-0 uploaded
+
+* geepack v1.2.1 (Release date: 2014-09-13)
+
+	* geeglm objects now inherits from lm also (to prevent warning when
+		calling predict).
+
+* geepack v1.2.0 (Release date: 2014-09-13)
+
+  * Maintainer of geepack is now Søren Højsgaard
+  * Location of vignette fixed
+  * Version 1.2-0 uploaded
+
+* Legacy from when Jun Yan was maintainer:
 
 2012-01-27  Jun Yan  <jun.yan@uconn.edu>
 
