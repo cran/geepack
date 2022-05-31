@@ -51,7 +51,7 @@ An object of class \code{"geese"} representing the fit.
 }
 \description{
 Fit a Relative Risk Model for Binary data with Log
-    Link using the COPY method.
+Link using the COPY method.
 }
 \examples{
 
@@ -75,9 +75,9 @@ summary(fit)
 }
 \references{
 Lumley, T., Kornmal, R. and Ma, S. (2006). Relative
-    risk regression in medical research: models, contrasts,
-    estimators, and algorithms. UW Biostatistics Working Paper
-    Series 293, University of Washington.
+risk regression in medical research: models, contrasts,
+estimators, and algorithms. UW Biostatistics Working Paper
+Series 293, University of Washington.
 }
 \author{
 Jun Yan \email{jyan.stat@gmail.com}

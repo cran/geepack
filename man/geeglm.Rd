@@ -96,24 +96,24 @@ An object of type 'geeglm'
 }
 \description{
 The geeglm function fits generalized estimating equations using
-    the 'geese.fit' function of the 'geepack' package for doing the actual
-    computations. geeglm has a syntax similar to glm and returns an object
-    similar to a glm object.  An important feature of geeglm, is that an
-    anova method exists for these models.
+the 'geese.fit' function of the 'geepack' package for doing the actual
+computations. geeglm has a syntax similar to glm and returns an object
+similar to a glm object.  An important feature of geeglm, is that an
+anova method exists for these models.
 }
 \details{
 In the case of corstr="fixed" one must provide the zcor vector if
-    the clusters have unequal sizes. Clusters with size one must not be
-    represented in zcor.
+the clusters have unequal sizes. Clusters with size one must not be
+represented in zcor.
 }
 \note{
 See the documentation for the 'geese' function for additional
-    information. geeglm only works for complete data. Thus if there are NA's
-    in data you can specify data=na.omit(mydata).
+information. geeglm only works for complete data. Thus if there are NA's
+in data you can specify data=na.omit(mydata).
 }
 \section{Warning }{
  Use "unstructured" correlation structure only with great
-    care. (It may cause R to crash).
+care. (It may cause R to crash).
 }
 
 \examples{
@@ -139,11 +139,11 @@ The R Package geepack for Generalized Estimating Equations.
 Journal of Statistical Software, 15, 2, 1-11"
 
 Liang, K.Y. and Zeger, S.L. (1986) Longitudinal data analysis using
-generalized linear models. Biometrika, *73* 13-22.
+generalized linear models. Biometrika, \emph{73} 13-22.
 
 Prentice, R.L. and Zhao, L.P. (1991). Estimating equations for
 parameters in means and covariances of multivariate discrete and
-continuous responses.  Biometrics, *47* 825-839.
+continuous responses.  Biometrics, \emph{47} 825-839.
 }
 \seealso{
 \code{\link{geese}}, \code{\link{glm}}, \code{\link{anova.geeglm}}

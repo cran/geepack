@@ -18,8 +18,8 @@ A vector which can be passed as the zcor argument to geeglm.
 }
 \description{
 Construct zcor vector (of fixed correlations) from a fixed
-    working correlation matrix, a specification of clusters and a
-    specifcation of waves.
+working correlation matrix, a specification of clusters and a
+specifcation of waves.
 }
 \examples{
 

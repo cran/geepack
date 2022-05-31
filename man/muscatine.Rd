@@ -7,19 +7,19 @@
 \format{
 A dataframe with 14568 rows and 7 variables:
 \describe{
-  \item{id}{identifier of child.}
+\item{id}{identifier of child.}
 
-  \item{gender}{gender of child}
+\item{gender}{gender of child}
 
-  \item{base_age}{baseline age}
+\item{base_age}{baseline age}
 
-  \item{age}{current age}
+\item{age}{current age}
 
-  \item{occasion}{identifier of occasion of recording}
+\item{occasion}{identifier of occasion of recording}
 
-  \item{obese}{'yes' or 'no'}
+\item{obese}{'yes' or 'no'}
 
-  \item{numobese}{obese in numerical form: 1 corresponds to 'yes'
+\item{numobese}{obese in numerical form: 1 corresponds to 'yes'
 and 0 corresponds to 'no'.}
 
 }

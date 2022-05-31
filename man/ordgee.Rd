@@ -115,8 +115,8 @@ An object of class \code{"geese"} representing the fit.
 }
 \description{
 Produces an object of class `geese' which is a
-    Generalized Estimating Equation fit of the clustered ordinal
-    data.
+Generalized Estimating Equation fit of the clustered ordinal
+data.
 }
 \examples{
 
@@ -135,8 +135,8 @@ summary(fit)
 }
 \references{
 Heagerty, P.J. and Zeger, S.L. (1996) Marginal
-    regression models for clustered ordinal measurements.
-    \emph{JASA}, \bold{91} 1024--1036.
+regression models for clustered ordinal measurements.
+\emph{JASA}, \bold{91} 1024--1036.
 }
 \seealso{
 \code{\link{glm}}, \code{\link{lm}}, \code{\link{geese}}.

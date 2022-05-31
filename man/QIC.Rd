@@ -25,8 +25,8 @@ package. Currently only works on geeglm objects}
 }
 \value{
 A vector or matrix with the QIC, QICu, quasi likelihood,
-    CIC, the number of mean effect parameters, and the corrected
-    QIC for each GEE object
+CIC, the number of mean effect parameters, and the corrected
+QIC for each GEE object
 }
 \description{
 Function for calculating the quasi-likelihood under the independence model
@@ -59,17 +59,16 @@ QIC(fit)
 }
 \references{
 Pan, W. (2001). \emph{Akaike's information criterion in
-    generalized estimating equations}. Biometrics, 57, 120-125.\cr
-    Hardin, J.W.  and Hilbe, J.M. (2012). \emph{Generalized
-    Estimating Equations, 2nd Edition}, Chapman and Hall/CRC: New
-    York. \cr
-
-    Hin, L.-Y. and Wang, Y-G.
-    (2009). \emph{Working-correlation-structure identification in
-    generalized estimating equations}, Statistics in Medicine 28:
-    642-658. \cr Thall, P.F.  and Vail, S.C. (1990). \emph{Some
-    Covariance Models for Longitudinal Count Data with
-    Overdispersion}.  Biometrics, 46, 657-671.
+generalized estimating equations}. Biometrics, 57, 120-125.\cr
+Hardin, J.W.  and Hilbe, J.M. (2012). \emph{Generalized
+Estimating Equations, 2nd Edition}, Chapman and Hall/CRC: New
+York. \cr\preformatted{Hin, L.-Y. and Wang, Y-G.
+(2009). \\emph\{Working-correlation-structure identification in
+generalized estimating equations\}, Statistics in Medicine 28:
+642-658. \\cr Thall, P.F.  and Vail, S.C. (1990). \\emph\{Some
+Covariance Models for Longitudinal Count Data with
+Overdispersion\}.  Biometrics, 46, 657-671.
+}
 }
 \seealso{
 \code{geeglm}

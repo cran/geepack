@@ -44,7 +44,7 @@ predictor for modeling the mean. A term of the form
 \code{offset(expression)} is allowed.}
 
 \item{sformula}{a formula expression of the form \code{ ~
-predictor}, the response being ignored. This specifies the
+    predictor}, the response being ignored. This specifies the
 linear predictor for modeling the dispersion. A term of the
 form \code{offset(expression)} is allowed.}
 
@@ -132,7 +132,7 @@ is fixed at the value of \code{scale.value}.}
 
 \item{scale.value}{numeric variable giving the value to which the
 scale parameter should be fixed; used only if \code{scale.fix
-== TRUE}.}
+    == TRUE}.}
 
 \item{corstr}{a character string specifying the correlation
 structure.  The following are permitted: \code{"independence"},
@@ -246,8 +246,8 @@ summary(geese(y ~ x1 + x2, id = id, data = mdat, waves = visit,
 }
 \references{
 Yan, J. and J.P. Fine (2004) Estimating Equations for
-    Association Structures.  \emph{Statistics in Medicine},
-    \bold{23}, 859--880.
+Association Structures.  \emph{Statistics in Medicine},
+\bold{23}, 859--880.
 }
 \seealso{
 \code{\link{glm}}, \code{\link{lm}}, \code{\link{ordgee}}.

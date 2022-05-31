@@ -13,9 +13,9 @@ compCoef(fit0, fit1)
 }
 \value{
 a list of two components: \item{delta}{estimated difference
-    in the coefficients of common covariates from \code{fit0} and
-    \code{fit1}} \item{variance}{estimated variance matrix of
-    delta}
+in the coefficients of common covariates from \code{fit0} and
+\code{fit1}} \item{variance}{estimated variance matrix of
+delta}
 }
 \description{
 Comparing regression coefficients between models when one model is nested
@@ -51,9 +51,9 @@ compCoef(fit0, fit1)
 }
 \references{
 Allison, P. D. (1995). The impact of random predictors
-    on comparisons of coefficients between models: Comment on
-    Clogg, Petkova, and Haritou.  \emph{American Journal of
-    Sociology}, \bold{100}(5), 1294--1305.
+on comparisons of coefficients between models: Comment on
+Clogg, Petkova, and Haritou.  \emph{American Journal of
+Sociology}, \bold{100}(5), 1294--1305.
 
 Clogg, C. C., Petkova, E., and Haritou, A. (1995). Statistical methods for
 comparing regression coefficients between models.  \emph{American Journal of

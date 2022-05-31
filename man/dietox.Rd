@@ -20,8 +20,8 @@ This data frame contains the following columns:
 }
 \source{
 Lauridsen, C., Højsgaard, S.,Sørensen, M.T. C. (1999) Influence of
-    Dietary Rapeseed Oli, Vitamin E, and Copper on Performance and
-    Antioxidant and Oxidative Status of Pigs. J. Anim. Sci.77:906-916
+Dietary Rapeseed Oli, Vitamin E, and Copper on Performance and
+Antioxidant and Oxidative Status of Pigs. J. Anim. Sci.77:906-916
 }
 \usage{
 dietox
@@ -31,11 +31,11 @@ The \code{dietox} data frame has 861 rows and 7 columns.
 }
 \details{
 Data contains weight of slaughter pigs measured weekly for 12
-    weeks. Data also contains the startweight (i.e. the weight at week
-    1). The treatments are 3 different levels of Evit = vitamin E (dose: 0,
-    100, 200 mg dl-alpha-tocopheryl acetat /kg feed) in combination with 3
-    different levels of Cu=copper (dose: 0, 35, 175 mg/kg feed) in the feed.
-    The cumulated feed intake is also recorded. The pigs are littermates.
+weeks. Data also contains the startweight (i.e. the weight at week
+1). The treatments are 3 different levels of Evit = vitamin E (dose: 0,
+100, 200 mg dl-alpha-tocopheryl acetat /kg feed) in combination with 3
+different levels of Cu=copper (dose: 0, 35, 175 mg/kg feed) in the feed.
+The cumulated feed intake is also recorded. The pigs are littermates.
 }
 \examples{
 

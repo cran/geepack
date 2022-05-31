@@ -8,12 +8,12 @@
 This data frame contains the following columns:
 \describe{
 
-   \item{y1, y2, y3, y4}{ordered factor measured at 4 visits for the response with
-    levels, \code{1} < \code{2} < \code{3}, 1 = poor, 2 = good, and 3 =
-    excellent}
+\item{y1, y2, y3, y4}{ordered factor measured at 4 visits for the response with
+levels, \code{1} < \code{2} < \code{3}, 1 = poor, 2 = good, and 3 =
+excellent}
 
 \item{trt}{a factor for treatment with levels, 1 = active, 0 =
-    placebo.}
+placebo.}
 
 }
 }
@@ -47,8 +47,8 @@ summary(fit)
 }
 \references{
 Miller, M.E., David, C.S., and Landis, R.J. (1993) The analysis
-    of longitudinal polytomous data: Generalized estimating equation and
-    connections with weighted least squares, \emph{Biometrics} \bold{49}:
-    1033-1048.
+of longitudinal polytomous data: Generalized estimating equation and
+connections with weighted least squares, \emph{Biometrics} \bold{49}:
+1033-1048.
 }
 \keyword{datasets}

@@ -40,15 +40,13 @@ estimate should be computed.}
 A list with the arguments as components.
 }
 \description{
-Auxiliary function as user interface for `gee' fitting. Only used when
-calling `geese' or `geese.fit'.
+Auxiliary function as user interface for \verb{gee' fitting. Only used when calling }geese' or `geese.fit'.
 }
 \details{
-When `trace' is true, output for each iteration is printed to the screen by
-the c++ code. Hence, `options(digits = *)' does not control the precision.
+When \verb{trace' is true, output for each iteration is printed to the screen by the c++ code. Hence, }options(digits = *)' does not control the precision.
 }
 \seealso{
-`geese.fit', the fitting procedure used by `geese'.
+\verb{geese.fit', the fitting procedure used by }geese'.
 }
 \author{
 Jun Yan \email{jyan.stat@gmail.com}

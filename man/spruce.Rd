@@ -16,16 +16,16 @@ This data frame contains the following columns:
 \item{id}{a numeric vector of tree id}
 
 \item{time}{a numeric vector of the time when the
-    measurements were taken, measured in days since Jan. 1, 1988}
+measurements were taken, measured in days since Jan. 1, 1988}
 
 \item{wave}{a numeric vector of the measurement number} \item{logsize}{a
-    numeric vector of the log-size}
+numeric vector of the log-size}
 
 }
 }
 \source{
 Diggle, P.J., Liang, K.Y., and Zeger, S.L. (1994) Analysis of
-    Longitudinal Data, Clarendon Press.
+Longitudinal Data, Clarendon Press.
 }
 \usage{
 spruce
