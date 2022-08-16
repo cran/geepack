@@ -15,7 +15,9 @@
 #'     \eqn{latex}{sigma_ij}.
 #' @param corstrv correlation structures:
 #'     1=independence, 2=exchangeable, 3=ar1, 4=unstructured.
+#' 
 #' @return The design matrix for the correlation structure.
+#'
 #' @author Jun Yan \email{jyan.stat@@gmail.com}
 #' @seealso \code{\link{fixed2Zcor}}
 #' @keywords regression

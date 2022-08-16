@@ -31,17 +31,17 @@ prettyDate <- format(Sys.Date())
 \parindent0pt\parskip4pt
 
 %% Efter preamble
-\definecolor{myGray}{rgb}{0.95,0.95,0.95}
-\makeatletter
-\renewenvironment{Schunk}{
-  \begin{lrbox}{\@tempboxa}
-    \begin{boxedminipage}
-      {\columnwidth}\scriptsize}
-    {\end{boxedminipage}
-  \end{lrbox}%
-  \colorbox{myGray}{\usebox{\@tempboxa}}
-}
-\makeatother
+% \definecolor{myGray}{rgb}{0.95,0.95,0.95}
+% \makeatletter
+% \renewenvironment{Schunk}{
+  % \begin{lrbox}{\@tempboxa}
+    % \begin{boxedminipage}
+      % {\columnwidth}\scriptsize}
+    % {\end{boxedminipage}
+  % \end{lrbox}%
+  % \colorbox{myGray}{\usebox{\@tempboxa}}
+% }
+% \makeatother
 
 \maketitle
 

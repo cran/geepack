@@ -1,5 +1,5 @@
 Package: geepack
-Version: 1.3.4
+Version: 1.3.9
 Title: Generalized Estimating Equation Package
 Authors@R: c(
     person(given = "Søren", family = "Højsgaard",
@@ -8,7 +8,7 @@ Authors@R: c(
         email = "uhalekoh@health.sdu.dk", role = c("aut", "cph")),
     person(given = "Jun", family = "Yan",
         email = "jun.yan@uconn.edu", role = c("aut", "cph")),
-    person(given = "Claus", family = "Ekstrøm",
+    person(given = "Claus Thorn", family = "Ekstrøm",
         email = "ekstrom@sund.ku.dk", role = c("ctb"))	
   )     
 Maintainer: Søren Højsgaard <sorenh@math.aau.dk>
@@ -23,11 +23,11 @@ License: GPL (>= 3)
 NeedsCompilation: yes
 Depends: R (>= 3.5.0), methods
 Imports: MASS, broom, magrittr
-RoxygenNote: 7.1.2
-Packaged: 2022-05-03 06:53:57 UTC; sorenh
+RoxygenNote: 7.2.1
+Packaged: 2022-08-16 07:09:25 UTC; sorenh
 Author: Søren Højsgaard [aut, cre, cph],
   Ulrich Halekoh [aut, cph],
   Jun Yan [aut, cph],
-  Claus Ekstrøm [ctb]
+  Claus Thorn Ekstrøm [ctb]
 Repository: CRAN
-Date/Publication: 2022-05-31 06:30:02 UTC
+Date/Publication: 2022-08-16 13:00:25 UTC

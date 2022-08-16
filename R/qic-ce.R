@@ -20,13 +20,14 @@
 #'
 #' @aliases QIC QIC.geeglm QIC.geekin QIC.ordgee
 #' @param object a fitted GEE model from the geepack
-#'     package. Currently only works on geeglm objects
-#' @param tol the tolerance used for matrix inversion
-#' @param \dots optionally more fitted geeglm model objects
+#'     package. Currently only works on geeglm objects.
+#' @param \dots optionally more fitted geeglm model objects.
+#' @param tol the tolerance used for matrix inversion.
+#' @param env environment.
 #' @return A vector or matrix with the QIC, QICu, quasi likelihood,
 #'     CIC, the number of mean effect parameters, and the corrected
 #'     QIC for each GEE object
-#' @author Claus Ekstrom \email{claus@@rprimer.dk}
+#' @author Claus Ekstrom \email{claus@@rprimer.dk}, Brian McLoone \email{bmcloone@pdx.edu} and Steven Orzack \email{orzack@freshpond.org}
 #' @seealso \code{geeglm}
 #' @references Pan, W. (2001). \emph{Akaike's information criterion in
 #'     generalized estimating equations}. Biometrics, 57, 120-125.\cr
@@ -36,6 +37,7 @@
 #'
 #'     Hin, L.-Y. and Wang, Y-G.
 #'     (2009). \emph{Working-correlation-structure identification in
+#'     generalized estimating equations}, Statistics in Medicine 28:
 #'     generalized estimating equations}, Statistics in Medicine 28:
 #'     642-658. \cr Thall, P.F.  and Vail, S.C. (1990). \emph{Some
 #'     Covariance Models for Longitudinal Count Data with
@@ -47,12 +49,16 @@
 #' data(ohio)
 #' fit <- geeglm(resp ~ age + smoke + age:smoke, id=id, data=ohio,
 #'              family=binomial, corstr="exch", scale.fix=TRUE)
-#' QIC(fit)
+#' fit2 <- geeglm(resp ~ age + smoke + age:smoke, id=id, data=ohio,
+#'              family=binomial, corstr="ar1", scale.fix=TRUE)            
+#' QIC(fit, fit2)
 #'
 #' @rdname QIC
 #' @export
-QIC.geeglm <- function(object, tol=.Machine$double.eps, ...) {
+QIC.geeglm <- function(object, ..., tol=.Machine$double.eps, env=parent.frame()) {
 
+    ## cat("QIC\n")
+    ## print(env)
   #
   # The majority of this code was taken from the internet
   # I added a bit of functionality and made the whole interface smoother
@@ -63,34 +69,38 @@ QIC.geeglm <- function(object, tol=.Machine$double.eps, ...) {
 
   # Setup functions
   invert <- if ("MASS" %in% loadedNamespaces()) {
-    MASS::ginv
-  } else { solve }
-
+                MASS::ginv
+            } else {
+                solve
+            }
+    
   # Missing:
   # Check correct handling of link and family functions
 
   # Create function to make the computations
   computeqic <- function(object) {
-    # Fitted and observed values for quasi likelihood
-    mu <- object$fitted.values
-    y  <- object$y
+      ## Fitted and observed values for quasi likelihood
+      mu <- object$fitted.values
+      y  <- object$y
+      
+      ## Quasi Likelihood for Poisson
+      ## quasi.R <- sum((y*log(mu.R)) - mu.R) # poisson()$dev.resids - scale and weights = 1
+      type <- family(object)$family
+      quasi <- switch(type,
+                      poisson  = sum((y * log(mu)) - mu),
+                      gaussian = sum(((y - mu)^2)/-2),
+                      binomial = sum(y * log(mu / (1 - mu)) + log(1 - mu)),
+                      Gamma    = sum(-y/(mu - log(mu))),
+                      stop("Error: distribution not recognized"))
+      
+      ## Fit model with independence correlation structure
+      object$call$corstr <- "independence"
+      object$call$zcor <- NULL
 
-    # Quasi Likelihood for Poisson
-    # quasi.R <- sum((y*log(mu.R)) - mu.R) # poisson()$dev.resids - scale and weights = 1
-    type <- family(object)$family
-    quasi <- switch(type,
-                    poisson = sum((y*log(mu)) - mu),
-                    gaussian = sum(((y - mu)^2)/-2),
-                    binomial = sum(y*log(mu/(1 - mu)) + log(1 - mu)),
-                    Gamma = sum(-y/(mu - log(mu))),
-                    stop("Error: distribution not recognized"))
-
-    # Fit model with independence correlation structure
-    object$call$corstr <- "independence"
-    object$call$zcor <- NULL
-    model.indep <- eval(object, parent.frame())
-    # model.indep <- update(object, corstr="independence",zcorr=NULL)
-
+      model.indep <- eval(object$call, envir=env) 
+       ## model.indep <- eval(object$call, parent.frame()) ## FIXME parent.frame() is wrong...
+      ## model.indep <- update(object, corstr="independence",zcorr=NULL)
+      
     # Trace term (penalty for model complexity)
     AIinverse <- invert(model.indep$geese$vbeta.naiv, tol=tol)
     Vr <- object$geese$vbeta
@@ -100,9 +110,9 @@ QIC.geeglm <- function(object, tol=.Machine$double.eps, ...) {
     kpm <- params+length(object$geese$alpha)
 
     # QIC
-    QIC <- -2*(quasi - trace)
+    QIC  <- -2*(quasi - trace)
     QICu <- -2*(quasi - params)
-    QICC <- QIC + (2*kpm*(kpm+1))/(length(object$residuals)-kpm-1)
+    QICC <- QIC + (2 * kpm * (kpm + 1)) / (length(unique(object$id)) - kpm - 1)
     output <- c(QIC, QICu, quasi, trace, params, QICC)
     names(output) <- c("QIC", "QICu", "Quasi Lik", "CIC", "params", "QICC")
     output
@@ -137,7 +147,7 @@ QIC.geeglm <- function(object, tol=.Machine$double.eps, ...) {
 
 #' @rdname QIC
 #' @export
-QIC.ordgee <- function(object, tol = .Machine$double.eps, ...) {
+QIC.ordgee <- function(object, ..., tol = .Machine$double.eps, env=parent.frame()) {
 
   #
   # The majority of this code was taken from the internet
@@ -217,6 +227,37 @@ QIC.ordgee <- function(object, tol = .Machine$double.eps, ...) {
   } else {
     computeqic(object)
   }
+}
+
+
+
+
+#' @rdname QIC
+#' @export
+QIC.geekin <- function(object, ..., tol = .Machine$double.eps, env=parent.frame()) {
+
+  # This functions is only needed to replace class
+  # geeglm to make sure the regular
+  # QIC function works
+
+  if (! ("geeglm" %in% class(object)) ) {
+    stop("QIC requires a geekin object as input")
+  }
+
+  object$call[[1]] <- as.name("geeglm")
+  object$call$varlist <- NULL
+  object$call$na.action <- NULL
+
+  # Swap class around
+  class(object) <- c("geeglm", unique(class(object)))
+  QIC(object)
+}
+
+
+#' @rdname QIC
+#' @export
+QIC <- function(object, ..., tol = .Machine$double.eps, env=parent.frame()) {
+  UseMethod("QIC")
 }
 
 
@@ -320,32 +361,3 @@ QIC.ordgee <- function(object, tol = .Machine$double.eps, ...) {
 ##     computeqic(object)
 ##   }
 ## }
-
-
-#' @rdname QIC
-#' @export
-QIC.geekin <- function(object,  tol = .Machine$double.eps, ...) {
-
-  # This functions is only needed to replace class
-  # geeglm to make sure the regular
-  # QIC function works
-
-  if (! ("geeglm" %in% class(object)) ) {
-    stop("QIC requires a geekin object as input")
-  }
-
-  object$call[[1]] <- as.name("geeglm")
-  object$call$varlist <- NULL
-  object$call$na.action <- NULL
-
-  # Swap class around
-  class(object) <- c("geeglm", unique(class(object)))
-  QIC(object)
-}
-
-
-#' @rdname QIC
-#' @export
-QIC <- function(object,  tol = .Machine$double.eps, ...) {
-  UseMethod("QIC")
-}
