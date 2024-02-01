@@ -1,3 +1,7 @@
+# geepack v1.3.10 (2022-09-29)
+	
+	* Update of vignette.
+	
 # geepack v1.3.9 (2022-08-16)
 
 	* QIC now takes environment argument because the function is called from another function in another package.

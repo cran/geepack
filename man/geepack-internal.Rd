@@ -22,7 +22,6 @@
 
 \usage{
 crossutri(wave)
-genZcor(clusz, waves, corstrv)
 genZodds(clusz, waves, corstrv, ncat)
 }
 \details{

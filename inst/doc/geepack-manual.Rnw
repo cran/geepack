@@ -19,7 +19,9 @@ prettyVersion <- packageDescription("geepack")$Version
 prettyDate <- format(Sys.Date())
 @
 
-\SweaveOpts{keep.source=T,prefix.string=figures/LSmeans}
+%% ,prefix.string=figures/geepack
+
+\SweaveOpts{keep.source=T}
 
 \title{On the usage of the \texttt{geepack} }
 \author{S\o ren H\o jsgaard and Ulrich Halekoh}
@@ -27,6 +29,7 @@ prettyDate <- format(Sys.Date())
 
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 
 \parindent0pt\parskip4pt
 
@@ -49,15 +52,13 @@ prettyDate <- format(Sys.Date())
 
 \section{Introduction}
 \label{sec:introduction}
+\label{sec:intro}
+
 This note contains a few extra examples. We illustrate the usage of a
 the |waves| argument and the |zcor| argument together with a fixed
 working correlation matrix for the |geeglm()| function. 
 
-
-\label{sec:intro}
-
-
-\section{Citing \texttt{geepack}}
+\subsection{Citing \texttt{geepack}}
 
 
 The primary reference for the |geepack| package is
@@ -78,6 +79,20 @@ citation("geepack")
 If you use |geepack| in your own work, please do cite the above
 reference.
 
+\subsection{When do GEE's work best?}
+\label{sec:when-do-gees}
+
+
+\begin{enumerate}
+\item GEEs work best when you have relatively many relatively small clusters of about equal size in your data. 
+
+\item If all your clusters are of size one you should not use GEEs; if all clusters are of size one a GEE corresponds to a generalized linear model. 
+
+\item If you only have very few  clusters (and in the extreme case only one cluster) you are likely to encounter numerical difficulties. 
+\end{enumerate}
+
+NOTICE: Care must be taken with respect to the order in which the clusters appear in the dataset. See Section \ref{sec:waves} for details.
+
 
 \section{Simulating a dataset}
 \label{sec:simulating}
@@ -86,18 +101,21 @@ reference.
 To illustrate the usage of 
 the |waves| argument and the |zcor| argument together with a fixed
 working correlation matrix for the |geeglm()|
- we simulate some data suitable for a regression model.
+ we simulate data suitable for a regression model.
 
 @
 <<>>=
 library(geepack)
-timeorder <- rep(1:5, 6)
+n_cluster <- 6
+n_time    <- 5
+set.seed(1213)
+timeorder <- rep(1:n_time, n_cluster)
 tvar      <- timeorder + rnorm(length(timeorder))
-idvar <- rep(1:6, each=5)
-uuu   <- rep(rnorm(6), each=5)
-yvar  <- 1 + 2*tvar + uuu + rnorm(length(tvar))
+idvar  <- rep(1:n_cluster, each=n_time)
+uuu    <- rep(rnorm(n_cluster), each=n_time) # A 'random intercept'
+yvar   <- 1 + 2 * tvar + uuu + rnorm(length(tvar))
 simdat <- data.frame(idvar, timeorder, tvar, yvar)
-head(simdat,12)
+head(simdat, 12)
 @ %def
 
 Notice that clusters of data appear together in |simdat| and that
@@ -116,7 +134,7 @@ each subject in the dataset.
 
 
 \section{Using the \texttt{waves} argument}
-\label{sec:xxx}
+\label{sec:waves}
 
 
 If observatios were not ordered according to cluster and time within
@@ -126,9 +144,7 @@ wrong result:
 @
 <<>>=
 set.seed(123)
-## library(doBy)
 simdatPerm <- simdat[sample(nrow(simdat)),]
-## simdatPerm <- orderBy(~idvar, simdatPerm)
 simdatPerm <- simdatPerm[order(simdatPerm$idvar),]
 head(simdatPerm)
 @ %def
@@ -136,8 +152,7 @@ head(simdatPerm)
 Notice that in |simdatPerm| data is ordered according to subject but
 the time ordering within subject is random.
 
-Fitting the model as
-before gives
+Fitting the model as before gives
 
 @
 <<>>=
@@ -150,11 +165,10 @@ wrong result (the clusters are not recognized):
 
 @
 <<>>=
-## simdatPerm2 <- orderBy(~timeorder, data=simdat)
 simdatPerm2 <- simdat[order(simdat$timeorder),]
+head(simdatPerm2)
 geeglm(yvar~tvar, id=idvar, data=simdatPerm2, corstr="ar1")
 @ %def
-
 
 To obtain the right result we must give the |waves| argument:
 
@@ -167,7 +181,7 @@ mod3
 @ %def
 
 \section{Using a fixed correlation matrix and the \texttt{zcor} argument}
-\label{sec:xxx}
+\label{sec:zcor}
 
 Suppose we want to use a fixed working correlation matrix:
 
@@ -201,14 +215,5 @@ we can fit the model with:
 mod4 <- geeglm(yvar~tvar, id=idvar, data=simdatPerm, corstr="fixed", zcor=zcor)
 mod4
 @ %def
-
-
-\section{When do GEE's work best?}
-\label{sec:when-do-gees}
-
-GEEs work best when you have relatively many relativly small clusters in your data. 
-
-
-
 
 \end{document}
