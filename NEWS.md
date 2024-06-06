@@ -1,3 +1,7 @@
+# geepack v1.3.11 (2024-06-06)
+
+	* Update of documentation of geeglm
+
 # geepack v1.3.10 (2022-09-29)
 	
 	* Update of vignette.

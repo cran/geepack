@@ -100,6 +100,24 @@
 #' mf2 <- formula(Weight ~ Cu * Time + I(Time^2) + I(Time^3))
 #' gee2 <- geeglm(mf2, data=dietox, id=Pig, family=poisson("identity"), corstr="ar1")
 #' anova(gee2)
+#'
+#' # Notice the difference here: Clusters of observations must
+#' # appear as chunks in data. 
+#'
+#' set.seed(1)
+#' chick1 <- ChickWeight
+#' chick2 <- chick1[sample(nrow(chick1)),]
+#' chick3 <- chick2[order(chick2$Chick),]
+#'
+#' fit1 <- geeglm(weight~Time, id=Chick, data=chick1)
+#' fit2 <- geeglm(weight~Time, id=Chick, data=chick2)
+#' fit3 <- geeglm(weight~Time, id=Chick, data=chick3)
+#' 
+#' vcov(fit1)
+#' vcov(fit2)
+#' vcov(fit3)
+#'
+#'
 #' 
 #' @export geeglm
 geeglm<- function (formula, family = gaussian, data = parent.frame(), 
