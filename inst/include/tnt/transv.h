@@ -140,14 +140,14 @@ std::ostream& operator<<(std::ostream &s, const Transpose_View<Matrix> &A)
     Subscript Mend = M + A.lbound() - 1;
     Subscript Nend = N + A.lbound() - 1;
 
-    s << M << "  " << N << endl;
+    s << M << "  " << N << std::endl;
     for (Subscript i=start; i<=Mend; i++)
     {
         for (Subscript j=start; j<=Nend; j++)
         {
             s << A(i,j) << " ";
         }
-        s << endl;
+        s << std::endl;
     }
 
 

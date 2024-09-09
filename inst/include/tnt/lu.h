@@ -184,7 +184,7 @@ int LU_solve(const MaTRiX &A, const VecToRSubscripts &indx, VecToR &b)
         if (ii)
             for (j=ii;j<=i-1;j++) 
                 sum -= A(i,j)*b(j);
-        else if (sum) ii=i;
+        else if (sum != 0.0) ii=i;
             b(i)=sum;
     }
     for (i=n;i>=1;i--) 

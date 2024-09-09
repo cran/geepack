@@ -7,7 +7,7 @@
 // from R CMD check, as suggested by K. Hornik and B. Ripley.
 // #undef NDEBUG
 
-using namespace std;
+//using namespace std;
 
 #include "tntsupp.h"
 #include "geese.h"

@@ -46,7 +46,7 @@ structures are compared.
 
 Models with smaller values of QIC, CIC, QICu, or QICC are preferred.
 
-If the MASS package is loaded then the \code{\link{ginv}} function is used
+If the MASS package is loaded then the \code{\link[MASS]{ginv}} function is used
 for matrix inversion. Otherwise the standard \code{\link{solve}} function is
 used.
 }
