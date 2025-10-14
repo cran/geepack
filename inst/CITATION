@@ -45,3 +45,17 @@ bibentry(bibtype="Article",
                "geepack: Yet Another Package for Generalized Estimating Equations",
                "R-News, 2/3, pp12-14.")
 )
+
+
+bibentry(bibtype="Article",
+         title = "On GEE for mean-variance-correlation models: Variance estimation and model selection.",
+         author = c("Xu, Z.", "Fine, J. P.", "Song, W.",  "Yan, J."),
+         year         = "2025",
+         journal      = "Statistics in Medicine",
+         volume       = "44",
+         pages        = "1-2",
+         textVersion = 
+         paste("Xu, Z.", "Fine, J. P.", "Song, W.",  "Yan, J. (2025)", 
+               "On GEE for mean-variance-correlation models: Variance estimation and model selection", 
+               "Statistics in Medicine, 44(1-2), e10271.")
+)

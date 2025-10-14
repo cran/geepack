@@ -1,5 +1,5 @@
 2c7ec897a3bb657e2353fc328fb40ab5 *ChangeLog
-41089bffa5adb9a7a4895f8f3f70649e *DESCRIPTION
+d9d265e7485f2926c107bb58c4fd6d79 *DESCRIPTION
 883312468fef336ca79944040ab1a68b *NAMESPACE
 fca4e2b961c7d574da5e43a4a8ea2f97 *NEWS.md
 0a48d3c82f8be0d26ed94eb3808b2c25 *R/NAMESPACE.R
@@ -16,7 +16,7 @@ edd80ad787cc850e0131d3393792db73 *R/qic-ce.R
 903668733f4bb12da2f0f83a65931116 *R/summary.R
 6505166c78c1a08e723f0ab1ab6c1608 *R/zzz.R
 09025c52708dd8f6d43340f2828e57d6 *README.md
-046334fe271c112b8cf41fc0c3c48649 *build/vignette.rds
+b816a8421febdf5067eaca89b3eff899 *build/vignette.rds
 830f7fc69c5afa1a23e8991d77e0b101 *data/dietox.rda
 4db449d2d05821a059969ee34818c48a *data/koch.RData
 331c55a17b264d413792bc3503e6c7df *data/muscatine.rda
@@ -26,10 +26,10 @@ c5c74995959496a594d75aaee98eea7f *data/respdis.RData
 344743cddf1a27b7b9d5dae851d8495e *data/seizure.RData
 8a96e06b08ac07da63c409f539a6a969 *data/sitka89.RData
 c573873a4bf48e2169119cfea4496143 *data/spruce.RData
-3c57d0e7b4692ad62932d857fa374a64 *inst/CITATION
+bbe170b63ce04a1896a886d383477cdb *inst/CITATION
 59f4bb2b9253c2307d5368e8ed197aa7 *inst/doc/geepack-manual.R
 b7ef96fe2613c7ba583830c588986596 *inst/doc/geepack-manual.Rnw
-85a622c0bffb55a69e1491268c1bc6e2 *inst/doc/geepack-manual.pdf
+ef6fdcb348450a021c1a8215f5c35ab1 *inst/doc/geepack-manual.pdf
 9828f5a1fa7e645dee75d7651986c9d0 *inst/include/famstr.h
 17b2a8381b909ce542221d3cc6a2ca86 *inst/include/gee2.h
 7d1cfd53a00f4edb17e31b0ac3fadd26 *inst/include/geese.h
